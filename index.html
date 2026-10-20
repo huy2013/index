@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>CodeTHCS</title>
+<title>PRIME Tin học 8</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -234,7 +234,17 @@ form.f{display:flex;flex-direction:column;gap:14px}
 .cbtn.armed{color:var(--red);font-size:.8rem;padding-inline:6px}
 .citem input{width:100%;margin:4px;background:var(--surface);border:1px solid var(--cyan);border-radius:8px;padding:6px 8px;color:var(--fg)}
 .cmain{display:flex;flex-direction:column;min-width:0;min-height:0;position:relative}
-.cbar{display:none;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line)}
+.cbar{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.cbar .hbtn{display:none}.cbar .ctt{margin-right:auto}
+.cstatus{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.qchip{display:inline-flex;flex-direction:column;gap:3px;font-size:.78rem;color:var(--muted);min-width:132px}
+.qchip.low{color:var(--amber)}.qchip.out{color:var(--red)}
+.qbar{display:block;height:4px;border-radius:4px;background:var(--line);overflow:hidden}.qbar b{display:block;height:100%;background:var(--cyan)}
+.qchip.low .qbar b{background:var(--amber)}.qchip.out .qbar b{background:var(--red)}
+.lchip{border:1px solid var(--line);background:var(--surface2);color:var(--fg);border-radius:999px;padding:5px 12px;font-size:.8rem;cursor:pointer}
+.lchip.ok{border-color:var(--green)}.lchip.warn{border-color:var(--amber)}.lchip.bad{border-color:var(--red)}
+.lpanel{margin:0;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--surface2);display:flex;flex-direction:column;gap:8px}
+.lpanel p{margin:0}
 .scrim{display:none}
 .chatapp .msgs{padding:20px 16px;align-items:center;gap:18px}
 .chatapp .msgs>*{width:min(100%,780px)}
@@ -281,7 +291,7 @@ form.f{display:flex;flex-direction:column;gap:14px}
   .csb{position:absolute;z-index:6;left:0;top:0;bottom:0;width:min(300px,86%);transform:translateX(-102%);transition:transform .2s}
   .chatapp.sbopen .csb{transform:none;box-shadow:0 0 40px #0008}
   .chatapp.sbopen .scrim{display:block;position:absolute;inset:0;z-index:5;background:#0006;border:0}
-  .cbar{display:flex}
+  .cbar .hbtn{display:inline-flex}
   .sgrid{grid-template-columns:1fr}
   .urow .mact{opacity:1}
 }
@@ -300,6 +310,7 @@ form.f{display:flex;flex-direction:column;gap:14px}
 #actions .btn{white-space:nowrap}
 .tabs.inl{display:inline-flex;margin:0;flex-wrap:wrap}
 /* community */
+.qf{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}.qf label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted)}.qf input,.qinp{width:96px;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 10px;color:var(--fg)}
 .dsearch{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .dsearch input[type=search]{flex:1;min-width:220px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;color:var(--fg)}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
@@ -359,6 +370,9 @@ td .acts{display:flex;gap:6px;flex-wrap:wrap}
 /* footer, toast */
 footer{border-top:1px solid var(--line);padding-block:28px;color:var(--muted);font-size:.92rem}
 footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between}
+footer .svstat{display:inline-flex;align-items:center;gap:6px;margin-top:4px;font-size:.82rem}
+footer .dot{width:8px;height:8px;border-radius:50%;background:var(--amber,#d98a00);display:inline-block}
+footer .dot.ok{background:var(--green,#1f9d55)}
 footer nav{display:flex;gap:16px;flex-wrap:wrap}
 footer button{background:none;border:0;color:var(--muted);cursor:pointer;padding:0;text-decoration:underline}
 #toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:calc(100vw - 32px);text-align:center}
@@ -392,9 +406,9 @@ footer button{background:none;border:0;color:var(--muted);cursor:pointer;padding
 <a class="skip" href="#main">Bỏ qua đến nội dung</a>
 <header class="top">
   <div class="wrap bar">
-    <button class="logo" data-act="go" data-go="home" aria-label="CodeTHCS, về trang chủ">
+    <button class="logo" data-act="go" data-go="home" aria-label="PRIME, về trang chủ">
       <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="8" fill="var(--violet)"/><path d="M12 10l-5 5 5 5M18 10l5 5-5 5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span>Code<b>THCS</b></span>
+      <span><b>PRIME</b></span>
     </button>
     <nav class="nav" id="nav" aria-label="Điều hướng chính"></nav>
     <div class="actions" id="actions"></div>
@@ -403,7 +417,7 @@ footer button{background:none;border:0;color:var(--muted);cursor:pointer;padding
 <main id="main" tabindex="-1"></main>
 <footer>
   <div class="wrap">
-    <span>© 2026 CodeTHCS · Hướng dẫn giải bài Tin học 8, sách Kết nối tri thức với cuộc sống.</span>
+    <span>© 2026 PRIME · Hướng dẫn giải bài Tin học 8, sách Kết nối tri thức với cuộc sống.<br><small id="svstat" class="svstat"></small></span>
     <nav aria-label="Liên kết chân trang">
       <button data-act="go" data-go="about">Giới thiệu</button>
       <button data-act="go" data-go="contact">Liên hệ</button>
@@ -417,7 +431,7 @@ footer button{background:none;border:0;color:var(--muted);cursor:pointer;padding
 /* ===== Scratch block renderer (Scratch 3 look, SVG) ===== */
 const SB=(function(){
 'use strict';
-const COL={motion:['#4C97FF','#3373CC'],looks:['#9966FF','#774DCB'],sound:['#CF63CF','#BD42BD'],events:['#FFBF00','#CC9900'],control:['#FFAB19','#CF8B17'],sensing:['#5CB1D6','#2E8EB8'],operators:['#59C059','#389438'],variables:['#FF8C1A','#DB6E00'],other:['#9AA0AB','#6E7480']};
+const COL={motion:['#4C97FF','#3373CC'],looks:['#9966FF','#774DCB'],sound:['#CF63CF','#BD42BD'],events:['#FFBF00','#CC9900'],control:['#FFAB19','#CF8B17'],sensing:['#5CB1D6','#2E8EB8'],operators:['#59C059','#389438'],variables:['#FF8C1A','#DB6E00'],pen:['#0FBD8C','#0B8E69'],lists:['#FF661A','#E64D00'],myblocks:['#FF6680','#FF4D6A'],other:['#9AA0AB','#6E7480']};
 const FONT='"Helvetica Neue",Helvetica,Arial,sans-serif';
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let cx=null;
@@ -504,6 +518,9 @@ function catOf(items,kind){
   if(/^(change|set) _ effect/.test(n))return /pitch|pan/.test(dd)?'sound':'looks';
   if(/^set size|^change size/.test(n)||/^(say|think|switch costume|next costume|switch backdrop|next backdrop|clear graphic)/.test(n)||n==='go to _ layer'||n==='go _ _ layers'||n==='show'||n==='hide'||/^(costume|backdrop) _$/.test(n))return 'looks';
   if(/^(play sound|start sound|stop all sounds|clear sound effects|change volume|set volume)/.test(n))return 'sound';
+  if(/^(pen down|pen up|erase all|stamp|set pen|change pen)/.test(n))return 'pen';
+  if(/^(add _ to _|delete _ of _|delete all of _|insert _ at _ of _|replace item _ of _ with _|item _ of _|item # of _ in _|show list|hide list|_ contains _\?)$/.test(n)&&/list|item|add|delete|insert|replace/.test(n))return 'lists';
+  if(/^define /.test(n))return 'myblocks';
   if(/^when i start as a clone|^create clone|^delete this clone/.test(n))return 'control';
   if(/^(when |broadcast )/.test(n))return 'events';
   if(/^(wait|repeat|forever|if|else|stop)/.test(n))return 'control';
@@ -542,7 +559,7 @@ function parseScripts(src){
       add(b);open.push(b);continue;
     }
     let shape='stack';
-    if(/^when /.test(n))shape='hat';
+    if(/^(when |define )/.test(n))shape='hat';
     else if(/^(stop|delete this clone)/.test(n))shape='cap';
     b={k:'blk',shape,cat,items};
     add(b);
@@ -714,9 +731,10 @@ const $=(s,e=document)=>e.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const F='\x60\x60\x60';
 const mem={};
+let svHook=null;
 const store={
   get(k,d){try{const v=localStorage.getItem('cthcs_'+k);if(v!==null)return JSON.parse(v)}catch(e){} return (k in mem)?mem[k]:d},
-  set(k,v){mem[k]=v;try{localStorage.setItem('cthcs_'+k,JSON.stringify(v))}catch(e){}}
+  set(k,v,q){mem[k]=v;try{localStorage.setItem('cthcs_'+k,JSON.stringify(v))}catch(e){} if(!q&&svHook){try{svHook(k)}catch(e){}}}
 };
 const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 async function hashPw(pw,salt){
@@ -1099,20 +1117,215 @@ const PAL=[
   ['set [my variable v] to (0)','Gán cho biến một giá trị.'],
   ['change [my variable v] by (1)','Tăng (hoặc giảm) giá trị của biến.'],
   ['show variable [my variable v]','Hiện biến trên sân khấu.'],
-  ['hide variable [my variable v]','Ẩn biến khỏi sân khấu.']]}
+  ['hide variable [my variable v]','Ẩn biến khỏi sân khấu.']]},
+ {k:'lists',name:'Lists',vi:'Danh sách',color:'#FF661A',items:[
+  ['add [thing] to [my list v]','Thêm một mục vào cuối danh sách.'],
+  ['delete (1) of [my list v]','Xóa mục thứ 1 khỏi danh sách.'],
+  ['delete all of [my list v]','Xóa sạch danh sách.'],
+  ['insert [thing] at (1) of [my list v]','Chèn một mục vào vị trí cho trước.'],
+  ['replace item (1) of [my list v] with [thing]','Thay mục ở vị trí cho trước bằng giá trị mới.'],
+  ['(item (1) of [my list v])','Giá trị: lấy mục ở vị trí cho trước.'],
+  ['show list [my list v]','Hiện danh sách trên sân khấu.'],
+  ['hide list [my list v]','Ẩn danh sách khỏi sân khấu.']]},
+ {k:'pen',name:'Pen',vi:'Bút vẽ',color:'#0FBD8C',items:[
+  ['erase all','Xóa mọi nét vẽ trên sân khấu.'],
+  ['stamp','In hình nhân vật lên sân khấu.'],
+  ['pen down','Hạ bút: nhân vật đi đến đâu vẽ nét đến đó.'],
+  ['pen up','Nhấc bút lên, ngừng vẽ.'],
+  ['set pen color to [#ff0000]','Đặt màu bút.'],
+  ['change pen size by (1)','Tăng hoặc giảm độ dày nét bút.'],
+  ['set pen size to (1)','Đặt độ dày nét bút.']]},
+ {k:'myblocks',name:'My Blocks',vi:'Khối của tôi',color:'#FF6680',items:[
+  ['define [my block]','Khối mũ để bạn tự tạo một khối lệnh mới, gom nhiều khối vào một tên.'],
+  ['when I start as a clone','Bắt đầu khi bản sao (clone) của nhân vật được tạo ra.'],
+  ['create clone of [myself v]','Tạo một bản sao của nhân vật.'],
+  ['delete this clone','Xóa bản sao đang chạy chương trình này.']]}
 ];
 
 /* ---------- data access ---------- */
-const users=()=>store.get('users',[]);
+const users=()=>SV.ok?SV.list:store.get('users',[]);
 const lessonsAll=()=>store.get('lessons',[]);
 const projects=()=>store.get('projects',[]);
-const progressAll=()=>store.get('progress',{});
+const progressAll=()=>SV.ok&&SV.user&&SV.user.role==='admin'?{...store.get('progress',{}),...SV.prog}:store.get('progress',{});
 const views=()=>store.get('views',{});
-const msgs=()=>store.get('msgs',[]);
-const me=()=>{const s=store.get('session',null);return s?users().find(u=>u.id===s&&!u.locked)||null:null};
+const msgs=()=>SV.ok?SV.msgs:store.get('msgs',[]);
+const me=()=>{if(SV.ok){const x=SV.user;return x&&!x.locked?x:null}const s=store.get('session',null);return s?users().find(u=>u.id===s&&!u.locked)||null:null};
 const isAdmin=()=>{const u=me();return !!u&&u.role==='admin'};
 const doneOf=id=>progressAll()[id]||{};
 const visLessons=()=>lessonsAll().filter(l=>l.visible);
+
+/* ---------- PRIME server (Supabase) ---------- */
+const EPOCH='1970-01-01T00:00:00Z';
+const SV={url:'https://nzacrwbwuuycbmvrkpca.supabase.co',key:'sb_publishable_9_L5w1YQZxeY6z3eYsIjng_olz1Rv49',ok:false,token:null,user:null,list:[],msgs:[],prog:{},since:EPOCH,dirty:{},timers:{},polling:false,tick:0,pt:null,off:false};
+const SV_ERR={unauthorized:'Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.',forbidden:'Bạn không có quyền thực hiện thao tác này.',bad_login:'Tên đăng nhập 3 đến 20 ký tự: chữ không dấu, số, dấu _ hoặc dấu chấm.',login_taken:'Tên đăng nhập này đã có người dùng, hãy chọn tên khác.',bad_name:'Họ và tên chưa hợp lệ.',bad_class:'Nhập tên lớp bắt đầu bằng số 8, ví dụ 8A.',bad_pw:'Mật khẩu cần ít nhất 8 ký tự, gồm cả chữ và số.',busy:'Máy chủ đang bận, hãy thử lại sau ít phút.',too_many:'Bạn nhập sai quá nhiều lần. Hãy đợi khoảng 10 phút rồi thử lại.',bad_credentials:'Sai tên đăng nhập hoặc mật khẩu. Kiểm tra lại nhé.',locked:'Tài khoản đang bị khóa. Hãy liên hệ giáo viên.',bad_old:'Mật khẩu hiện tại chưa đúng.',too_big:'Nội dung quá lớn.',bad_input:'Thông tin chưa hợp lệ.',not_found:'Không tìm thấy.',bad_coll:'Dữ liệu không hợp lệ.',bad_id:'Dữ liệu không hợp lệ.',bad_data:'Dữ liệu không hợp lệ.',net:'Không kết nối được máy chủ PRIME. Kiểm tra mạng rồi thử lại.'};
+const svMsg=e=>SV_ERR[e&&e.code]||SV_ERR[e&&e.message]||'Có lỗi xảy ra, bạn thử lại sau nhé.';
+async function rpc(fn,args,ms){
+  const ctl=typeof AbortController==='function'?new AbortController():null;
+  const t=setTimeout(()=>{try{ctl&&ctl.abort()}catch(e){}},ms||9000);
+  let r;
+  try{r=await fetch(SV.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'apikey':SV.key,'Content-Type':'application/json'},body:JSON.stringify(args||{}),signal:ctl?ctl.signal:undefined})}
+  catch(e){clearTimeout(t);const x=new Error('net');x.code='net';x.net=true;throw x}
+  clearTimeout(t);
+  let j=null;try{j=await r.json()}catch(e){}
+  if(!r.ok){const m=String((j&&j.message)||'').trim();const x=new Error(m||('http_'+r.status));x.code=m||('http_'+r.status);x.http=r.status;throw x}
+  return j;
+}
+const svUser=u=>u?{id:u.id,login:u.login,name:u.name,cls:u.cls||'',grade:'8',role:u.role,locked:!!u.locked,mustChange:!!u.mustChange,resetRequested:!!u.resetRequested,share:!!u.share,created:u.created||Date.now()}:null;
+/* ---- per-user data sync ---- */
+const DK={
+  progress:{g:u=>store.get('progress',{})[u.id],s:(u,v)=>{const m=store.get('progress',{});m[u.id]=v;store.set('progress',m,1)}},
+  time:{g:u=>store.get('time',{})[u.id],s:(u,v)=>{const m=store.get('time',{});m[u.id]=v;store.set('time',m,1)}},
+  asks:{g:u=>store.get('asks',{})[u.id],s:(u,v)=>{const m=store.get('asks',{});m[u.id]=v;store.set('asks',m,1)}},
+  badges:{g:u=>store.get('badges',{})[u.id],s:(u,v)=>{const m=store.get('badges',{});m[u.id]=v;store.set('badges',m,1)}},
+  aiuse:{g:u=>store.get('aiuse',{})[u.login],s:(u,v)=>{const m=store.get('aiuse',{});m[u.login]=v;store.set('aiuse',m,1)}},
+  favblocks:{g:u=>store.get('favblocks',[]),s:(u,v)=>store.set('favblocks',v,1)},
+  convs:{g:u=>store.get('convs_'+u.id,undefined),s:(u,v)=>store.set('convs_'+u.id,v,1)},
+  badgeInit:{g:u=>store.get('badgeInit_'+u.id,false),s:(u,v)=>store.set('badgeInit_'+u.id,v,1)}
+};
+const mergeMax=(a,b)=>{const o={...(a||{})};Object.entries(b||{}).forEach(([k,v])=>{if(typeof v==='number')o[k]=Math.max(+o[k]||0,v);else if(v&&typeof v==='object')o[k]=mergeMax(o[k],v);else if(!(k in o))o[k]=v});return o};
+function svKeyOf(k){
+  const u=SV.user;if(!u)return null;
+  if(['progress','time','asks','badges','aiuse','favblocks'].includes(k))return k;
+  if(k==='convs_'+u.id)return 'convs';
+  if(k==='badgeInit_'+u.id)return 'badgeInit';
+  return null;
+}
+svHook=function(k){
+  if(!SV.ok||!SV.token)return;
+  if(k==='lessons'){if(SV.user&&SV.user.role==='admin'){clearTimeout(SV.timers.lessons);SV.timers.lessons=setTimeout(svPushLessons,700)}return}
+  const key=svKeyOf(k);if(!key)return;
+  SV.dirty[key]=1;
+  clearTimeout(SV.timers[key]);
+  SV.timers[key]=setTimeout(svFlush,key==='time'?45000:1500);
+};
+async function svFlush(){
+  if(!SV.ok||!SV.token||!SV.user||SV.flushing)return;
+  SV.flushing=true;const tk=SV.token,usr=SV.user;
+  try{
+    for(const key of Object.keys(SV.dirty)){
+      const v=DK[key].g(usr);
+      if(v===undefined){delete SV.dirty[key];continue}
+      try{await rpc('app_data_set',{p_token:tk,p_key:key,p_val:v});delete SV.dirty[key]}
+      catch(e){if(e.code==='unauthorized'){svExpire();break}if(e.code==='too_big'||e.code==='bad_key'){delete SV.dirty[key]}else if(e.net)break}
+    }
+  }finally{SV.flushing=false}
+}
+function svExpire(){
+  SV.token=null;SV.user=null;SV.list=[];store.set('sbsess',null);
+  toast('Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.');render();
+}
+async function svPull(){
+  const u=SV.user;if(!u)return;
+  let d={};
+  try{d=await rpc('app_data_get',{p_token:SV.token})||{}}catch(e){if(e.code==='unauthorized'){svExpire()}return}
+  Object.keys(DK).forEach(key=>{
+    const local=DK[key].g(u),sv=d[key];
+    if(sv===undefined||sv===null){if(local!==undefined&&local!==null&&!(Array.isArray(local)&&!local.length)&&!(typeof local==='object'&&!Array.isArray(local)&&!Object.keys(local).length)&&local!==false)SV.dirty[key]=1;return}
+    if(key==='progress'||key==='badges'){DK[key].s(u,sv)}
+    else if(key==='time'||key==='aiuse'||key==='asks'){DK[key].s(u,key==='asks'?Math.max(+local||0,+sv||0):mergeMax(local,sv))}
+    else if(key==='favblocks'){DK[key].s(u,Array.from(new Set([...(Array.isArray(local)?local:[]),...(Array.isArray(sv)?sv:[])])))}
+    else if(key==='badgeInit'){DK[key].s(u,!!sv||!!local)}
+    else DK[key].s(u,sv);
+    const nv=DK[key].g(u);if(JSON.stringify(nv)!==JSON.stringify(sv))SV.dirty[key]=1;
+  });
+  if(Object.keys(SV.dirty).length)setTimeout(svFlush,300);
+  state.chat.key=null;
+}
+async function svAdminLoad(){
+  if(!SV.token||!SV.user||SV.user.role!=='admin')return;
+  try{
+    const [us,pr,ms]=await Promise.all([rpc('app_admin_users',{p_token:SV.token}),rpc('app_admin_progress',{p_token:SV.token}),rpc('app_admin_msgs',{p_token:SV.token})]);
+    SV.list=(us||[]).map(svUser);SV.prog=pr||{};SV.msgs=ms||[];
+  }catch(e){if(e.code==='unauthorized')svExpire()}
+}
+async function svAfterLogin(){
+  if(!SV.user)return;
+  await svPull();
+  if(SV.user&&SV.user.role==='admin'){await svAdminLoad();
+    const has=SVDB.docs.lessons&&SVDB.docs.lessons.all;
+    if(!has&&lessonsAll().length)svPushLessons();}
+  CM.lastProf='';
+  svStartPoll();
+}
+function svSetSession(r){
+  SV.token=r.token;SV.user=svUser(r.user);
+  store.set('sbsess',{token:r.token});
+}
+async function svPushLessons(){
+  if(!SV.token||!SV.user||SV.user.role!=='admin')return;
+  try{const o={list:lessonsAll(),ts:Date.now()};await rpc('app_doc_set',{p_token:SV.token,p_coll:'lessons',p_id:'all',p_data:o});SVDB.docs.lessons=SVDB.docs.lessons||{};SVDB.docs.lessons.all=o}
+  catch(e){if(e.code==='unauthorized')svExpire();else if(e.code==='too_big')toast('Danh sách bài tập quá lớn để lưu lên máy chủ.')}
+}
+/* ---- shared docs adapter (looks like the Claude db) ---- */
+const SVDB={docs:{},ls:{},
+  collection(c){return{onSnapshot(cb){(SVDB.ls[c]=SVDB.ls[c]||[]).push(cb);cb(SVDB.snap(c))}}},
+  snap(c){const o=SVDB.docs[c]||{};return{docs:Object.keys(o).map(id=>({id,data:()=>o[id]}))}},
+  emit(c){(SVDB.ls[c]||[]).forEach(cb=>{try{cb(SVDB.snap(c))}catch(e){}})},
+  doc(p){const i=p.indexOf('/'),c=p.slice(0,i),id=p.slice(i+1);
+    return{set:o=>svWrite('app_doc_set',c,id,o),delete:()=>svWrite('app_doc_del',c,id)}}
+};
+async function svWrite(fn,c,id,o){
+  if(!SV.token){const x=new Error('unauthorized');x.code='unauthorized';throw x}
+  const col=SVDB.docs[c]=SVDB.docs[c]||{};const had=Object.prototype.hasOwnProperty.call(col,id),prev=col[id];
+  if(fn==='app_doc_set')col[id]=o;else delete col[id];
+  try{
+    const a={p_token:SV.token,p_coll:c,p_id:id};if(fn==='app_doc_set')a.p_data=o;
+    await rpc(fn,a);
+  }catch(e){
+    if(had)col[id]=prev;else delete col[id];
+    SVDB.emit(c);
+    if(e.code==='unauthorized')svExpire();
+    throw e;
+  }
+}
+async function svPoll(){
+  if(!SV.ok||SV.polling)return;
+  SV.polling=true;
+  try{
+    for(let i=0;i<5;i++){
+      const rows=await rpc('app_docs_list',{p_since:SV.since})||[];
+      const ch=new Set();
+      rows.forEach(r=>{const col=SVDB.docs[r.c]=SVDB.docs[r.c]||{};if(r.x)delete col[r.i];else col[r.i]=r.d;ch.add(r.c);if(r.u>SV.since)SV.since=r.u});
+      ch.forEach(c=>{if(c==='lessons')svLessonsIn();else SVDB.emit(c)});
+      if(rows.length<3000)break;
+    }
+  }catch(e){}
+  SV.polling=false;
+}
+function svLessonsIn(){
+  const d=SVDB.docs.lessons&&SVDB.docs.lessons.all;
+  if(d&&Array.isArray(d.list)&&d.list.length){
+    if(JSON.stringify(d.list)!==JSON.stringify(store.get('lessons',[]))){store.set('lessons',d.list,1);if(['home','lessons','lesson','ask','stats','account','admin'].includes(state.route.name))scheduleRender()}
+  }
+}
+function svStartPoll(){
+  if(SV.pt)return;
+  SV.pt=setInterval(async()=>{
+    if(document.visibilityState!=='visible')return;
+    SV.tick++;
+    await svPoll();
+    if(SV.token&&Object.keys(SV.dirty).length)svFlush();
+    if(SV.user&&SV.user.role==='admin'&&SV.tick%3===0){await svAdminLoad();if(state.route.name==='admin')scheduleRender()}
+    if(SV.token&&SV.tick%6===0){try{const u=await rpc('app_me',{p_token:SV.token});SV.user=svUser(u);if(SV.user.locked)svExpire()}catch(e){if(e.code==='unauthorized')svExpire()}}
+  },10000);
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')svFlush();else if(SV.ok)svPoll()});
+window.addEventListener('pagehide',()=>{svFlush()});
+async function svInit(){
+  try{await rpc('app_ping',{},5000);SV.ok=true}catch(e){SV.ok=false}
+  if(!SV.ok)return;
+  const s=store.get('sbsess',null);
+  if(s&&s.token){
+    SV.token=s.token;
+    try{SV.user=svUser(await rpc('app_me',{p_token:s.token}));await svAfterLogin()}
+    catch(e){if(e.net){SV.user=svUser(store.get('sbuser',null))}else{SV.token=null;SV.user=null;store.set('sbsess',null)}}
+  }
+}
+function svStatus(){
+  const e=$('#svstat');if(!e)return;
+  e.innerHTML=SV.ok?'<span class="dot ok"></span>Dữ liệu lưu trên máy chủ PRIME':'<span class="dot"></span>Chế độ ngoại tuyến: dữ liệu chỉ lưu trên máy này';
+  e.title=SV.ok?'Tài khoản, mật khẩu và tiến độ học được lưu trên máy chủ nên dùng được trên mọi thiết bị.':'Không kết nối được máy chủ PRIME, nên tài khoản chỉ có trên thiết bị này.';
+}
 
 async function seed(){
   let us=users();
@@ -1131,7 +1344,7 @@ async function seed(){
 
 /* ---------- state & routing ---------- */
 const state={route:{name:'home',id:null},filter:{cd:'',q:''},authTab:'login',adminTab:'stats',editing:null,show:{},tempPw:null,seen:{},note:'',palTab:'motion',g:{sort:'new',form:false,open:null},qa:{tag:'',q:'',open:null,form:false},dict:{q:'',cat:'all',fav:false,open:{}},
-  chat:{convs:[],key:null,cur:null,busy:false,ctl:null,ctx:null,draft:'',hint:false,sb:false,ren:null,q:''},ai:'pending'};
+  chat:{lp:false,convs:[],key:null,cur:null,busy:false,ctl:null,ctx:null,draft:'',hint:false,sb:false,ren:null,q:''},ai:'pending'};
 const ROUTES=['home','auth','lessons','lesson','ask','blocks','portfolio','gallery','qa','friends','stats','account','admin','about','contact','privacy'];
 function parseHash(){
   let h='';try{h=(location.hash||'').replace('#','')}catch(e){}
@@ -1422,6 +1635,85 @@ function lesson(id){
 }
 
 /* ---------- block reference page ---------- */
+/* ---------- daily quota + Claude link ---------- */
+const dayVN=()=>new Date(Date.now()+7*3600e3).toISOString().slice(0,10);
+const QDEF={def:20,guest:5};
+const quotaCfg=()=>({...QDEF,...(CM.d.settings.quota||{})});
+const whoKey=()=>{const u=me();return u?u.login:'guest'};
+function limitOf(login){
+  const c=quotaCfg(),u=login?users().find(x=>x.login===login):me();
+  if(!u)return +c.guest;
+  if(u.role==='admin')return 9999;
+  const v=c.per&&c.per[u.login];
+  return v!=null&&v!==''?+v:+c.def;
+}
+function usedToday(login){
+  const k=login||whoKey(),d=dayVN();
+  const l=((store.get('aiuse',{})[k])||{})[d]||0,s=CM.d.usage[k+'__'+d];
+  return Math.max(l,(s&&s.n)||0);
+}
+function usedWeek(login){
+  let n=0;const now=Date.now();
+  cmRows('usage').forEach(r=>{if(r.login===login&&now-Date.parse(r.date+'T00:00:00Z')<8*86400e3)n+=r.n||0});
+  return n;
+}
+async function addUse(){
+  const k=whoKey(),d=dayVN(),a=store.get('aiuse',{}),m=a[k]=a[k]||{};
+  m[d]=Math.max(m[d]||0,usedToday())+1;
+  Object.keys(m).forEach(x=>{if(Date.parse(x)<Date.now()-30*864e5)delete m[x]});
+  store.set('aiuse',a);
+  const u=me();if(u&&u.role!=='admin')cmSet('usage',k+'__'+d,{login:k,date:d,n:m[d]});
+}
+const linkState=()=>{
+  if(!sampleFn)return 'none';
+  if(store.get('claudeOff',false))return 'off';
+  return state.link||'unknown';
+};
+const LINK_TXT={none:['Claude: chưa kết nối','bad'],off:['Claude: đã ngắt','warn'],unknown:['Claude: chưa xác nhận','warn'],ok:['Claude: đã kết nối','ok'],denied:['Claude: bị từ chối','bad'],limit:['Claude: hết lượt','warn'],expired:['Claude: cần đăng nhập lại','warn'],error:['Claude: có lỗi','warn']};
+function statusHTML(){
+  const lim=limitOf(),used=usedToday(),left=Math.max(0,lim-used),admin=me()&&me().role==='admin';
+  const pct=admin?0:Math.min(100,Math.round(used/Math.max(1,lim)*100));
+  const [lt,lc]=LINK_TXT[linkState()]||LINK_TXT.none;
+  return `<span class="qchip ${left===0&&!admin?'out':left<=3&&!admin?'low':''}" title="Hạn mức hỏi AI mỗi ngày, đặt lại lúc 0 giờ"><span>${admin?'Giáo viên: không giới hạn':'Hôm nay còn '+left+'/'+lim+' lượt'}</span><i class="qbar"><b style="width:${pct}%"></b></i></span>
+  <button class="lchip ${lc}" data-act="lpanel" aria-expanded="${!!state.chat.lp}">${lt}</button>`;
+}
+function linkPanelHTML(){
+  const st=linkState(),busy=state.linkBusy;
+  let msg='';
+  if(st==='none')msg='Trang này chưa nối được với Claude. Hãy mở trang trong Claude khi đã đăng nhập tài khoản của bạn.';
+  else if(st==='off')msg='Bạn đã ngắt kết nối. Gia sư AI đang tắt, bạn vẫn dùng được tìm bài và Từ điển khối.';
+  else if(st==='ok')msg='Đã kết nối. Gia sư AI đang dùng lượt Claude của chính tài khoản bạn.';
+  else if(st==='denied')msg='Bạn chưa cho phép trang dùng Claude. Bấm “Kết nối Claude” để hiện lại hộp xin phép, hoặc mở Quản lý quyền.';
+  else if(st==='limit')msg='Tài khoản Claude của bạn đang hết lượt hoặc hỏi quá nhanh. Hãy đợi một lúc rồi thử lại.';
+  else if(st==='expired')msg='Phiên đăng nhập Claude đã hết hạn. Hãy đăng nhập lại Claude rồi bấm “Thử kết nối”.';
+  else if(st==='error')msg='Chưa thử kết nối được. Bạn bấm “Thử kết nối” lần nữa nhé.';
+  else msg='Bấm “Kết nối Claude”. Claude sẽ hỏi bạn có cho phép trang này dùng AI không.';
+  return `<div class="lpanel"><p><b>Liên kết tài khoản Claude của bạn</b></p>
+    <p class="help">${msg}</p>
+    <p class="help">Trang không bao giờ thấy mật khẩu hay khóa API của bạn. Mỗi câu hỏi dùng lượt Claude của bạn, và PRIME còn có hạn mức riêng mỗi ngày. Khi một trong hai hết, AI sẽ tạm dừng.</p>
+    <div class="row" style="justify-content:flex-start;gap:8px;flex-wrap:wrap">
+      ${sampleFn&&st!=='ok'?`<button class="btn small primary" data-act="lconnect" ${busy?'disabled':''}>${busy?'Đang kết nối…':'Kết nối Claude'}</button>`:''}
+      ${sampleFn?`<button class="btn small" data-act="lconnect" ${busy?'disabled':''}>Thử kết nối</button>`:''}
+      ${sampleFn&&st!=='off'?`<button class="btn small" data-act="ldisc">Ngắt kết nối</button>`:''}
+      <button class="btn small ghost" data-act="lperm">Quản lý quyền</button></div></div>`;
+}
+function refreshLink(){
+  const s=$('#cstatus');if(s)s.innerHTML=statusHTML();
+  const p=$('#lpanel');if(p){p.innerHTML=state.chat.lp?linkPanelHTML():'';}
+}
+async function testLink(){
+  if(!sampleFn){state.link='none';refreshLink();return}
+  store.set('claudeOff',false);state.linkBusy=true;refreshLink();
+  try{
+    await sampleFn('Trả lời đúng một chữ: OK',{cache:false});
+    state.link='ok';store.set('claudeLinked',true);toast('Đã kết nối Claude');
+  }catch(e){
+    const c=e&&e.code;
+    state.link=['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'].includes(c)?'denied':c==='rate_limited'?'limit':c==='session_expired'?'expired':'error';
+  }
+  state.linkBusy=false;refreshLink();
+}
+
 /* ---------- AI chat ---------- */
 let sampleFn=null,aiReadyP=null;
 function initAI(){
@@ -1433,6 +1725,7 @@ function initAI(){
       }
     }catch(e){sampleFn=null}
     state.ai=sampleFn?'ready':'none';
+    state.link=store.get('claudeLinked',false)?'ok':'unknown';
     if(state.route.name==='ask')refreshAIBanner();
   })();
 }
@@ -1449,11 +1742,11 @@ Cuối MỖI câu trả lời, thêm đúng một dòng riêng, không có gì s
 function rules(){
   const ctx=curCtx();
   const ctxTxt=ctx?`\nNGỮ CẢNH: học sinh đang xem bài “${ctx.title}” (${ctx.bai}). Đề bài: ${ctx.prompt}\nĐáp án tham khảo của giáo viên (dùng để bảo đảm câu trả lời đúng, không nói rằng bạn được cho đáp án):\n${ctx.code}\n`:'';
-  return `Bạn là “Gia sư CodeTHCS”, trợ lý hướng dẫn giải bài môn Tin học lớp 8 (sách Kết nối tri thức với cuộc sống) cho học sinh THCS Việt Nam.
+  return `Bạn là “Gia sư PRIME”, trợ lý hướng dẫn giải bài môn Tin học lớp 8 (sách Kết nối tri thức với cuộc sống) cho học sinh THCS Việt Nam.
 
-PHẠM VI: chỉ hỗ trợ bài tập Scratch và các bài thuộc chương trình Tin học 8: (1) Máy tính và cộng đồng; (2) Tổ chức lưu trữ, tìm kiếm, trao đổi thông tin; (3) Đạo đức, pháp luật, văn hóa trong môi trường số; (4) Ứng dụng tin học, gồm bảng tính (công thức, hàm, sắp xếp, lọc, biểu đồ); (5) Giải quyết vấn đề với máy tính: thuật toán, biến, cấu trúc điều khiển, gỡ lỗi bằng Scratch; (6) Hướng nghiệp với tin học. Câu hỏi ngoài phạm vi: từ chối nhẹ nhàng trong một hai câu và mời hỏi lại về bài Tin học 8.
+PHẠM VI: hỗ trợ MỌI câu hỏi về Scratch (làm trò chơi, hoạt hình, câu chuyện, biến, danh sách, khối của tôi, nhân bản, thông điệp, vẽ bằng bút, âm thanh, gỡ lỗi, ý tưởng dự án...), các ngôn ngữ lập trình cơ bản cho học sinh, và các bài thuộc chương trình Tin học 8: (1) Máy tính và cộng đồng; (2) Tổ chức lưu trữ, tìm kiếm, trao đổi thông tin; (3) Đạo đức, pháp luật, văn hóa trong môi trường số; (4) Ứng dụng tin học, gồm bảng tính (công thức, hàm, sắp xếp, lọc, biểu đồ); (5) Giải quyết vấn đề với máy tính: thuật toán, biến, cấu trúc điều khiển, gỡ lỗi bằng Scratch; (6) Hướng nghiệp với tin học. Câu hỏi ngoài các phạm vi này: từ chối nhẹ nhàng trong một hai câu và mời hỏi lại về Scratch hoặc Tin học 8.
 
-CÁCH TRẢ LỜI: viết tiếng Việt, thân thiện, xưng “mình”, gọi “bạn”, câu ngắn, dễ hiểu với học sinh lớp 8. Dùng Markdown nhẹ: tiêu đề ###, danh sách đánh số, **chữ đậm**, mã trong dấu huyền. Không dùng bảng, không dùng emoji. Câu trả lời gọn, dưới khoảng 350 từ. Bố cục với bài tập:
+CÁCH TRẢ LỜI: viết tiếng Việt, thân thiện, xưng “mình”, gọi “bạn”, câu ngắn, dễ hiểu với học sinh lớp 8. Dùng Markdown nhẹ: tiêu đề ###, danh sách đánh số, **chữ đậm**, mã trong dấu huyền. Không dùng bảng, không dùng emoji. Câu trả lời gọn, dưới khoảng 400 từ (dự án Scratch lớn thì chia nhiều khối mã nhỏ có tiêu đề, mỗi khối ngắn). Bố cục với bài tập:
 ### Hiểu đề
 (1 đến 2 câu nêu lại yêu cầu và dữ liệu vào ra)
 ### Các bước làm
@@ -1598,7 +1891,8 @@ function ask(){
       </aside>
       <button class="scrim" data-act="csb" aria-label="Đóng lịch sử"></button>
       <section class="cmain" aria-label="Khung chat với gia sư AI">
-        <div class="cbar"><button class="btn small ghost" data-act="csb">☰ Lịch sử</button><b>Gia sư Scratch</b><span class="help">Tin học 8 · KNTT</span></div>
+        <div class="cbar"><button class="btn small ghost hbtn" data-act="csb">☰ Lịch sử</button><b class="ctt">Gia sư Scratch</b><span class="cstatus" id="cstatus">${statusHTML()}</span></div>
+        <div id="lpanel">${c.lp?linkPanelHTML():''}</div>
         <div class="msgs" id="msgs" role="log" aria-live="polite">${msgsHTML()}</div>
         <form class="composer" id="composer" data-form="chat">
           ${ctx?`<span class="ctxchip">Đang hỏi về bài: <b>${esc(ctx.title)}</b><button type="button" data-act="clearctx" aria-label="Bỏ ngữ cảnh bài học">×</button></span>`:''}
@@ -1647,10 +1941,17 @@ async function sendQ(q,regen){
   if(cv.title==='Cuộc trò chuyện mới')cv.title=q.slice(0,40);
   cv.ts=Date.now();saveChat();renderMsgs();refreshList();
   if(state.ai==='pending'&&aiReadyP)await aiReadyP;
-  if(!sampleFn){
-    const ids=localSearch(q);
-    cv.turns.push({role:'assistant',local:true,ids,content:ids.length?'AI chưa dùng được ở chế độ xem này. Đây là các bài có sẵn gần với câu hỏi của bạn:':'AI chưa dùng được ở chế độ xem này, và mình chưa tìm thấy bài nào gần với câu hỏi. Hãy thử từ khóa ngắn hơn, ví dụ “vòng lặp”, “biến”, “SUM”.'});
+  const off=store.get('claudeOff',false);
+  if(!sampleFn||off){
+    const ids=localSearch(q),why=off?'Bạn đã ngắt kết nối Claude (bấm nhãn “Claude” phía trên để kết nối lại).':'AI chưa dùng được ở chế độ xem này.';
+    cv.turns.push({role:'assistant',local:true,ids,content:ids.length?why+' Đây là các bài có sẵn gần với câu hỏi của bạn:':why+' Mình chưa tìm thấy bài nào gần với câu hỏi. Hãy thử từ khóa ngắn hơn, ví dụ “vòng lặp”, “biến”, “SUM”.'});
     saveChat();renderMsgs();return;
+  }
+  if(usedToday()>=limitOf()){
+    const ids=localSearch(q);
+    cv.turns.push({role:'assistant',err:true,content:`Hôm nay bạn đã dùng hết ${limitOf()} lượt hỏi AI. Lượt mới có lúc 0 giờ sáng mai. Trong lúc chờ, bạn thử xem các bài gần nhất bên dưới, Từ điển khối hoặc mục Hỏi đáp nhé.`});
+    if(ids.length)cv.turns.push({role:'assistant',local:true,ids,content:'Các bài có sẵn gần với câu hỏi của bạn:'});
+    saveChat();renderMsgs();refreshLink();return;
   }
   const intent=classify(q,curCtx());
   const hist=cv.turns.filter(t=>!t.err&&!t.local).slice(-10).map(t=>({role:t.role,content:t.content}));
@@ -1664,7 +1965,8 @@ async function sendQ(q,regen){
   try{
     const r=await sampleFn(input,{cache:false,signal:c.ctl.signal,onText:({text})=>live(text)});
     cv.turns.push({role:'assistant',content:r.text,intent});
-    saveChat();renderMsgs();
+    state.link='ok';store.set('claudeLinked',true);await addUse();
+    saveChat();renderMsgs();refreshLink();
     if(r.truncated)appendMsgHTML(`<div class="msg err">Câu trả lời bị cắt ngắn. Hãy hỏi riêng từng phần để nhận câu trả lời đầy đủ hơn.</div>`);
   }catch(e){
     const code=e&&e.code;
@@ -1674,14 +1976,15 @@ async function sendQ(q,regen){
     }else{
       let msg='Có lỗi khi gọi AI. Bạn thử gửi lại sau ít phút nhé.';
       if(['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'].includes(code)){
-        sampleFn=null;state.ai='none';refreshAIBanner();
+        state.link='denied';refreshLink();
         const ids=localSearch(q);
         cv.turns.push({role:'assistant',err:true,content:'Bạn chưa cho phép trang này dùng Claude, hoặc tài khoản chưa dùng được AI. Mình sẽ tìm bài có sẵn thay thế.'});
         cv.turns.push({role:'assistant',local:true,ids,content:ids.length?'Các bài có sẵn gần với câu hỏi của bạn:':'Chưa tìm thấy bài nào gần với câu hỏi.'});
         saveChat();renderMsgs();setBusy(false);c.ctl=null;return;
       }
-      else if(code==='rate_limited')msg='Bạn hỏi hơi nhanh hoặc đã dùng hết lượt Claude hiện có. Hãy đợi một lúc rồi hỏi lại.';
-      else if(code==='session_expired')msg='Phiên đăng nhập Claude đã hết hạn. Hãy đăng nhập lại Claude rồi hỏi tiếp.';
+      else if(code==='rate_limited'){state.link='limit';refreshLink();msg='Tài khoản Claude của bạn đang hết lượt hoặc hỏi quá nhanh. Hãy đợi một lúc rồi hỏi lại.'}
+      else if(false)msg='Bạn hỏi hơi nhanh hoặc đã dùng hết lượt Claude hiện có. Hãy đợi một lúc rồi hỏi lại.';
+      else if(code==='session_expired'){state.link='expired';refreshLink();msg='Phiên đăng nhập Claude đã hết hạn. Hãy đăng nhập lại Claude rồi hỏi tiếp.'}
       else if(code==='refused')msg='AI không trả lời câu hỏi này. Bạn thử diễn đạt lại theo bài Tin học 8 nhé.';
       else if(code==='prompt_too_large')msg='Cuộc trò chuyện đã quá dài. Hãy bấm “Cuộc trò chuyện mới” rồi hỏi lại.';
       cv.turns.push({role:'assistant',err:true,content:msg});
@@ -1701,7 +2004,7 @@ async function copyText(t){
 
 function about(){
   return `<div class="view wrap" style="padding-block:40px"><div class="detail"><span class="eyebrow">Giới thiệu</span><h1>Hướng dẫn giải bài Tin học 8, dành riêng cho học sinh lớp 8</h1>
-  <p class="lead">CodeTHCS tập hợp bài tập Scratch và bài thuộc chương trình Tin học 8 (Kết nối tri thức với cuộc sống), mỗi bài có gợi ý từng bước và lời giải mẫu.</p>
+  <p class="lead">PRIME tập hợp bài tập Scratch và bài thuộc chương trình Tin học 8 (Kết nối tri thức với cuộc sống), mỗi bài có gợi ý từng bước và lời giải mẫu.</p>
   <div class="grid g3">
     <div class="card feat"><h3>Gợi ý, không đưa sẵn</h3><p>Mỗi bài có các gợi ý mở dần. Bạn tự nghĩ trước, rồi mới đối chiếu lời giải mẫu.</p></div>
     <div class="card feat"><h3>Khối lệnh như Scratch</h3><p>Lời giải Scratch vẽ bằng đúng các khối lệnh và màu sắc từng nhóm bạn thấy khi làm bài.</p></div>
@@ -1786,7 +2089,9 @@ function adminStats(){
   const byClass=Object.entries(groups).sort((a,b)=>a[0].localeCompare(b[0]));
   const rank=L.map(l=>({t:l.title,view:vw[l.id]||0})).sort((a,b)=>b.view-a.view).slice(0,6);
   const max=Math.max(1,...rank.map(r=>r.view));
-  return `<div class="stats">
+  const qc=quotaCfg();
+  const qform=`<div class="card" style="margin-bottom:16px"><h3 style="margin-bottom:10px">Hạn mức hỏi AI mỗi ngày</h3><form class="qf" data-form="aiq"><label>Học sinh<input type="number" name="def" min="0" max="200" value="${qc.def}"></label><label>Khách<input type="number" name="guest" min="0" max="50" value="${qc.guest}"></label><button class="btn small primary" type="submit">Lưu</button></form><p class="help" style="margin-top:8px">Đặt lại lúc 0 giờ (giờ Việt Nam). Hạn mức riêng từng học sinh đặt ở tab Học sinh. Chỉ đếm khi AI trả lời xong.</p></div>`;
+  return `${qform}<div class="stats">
     <div class="stat"><b>${st.length}</b><span>Học sinh đã đăng ký</span></div>
     <div class="stat"><b>${L.length}</b><span>Bài tập</span></div>
     <div class="stat"><b>${comp}</b><span>Lượt đánh dấu đã học</span></div>
@@ -1818,7 +2123,7 @@ function adminLessons(){
       <label class="check"><input type="checkbox" id="a_vis" name="visible" ${e.visible?'checked':''}><span>Hiển thị cho học sinh</span></label>
       <div class="cta"><button class="btn primary" type="submit">Lưu bài</button><button class="btn" type="button" data-act="cancel">Hủy</button></div></form></div>`;
   }
-  return `${form}<p style="margin-bottom:14px"><button class="btn primary" data-act="newlesson">+ Thêm bài tập</button></p>
+  return `${form}<p style="margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn primary" data-act="newlesson">+ Thêm bài tập</button>${SV.ok?`<button class="btn" data-act="pushlessons">Đưa bài tập trên máy này lên máy chủ</button><span class="help">Dùng khi bạn đã sửa bài ở trang cũ trên máy này và muốn mọi thiết bị thấy.</span>`:''}</p>
   <div class="tbl"><table><thead><tr><th>Bài</th><th>Bài trong sách</th><th>Chủ đề</th><th>Trạng thái</th><th></th></tr></thead><tbody>
   ${L.map(l=>`<tr><td>${esc(l.title)}</td><td>${esc(l.bai)}</td><td>${l.cd}</td><td><span class="pill ${l.visible?'ok':''}">${l.visible?'Hiển thị':'Ẩn'}</span></td>
    <td><div class="acts"><button class="btn small" data-act="editlesson" data-id="${l.id}">Sửa</button><button class="btn small" data-act="togglelesson" data-id="${l.id}">${l.visible?'Ẩn':'Hiện'}</button><button class="btn small danger" data-act="dellesson" data-id="${l.id}">Xóa</button></div></td></tr>`).join('')}
@@ -1827,8 +2132,8 @@ function adminLessons(){
 function adminStudents(){
   const st=users().filter(u=>u.role==='student'),pr=progressAll();
   const tp=state.tempPw?`<div class="notice warn" style="margin-bottom:16px"><b>Mật khẩu tạm của ${esc(state.tempPw.name)}: <span style="font-family:var(--f-mono)">${esc(state.tempPw.pw)}</span></b><br>Hãy đưa cho học sinh. Bạn ấy sẽ được yêu cầu đổi mật khẩu khi đăng nhập. <button class="crumb" style="padding:0;text-decoration:underline" data-act="closetemp">Đóng</button></div>`:'';
-  return `${tp}${st.length?`<div class="tbl"><table><thead><tr><th>Họ tên</th><th>Đăng nhập</th><th>Lớp</th><th>Đã học</th><th>Trạng thái</th><th></th></tr></thead><tbody>
-  ${st.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.login)}</td><td>${esc(u.cls||u.grade)}</td><td>${Object.keys(pr[u.id]||{}).length}</td>
+  return `${tp}${st.length?`<div class="tbl"><table><thead><tr><th>Họ tên</th><th>Đăng nhập</th><th>Lớp</th><th>Đã học</th><th>AI hôm nay</th><th>Hạn mức riêng</th><th>Trạng thái</th><th></th></tr></thead><tbody>
+  ${st.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.login)}</td><td>${esc(u.cls||u.grade)}</td><td>${Object.keys(pr[u.id]||{}).length}</td><td>${usedToday(u.login)}/${limitOf(u.login)} <span class="help">(7 ngày: ${usedWeek(u.login)})</span></td><td><input class="qinp" type="number" min="0" max="200" data-id="${esc(u.login)}" placeholder="mặc định" value="${(quotaCfg().per||{})[u.login]!=null?(quotaCfg().per||{})[u.login]:''}" aria-label="Hạn mức riêng của ${esc(u.name)}"></td>
    <td>${u.locked?'<span class="pill bad">Đã khóa</span>':u.resetRequested?'<span class="pill warn">Xin cấp lại mật khẩu</span>':'<span class="pill ok">Hoạt động</span>'}</td>
    <td><div class="acts"><button class="btn small" data-act="resetpw" data-id="${u.id}">Đặt lại mật khẩu</button><button class="btn small" data-act="lockuser" data-id="${u.id}">${u.locked?'Mở khóa':'Khóa'}</button><button class="btn small danger" data-act="deluser" data-id="${u.id}">Xóa</button></div></td></tr>`).join('')}
   </tbody></table></div>`:'<div class="empty">Chưa có học sinh nào đăng ký.</div>'}
@@ -1841,7 +2146,7 @@ function adminMsgs(){
 
 /* ================= COMMUNITY: shared data layer ================= */
 const CM={db:null,uid:null,canWrite:null,mode:'local',inited:false,lastProf:'',err:null,
-  d:{profiles:{},gallery:{},reacts:{},comments:{},qa:{},answers:{},friends:{}}};
+  d:{profiles:{},gallery:{},reacts:{},comments:{},qa:{},answers:{},friends:{},settings:{},usage:{}}};
 const CM_KEYS=Object.keys(CM.d);
 CM_KEYS.forEach(k=>{CM.d[k]=store.get('cm_'+k,{})});
 const cmRows=k=>Object.entries(CM.d[k]).map(([id,v])=>({...v,id}));
@@ -1861,6 +2166,13 @@ function cmChanged(){
 }
 async function initCM(){
   try{
+    if(SV.ok){
+      CM.db=SVDB;CM.mode='server';CM.canWrite=true;CM.uid=null;
+      CM_KEYS.forEach(k=>{CM.d[k]={}});
+      await svPoll();
+      CM_KEYS.forEach(k=>{SVDB.collection(k).onSnapshot(s=>{const o={};s.docs.forEach(x=>{o[x.id]=x.data()});CM.d[k]=o;cmChanged()})});
+      svLessonsIn();svStartPoll();CM.inited=true;scheduleRender();return;
+    }
     if(!window.claude||typeof window.claude.use!=='function'){CM.inited=true;return}
     const db=await window.claude.use('db');
     if(!db){CM.inited=true;return}
@@ -1878,6 +2190,9 @@ async function initCM(){
 }
 function cmFail(e){
   const c=e&&e.code;
+  if(c==='unauthorized'){toast('Hãy đăng nhập lại để thực hiện thao tác này.');return}
+  if(c==='forbidden'){toast('Bạn không có quyền thực hiện thao tác này.');return}
+  if(c==='net'){toast('Không kết nối được máy chủ PRIME, bạn thử lại nhé.');return}
   toast(c==='invalid_argument'?'Chưa lưu được. Tài khoản của bạn có thể chỉ được xem, hãy nhờ thầy cô cấp quyền cho bạn.':c==='quota_exceeded'?'Kho dữ liệu đã đầy. Hãy báo giáo viên.':'Chưa lưu được, bạn thử lại sau nhé.');
 }
 async function cmSet(c,id,o){
@@ -1902,6 +2217,7 @@ function dirty(t){const w=String(t).toLowerCase().split(/[^\p{L}\p{N}]+/u);retur
 const canMod=()=>isAdmin();
 const clean=(s,n)=>String(s||'').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').trim().slice(0,n);
 function cmBanner(){
+  if(CM.mode==='server')return `<div class="notice" style="margin-bottom:16px">Dữ liệu dùng chung trên máy chủ PRIME: các bạn trong lớp đều thấy bài đăng, câu hỏi và bình luận của nhau.</div>`;
   if(CM.mode==='shared'){
     return CM.canWrite===false?`<div class="notice warn" style="margin-bottom:16px"><b>Bạn đang ở chế độ chỉ xem.</b> Nhờ thầy cô cấp quyền Contributor trong nút Share để đăng bài, bình luận và kết bạn.</div>`
       :`<div class="notice" style="margin-bottom:16px">Dữ liệu dùng chung: các bạn mở cùng trang này đều thấy nội dung của nhau.</div>`;
@@ -1992,6 +2308,9 @@ setInterval(()=>{
 
 /* ================= DICTIONARY ================= */
 const USE={
+ lists:'Dùng để lưu nhiều giá trị như điểm của cả lớp, danh sách việc cần làm.',
+ pen:'Dùng để vẽ hình khi nhân vật di chuyển.',
+ myblocks:'Dùng để tự đặt tên cho một nhóm khối, hoặc tạo bản sao nhân vật.',
  motion:'Dùng để di chuyển, xoay hoặc đặt vị trí nhân vật trên sân khấu.',
  looks:'Dùng để thay đổi vẻ ngoài: lời nói, trang phục, kích thước, hiệu ứng.',
  sound:'Dùng để phát hoặc chỉnh âm thanh cho chương trình.',
@@ -2093,6 +2412,7 @@ function statsPage(){
       <div class="card kpi"><span class="help">Bài đã học</span><b>${s.done}<small>/${s.total}</small></b></div>
       <div class="card kpi"><span class="help">Thời gian học</span><b>${hm(s.mins)}</b></div>
       <div class="card kpi"><span class="help">Chuỗi ngày học</span><b>${s.streak}<small> ngày</small></b></div>
+      <div class="card kpi"><span class="help">Lượt hỏi AI hôm nay</span><b>${usedToday()}<small>/${limitOf()}</small></b></div>
       <div class="card kpi"><span class="help">Huy hiệu</span><b>${s.badgeIds.length}<small>/${BADGES.length}</small></b></div></div>
     <div class="split" style="margin-top:20px">
       <div class="card"><h3 style="margin-bottom:4px">Phút học trong 7 ngày qua</h3><p class="help" style="margin-bottom:10px">Tổng ${total7} phút. Chỉ tính khi bạn đang mở bài, hỏi AI hoặc tra từ điển.</p>
@@ -2305,6 +2625,12 @@ async function commSubmit(kind,f,fd){
     if(await cmSet('answers',uid('a_'),{qid:f.dataset.id,text,a:u.login,n:dn(u),ts:Date.now(),hidden:false})){f.reset();toast('Đã gửi trả lời')}
     return true;
   }
+  if(kind==='aiq'){
+    if(!isAdmin())return true;
+    const d=Math.max(0,Math.min(200,parseInt(fd.def,10)||0)),g=Math.max(0,Math.min(50,parseInt(fd.guest,10)||0));
+    if(await cmSet('settings','quota',{...quotaCfg(),def:d,guest:g}))toast('Đã lưu hạn mức');
+    return true;
+  }
   if(kind==='fadd'){if(!u)return needLogin(),true;await sendFriend(fd.login);f.reset();return true}
   return false;
 }
@@ -2338,6 +2664,10 @@ function commClick(a,el,id){
     case 'qthanks':toggleReact('a',id);return true;
     case 'qbest':{const an=CM.d.answers[id];if(!an)return true;const q=CM.d.qa[an.qid];if(q&&u&&(q.a===u.login||canMod()))cmPatch('qa',an.qid,{best:q.best===id?null:id});return true}
     case 'qai':{const q=CM.d.qa[id];if(!q)return true;state.chat.cur=null;state.chat.ctx=null;state.chat.draft=q.title+(q.body?'\n'+q.body:'');go('ask');const t=$('#chatIn');if(t){growBox();t.focus()}return true}
+    case 'lpanel':state.chat.lp=!state.chat.lp;refreshLink();return true;
+    case 'lconnect':testLink();return true;
+    case 'ldisc':store.set('claudeOff',true);toast('Đã ngắt kết nối Claude trên trang này');refreshLink();return true;
+    case 'lperm':(async()=>{try{const pm=await window.claude.use('permissions');await pm.manage()}catch(e){toast('Hãy mở menu Permissions của trang để chỉnh quyền.')}})();return true;
     case 'fcopy':if(u)copyText(u.login);return true;
     case 'fquick':sendFriend(id);return true;
     case 'facc':{const f=CM.d.friends[id+'__'+(u&&u.login)];if(f)cmSet('friends',id+'__'+u.login,{...f,s:'ok',ts:Date.now()}).then(()=>toast('Hai bạn đã kết bạn!'));return true}
@@ -2351,10 +2681,11 @@ function render(){
   const v={home,auth,lessons,lesson,ask,blocks:blocksPage,portfolio:gallery,gallery,qa:qaPage,friends:friendsPage,stats:statsPage,account,admin,about,contact,privacy}[state.route.name]||home;
   $('#main').innerHTML=v(state.route.id);
   renderChrome();
-  document.title='CodeTHCS';
+  document.title='PRIME Tin học 8';
   if(state.route.name==='ask'){scrollMsgs(true);if(state.ai==='pending')refreshAIBanner()}
   try{checkBadges()}catch(e){}
   setTimeout(syncProfile,400);
+  svStatus();
 }
 
 /* ---------- forms ---------- */
@@ -2376,6 +2707,11 @@ async function onSubmit(e){
     if(!lg)ok=bad(f,'l_login','Nhập tên đăng nhập.');
     if(!fd.pw)ok=bad(f,'l_pw','Nhập mật khẩu.');
     if(!ok)return firstBad(f);
+    if(SV.ok){
+      try{const r=await rpc('app_login',{p_login:lg,p_pw:fd.pw});svSetSession(r);await svAfterLogin();state.note='';toast('Đăng nhập thành công');go(SV.user.mustChange?'account':(SV.user.role==='admin'?'admin':'lessons'))}
+      catch(er){$('#e_l_form').textContent=svMsg(er)}
+      return;
+    }
     const u=users().find(x=>x.login===lg);
     const h=u?await hashPw(fd.pw,u.id):'';
     if(!u||u.hash!==h){$('#e_l_form').textContent='Sai tên đăng nhập hoặc mật khẩu. Kiểm tra lại nhé.';return}
@@ -2396,16 +2732,22 @@ async function onSubmit(e){
     if(fd.pw!==fd.pw2)ok=bad(f,'r_pw2','Hai mật khẩu chưa giống nhau.');
     if(!fd.ok)ok=bad(f,'r_ok','Bạn cần đồng ý với chính sách bảo mật.');
     if(!ok)return firstBad(f);
+    if(SV.ok){
+      try{const r=await rpc('app_register',{p_login:lg,p_name:fd.name.trim(),p_cls:cls,p_pw:fd.pw});svSetSession(r);await svAfterLogin();toast('Chào mừng bạn đến với PRIME!');go('lessons')}
+      catch(er){const m={login_taken:'r_login',bad_login:'r_login',bad_name:'r_name',bad_class:'r_class',bad_pw:'r_pw'}[er.code];if(m){bad(f,m,svMsg(er));firstBad(f)}else toast(svMsg(er))}
+      return;
+    }
     const id=uid('u_');const us=users();
     us.push({id,name:fd.name.trim(),login:lg,grade:'8',cls,role:'student',share:false,hash:await hashPw(fd.pw,id),locked:false,created:Date.now()});
     store.set('users',us);store.set('session',id);
-    toast('Chào mừng bạn đến với CodeTHCS!');go('lessons');
+    toast('Chào mừng bạn đến với PRIME!');go('lessons');
   }
   else if(kind==='forgot'){
     const lg=norm(fd.login);
     if(!lg){bad(f,'f_login','Nhập tên đăng nhập.');return firstBad(f)}
-    const us=users(),u=us.find(x=>x.login===lg&&x.role==='student');
-    if(u){u.resetRequested=true;store.set('users',us)}
+    if(SV.ok){try{await rpc('app_forgot',{p_login:lg})}catch(er){if(er.net){toast(svMsg(er));return}}}
+    else{const us=users(),u=us.find(x=>x.login===lg&&x.role==='student');
+    if(u){u.resetRequested=true;store.set('users',us)}}
     const d=$('#f_done');d.hidden=false;d.textContent='Đã ghi nhận yêu cầu. Nếu tài khoản tồn tại, giáo viên sẽ cấp mật khẩu tạm cho bạn. Hãy nhắn thầy cô để được xử lý nhanh.';
   }
   else if(kind==='chpw'){
@@ -2415,6 +2757,11 @@ async function onSubmit(e){
     if(!strong(fd.pw||''))ok=bad(f,'c_new','Mật khẩu mới cần ít nhất 8 ký tự, gồm cả chữ và số.');
     if(fd.pw!==fd.pw2)ok=bad(f,'c_new2','Hai mật khẩu chưa giống nhau.');
     if(!ok)return firstBad(f);
+    if(SV.ok){
+      try{const r=await rpc('app_change_pw',{p_token:SV.token,p_old:fd.old,p_new:fd.pw});SV.user=svUser(r);toast('Đã đổi mật khẩu');render()}
+      catch(er){if(er.code==='bad_old')bad(f,'c_old',svMsg(er));else if(er.code==='bad_pw')bad(f,'c_new',svMsg(er));else if(er.code==='unauthorized')svExpire();else toast(svMsg(er));firstBad(f)}
+      return;
+    }
     if(u.hash!==await hashPw(fd.old,u.id)){bad(f,'c_old','Mật khẩu hiện tại chưa đúng.');return firstBad(f)}
     const us=users(),x=us.find(a=>a.id===u.id);x.hash=await hashPw(fd.pw,u.id);x.mustChange=false;x.resetRequested=false;store.set('users',us);
     toast('Đã đổi mật khẩu');render();
@@ -2425,6 +2772,7 @@ async function onSubmit(e){
     if(!validLogin(norm(fd.email)))ok=bad(f,'m_email','Email hoặc số điện thoại chưa đúng định dạng.');
     if(String(fd.msg||'').trim().length<5)ok=bad(f,'m_msg','Nội dung quá ngắn.');
     if(!ok)return firstBad(f);
+    if(SV.ok){try{await rpc('app_contact',{p_name:fd.name.trim(),p_contact:fd.email.trim(),p_msg:fd.msg.trim()});f.reset();toast('Đã gửi tin nhắn tới giáo viên')}catch(er){toast(svMsg(er))}return}
     const m=msgs();m.push({id:uid('m_'),name:fd.name.trim(),email:fd.email.trim(),msg:fd.msg.trim(),time:Date.now()});store.set('msgs',m);
     f.reset();toast('Đã gửi tin nhắn tới giáo viên');
   }
@@ -2467,7 +2815,10 @@ function onClick(e){
     case 'authtab':state.authTab=el.dataset.tab;render();break;
     case 'theme':toggleTheme();break;
     case 'menu':{const n=$('#nav');const o=n.classList.toggle('open');el.setAttribute('aria-expanded',String(o));break}
-    case 'logout':store.set('session',null);toast('Đã đăng xuất');go('home');break;
+    case 'logout':{
+      if(SV.ok&&SV.token){const t=SV.token;svFlush().then(()=>rpc('app_logout',{p_token:t})).catch(()=>{});SV.token=null;SV.user=null;SV.list=[];SV.prog={};SV.msgs=[];store.set('sbsess',null)}
+      else store.set('session',null);
+      state.chat.key=null;CM.lastProf='';toast('Đã đăng xuất');go('home');break}
     case 'topicgo':state.filter={cd:el.dataset.v,q:''};go('lessons');break;
     case 'topic':state.filter.cd=el.dataset.v;updateList();break;
     case 'paltab':state.palTab=el.dataset.v;render();break;
@@ -2519,12 +2870,17 @@ function onClick(e){
     case 'togglelesson':{if(!isAdmin())break;const L=lessonsAll(),l=L.find(x=>x.id===id);l.visible=!l.visible;store.set('lessons',L);render();break}
     case 'dellesson':{if(!isAdmin()||!twice(el,'Bấm lại để xóa'))break;store.set('lessons',lessonsAll().filter(x=>x.id!==id));toast('Đã xóa bài tập');render();break}
     case 'resetpw':{if(!isAdmin())break;
+      if(SV.ok){rpc('app_admin_reset_pw',{p_token:SV.token,p_user:id}).then(async r=>{state.tempPw={name:r.name,pw:r.pw};await svAdminLoad();render()}).catch(er=>toast(svMsg(er)));break}
       const us=users(),u=us.find(x=>x.id===id);
       const pw='ct'+Math.floor(100000+Math.random()*900000);
       hashPw(pw,id).then(h=>{u.hash=h;u.mustChange=true;u.resetRequested=false;store.set('users',us);state.tempPw={name:u.name,pw};render()});break}
+    case 'pushlessons':{if(!isAdmin()||!SV.ok)break;svPushLessons().then(()=>toast('Đã đưa '+lessonsAll().length+' bài tập lên máy chủ'));break}
     case 'closetemp':state.tempPw=null;render();break;
-    case 'lockuser':{if(!isAdmin())break;const us=users(),u=us.find(x=>x.id===id);u.locked=!u.locked;store.set('users',us);render();break}
+    case 'lockuser':{if(!isAdmin())break;
+      if(SV.ok){const x=SV.list.find(a=>a.id===id);if(!x)break;rpc('app_admin_lock',{p_token:SV.token,p_user:id,p_locked:!x.locked}).then(()=>svAdminLoad()).then(()=>render()).catch(er=>toast(svMsg(er)));break}
+const us=users(),u=us.find(x=>x.id===id);u.locked=!u.locked;store.set('users',us);render();break}
     case 'deluser':{if(!isAdmin()||!twice(el,'Bấm lại để xóa'))break;
+      if(SV.ok){rpc('app_admin_delete',{p_token:SV.token,p_user:id}).then(async()=>{await svAdminLoad();await svPoll();toast('Đã xóa tài khoản và dữ liệu');render()}).catch(er=>toast(svMsg(er)));break}
       store.set('users',users().filter(x=>x.id!==id));
       const p=progressAll();delete p[id];store.set('progress',p);
       store.set('projects',projects().filter(x=>x.uid!==id));
@@ -2536,9 +2892,11 @@ function onInput(e){
   const t=e.target;
   if(t.id==='flt_q'){state.filter.q=t.value;updateList()}
   else if(t.id==='chatIn'){state.chat.draft=t.value;growBox()}
+  else if(t.classList&&t.classList.contains('qinp')&&e.type==='change'){if(isAdmin()){const c=quotaCfg(),per={...(c.per||{})};if(t.value==='')delete per[t.dataset.id];else per[t.dataset.id]=Math.max(0,Math.min(200,parseInt(t.value,10)||0));cmSet('settings','quota',{...c,per});toast('Đã lưu hạn mức riêng')}}
   else if(t.id==='dq'){state.dict.q=t.value;const l=$('#dlist');if(l)l.innerHTML=dictList()}
   else if(t.id==='dfavonly'){state.dict.fav=t.checked;const l=$('#dlist');if(l)l.innerHTML=dictList()}
   else if(t.id==='qsearch'){state.qa.q=t.value;render();const e=$('#qsearch');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}}
+  else if(t.id==='shareProg'&&SV.ok&&SV.user){const v=t.checked;SV.user.share=v;rpc('app_set_share',{p_token:SV.token,p_share:v}).catch(()=>{});syncProfile();toast(v?'Bạn bè đã xem được tiến độ của bạn':'Đã ẩn tiến độ khỏi bạn bè')}
   else if(t.id==='shareProg'){const us=users(),x=us.find(a=>a.id===(me()||{}).id);if(x){x.share=t.checked;store.set('users',us);syncProfile();toast(t.checked?'Bạn bè đã xem được tiến độ của bạn':'Đã ẩn tiến độ khỏi bạn bè')}}
   else if(t.id==='csearch'){state.chat.q=t.value;refreshList()}
   else if(t.id==='hintMode'){state.chat.hint=t.checked}
@@ -2563,11 +2921,13 @@ document.addEventListener('keydown',onKey);
 
 /* ---------- boot ---------- */
 initAI();
-initCM();
-seed().then(()=>{
+(async()=>{
+  await seed();
+  await svInit();
+  initCM();
   const r=parseHash();if(r)state.route=r;
   render();
-});
+})();
 })();
 </script>
 
