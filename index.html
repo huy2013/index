@@ -321,6 +321,20 @@ form.f{display:flex;flex-direction:column;gap:14px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .kpi b{font-size:2rem;display:block;line-height:1.2}.kpi small{font-size:1rem;color:var(--muted);font-weight:500}
 .bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:12px}
+.bgrid2{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:560px}
+@media(max-width:560px){.bgrid2{grid-template-columns:repeat(3,1fr);gap:10px}}
+.bt{position:relative;aspect-ratio:1/1.08;border:0;border-radius:18px;background:var(--bc);box-shadow:0 5px 0 var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:10px 6px 7px;cursor:pointer;color:#fff;font-family:inherit;transition:transform .12s,box-shadow .12s;overflow:hidden}
+.bt svg{width:68%;height:auto;flex:1;min-height:0;display:block}
+.bt .lvl{font-size:.68rem;font-weight:800;letter-spacing:.06em;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.18)}
+.bt.off .lvl{color:var(--muted);text-shadow:none}.bt.off svg{opacity:.45}
+.bt.gold{background:repeating-linear-gradient(135deg,#FFC93C 0 12px,#FFD65C 12px 24px)}.bt.gold .lvl{color:#C27A00;text-shadow:none}
+.bt.l2::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,.14) 0 10px,transparent 10px 20px);pointer-events:none}
+.bt:hover:not(:disabled){transform:translateY(-2px)}.bt:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 var(--bd)}
+.bt.sel{outline:3px solid var(--violet);outline-offset:3px}
+.bt:focus-visible{outline:3px solid var(--violet);outline-offset:3px}
+.bt:disabled{cursor:default}
+.bdet{margin-bottom:16px;max-width:560px}.bdet-t{display:flex;gap:14px;align-items:center}.bdet-ic{width:78px;flex:none}
+@media(prefers-reduced-motion:reduce){.bt{transition:none}}
 .bdg{display:flex;flex-direction:column;gap:6px;align-items:flex-start;opacity:.55}
 .bdg.on{opacity:1;border-color:var(--violet)}
 .bic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--surface2);color:var(--muted)}
@@ -2259,22 +2273,58 @@ function statsOf(u){
   const friends=friendsOf(u.login).length;
   const ent=Object.entries(d).sort((a,b)=>b[1]-a[1])[0];
   const lastL=ent?lessonsAll().find(l=>l.id===ent[0]):null;
-  const s={done,total:all.length,sc:sc.length,scDone,debug,mins,streak,asks,posts,answers,friends,t,last:lastL?{id:lastL.id,title:lastL.title}:null};
+  const favs=(store.get('favblocks',[])||[]).length,topics=new Set(all.filter(l=>d[l.id]).map(l=>l.cd)).size,topics3=new Set(all.map(l=>l.cd)).size;
+  const s={done,total:all.length,sc:sc.length,scDone,debug,mins,streak,asks,posts,answers,friends,favs,topics,topics3,t,last:lastL?{id:lastL.id,title:lastL.title}:null};
   s.badgeIds=BADGES.filter(b=>b.test(s)).map(b=>b.id);
   return s;
 }
+const BADGE_GLYPH={
+flag:'<rect x="15" y="8" width="5" height="46" rx="2.5" fill="var(--c)"/><path d="M20 10h30l-7 10 7 10H20z" fill="var(--a)"/><path d="M20 10h30l-2.6 3.6H20z" fill="var(--d)" opacity=".55"/><ellipse cx="17.5" cy="55" rx="11" ry="3.6" fill="var(--b)"/><circle cx="31" cy="20" r="3.2" fill="var(--d)" opacity=".8"/>',
+blocks:'<rect x="9" y="10" width="34" height="13" rx="4" fill="var(--a)"/><rect x="14" y="21" width="9" height="4" rx="2" fill="var(--a)"/><rect x="21" y="25" width="34" height="13" rx="4" fill="var(--b)"/><rect x="26" y="36" width="9" height="4" rx="2" fill="var(--b)"/><rect x="9" y="40" width="34" height="13" rx="4" fill="var(--d)"/><circle cx="16" cy="16.5" r="3" fill="var(--d)"/><circle cx="28" cy="31.5" r="3" fill="var(--d)"/><circle cx="16" cy="46.5" r="3" fill="var(--c)"/>',
+bug:'<circle cx="27" cy="27" r="17" fill="var(--d)" opacity=".35"/><circle cx="27" cy="27" r="17" fill="none" stroke="var(--c)" stroke-width="5"/><path d="M40 40l15 15" stroke="var(--c)" stroke-width="7" stroke-linecap="round"/><ellipse cx="27" cy="30" rx="8" ry="9.5" fill="var(--a)"/><circle cx="27" cy="19" r="5" fill="var(--a)"/><path d="M27 21v18M13 24l7 3M41 24l-7 3M13 36l7-3M41 36l-7-3" stroke="var(--b)" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="24.5" cy="18" r="1.4" fill="var(--d)"/><circle cx="29.5" cy="18" r="1.4" fill="var(--d)"/>',
+flame:'<path d="M32 5c3 9 15 14 15 29a15 15 0 0 1-30 0c0-7 4-10 6-15 3 3 3 6 5 7 2-7 1-14 4-21z" fill="var(--a)"/><path d="M32 28c2 5 9 8 9 16a9 9 0 0 1-18 0c0-5 3-6 4-10 2 2 3 3 4 3 1-3 0-6 1-9z" fill="var(--b)"/><path d="M32 44c1.5 3 4.5 4 4.5 8a4.5 4.5 0 0 1-9 0c0-3 3-4 4.5-8z" fill="var(--d)"/>',
+glass:'<rect x="14" y="7" width="36" height="6" rx="3" fill="var(--c)"/><rect x="14" y="51" width="36" height="6" rx="3" fill="var(--c)"/><path d="M18 13h28c0 10-6 15-9 19 3 4 9 9 9 19H18c0-10 6-15 9-19-3-4-9-9-9-19z" fill="var(--d)" opacity=".5"/><path d="M22 13h20c-1 6-5 9-10 12-5-3-9-6-10-12z" fill="var(--a)"/><path d="M32 36c3 4 8 7 9 15H23c1-8 6-11 9-15z" fill="var(--b)"/>',
+chat:'<path d="M10 12h38a6 6 0 0 1 6 6v20a6 6 0 0 1-6 6H30l-10 9v-9h-10a6 6 0 0 1-6-6V18a6 6 0 0 1 6-6z" transform="translate(0 0)" fill="var(--a)"/><circle cx="19" cy="28" r="3.4" fill="var(--d)"/><circle cx="30" cy="28" r="3.4" fill="var(--d)"/><circle cx="41" cy="28" r="3.4" fill="var(--d)"/><path d="M52 4l2.6 6 6 2.6-6 2.6L52 21l-2.6-5.8-6-2.6 6-2.6z" fill="var(--b)"/>',
+rocket:'<path d="M32 4c9 7 13 17 11 30H21C19 21 23 11 32 4z" fill="var(--d)"/><path d="M32 4c9 7 13 17 11 30H32z" fill="var(--c)" opacity=".18"/><circle cx="32" cy="22" r="5.5" fill="var(--c)"/><circle cx="32" cy="22" r="3" fill="var(--b)"/><path d="M21 28l-9 12 10-2zM43 28l9 12-10-2z" fill="var(--a)"/><path d="M26 36h12l-3 8h-6z" fill="var(--c)"/><path d="M32 60c-5-5-5-10-3-14h6c2 4 2 9-3 14z" fill="var(--b)"/>',
+bulb:'<path d="M32 6a18 18 0 0 0-10 33c2 2 3 4 3 7h14c0-3 1-5 3-7A18 18 0 0 0 32 6z" fill="var(--a)"/><path d="M22 18a14 14 0 0 1 9-8" stroke="var(--d)" stroke-width="3.5" stroke-linecap="round" fill="none" opacity=".8"/><rect x="24" y="46" width="16" height="5" rx="2.5" fill="var(--c)"/><rect x="26" y="52" width="12" height="5" rx="2.5" fill="var(--c)"/><path d="M27 33l5-9 5 9" stroke="var(--b)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+pals:'<circle cx="23" cy="26" r="13" fill="var(--a)"/><circle cx="42" cy="32" r="13" fill="var(--b)"/><path d="M10 20c2-9 14-13 21-6 3 3 3 6 3 6-6 0-14 1-24 0z" fill="var(--c)"/><circle cx="19" cy="27" r="1.9" fill="var(--c)"/><circle cx="28" cy="27" r="1.9" fill="var(--c)"/><path d="M19 32c2 3 7 3 9 0" stroke="var(--c)" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="38" cy="33" r="1.9" fill="var(--c)"/><circle cx="47" cy="33" r="1.9" fill="var(--c)"/><path d="M38 38c2 3 7 3 9 0" stroke="var(--c)" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M22 54a14 8 0 0 1 20 0z" fill="var(--d)" opacity=".0"/>',
+cup:'<path d="M18 8h28v18a14 14 0 0 1-28 0z" fill="var(--a)"/><path d="M18 14h-8c0 9 4 14 10 15M46 14h8c0 9-4 14-10 15" stroke="var(--b)" stroke-width="4" stroke-linecap="round" fill="none"/><rect x="29" y="38" width="6" height="9" fill="var(--b)"/><rect x="20" y="47" width="24" height="8" rx="3" fill="var(--c)"/><path d="M32 13l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z" fill="var(--d)"/>',
+book:'<path d="M6 14c9-3 18-2 26 4v36c-8-6-17-7-26-4z" fill="var(--d)"/><path d="M58 14c-9-3-18-2-26 4v36c8-6 17-7 26-4z" fill="var(--b)"/><path d="M32 18v36" stroke="var(--c)" stroke-width="3"/><path d="M11 22c5-1 11 0 16 3M11 30c5-1 11 0 16 3M11 38c5-1 11 0 16 3" stroke="var(--a)" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M37 25c5-3 11-4 16-3M37 33c5-3 11-4 16-3" stroke="var(--c)" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".7"/>',
+compass:'<circle cx="32" cy="32" r="25" fill="var(--a)"/><circle cx="32" cy="32" r="19" fill="var(--d)"/><path d="M42 22L36 36 22 42l6-14z" fill="var(--b)"/><path d="M42 22L36 36l-8-8z" fill="var(--c)"/><circle cx="32" cy="32" r="3" fill="var(--d)"/><path d="M32 8v4M32 52v4M8 32h4M52 32h4" stroke="var(--c)" stroke-width="3" stroke-linecap="round"/>'
+};
+const BP={green:['#58CC02','#43A000'],red:['#FF5A5A','#D23C3C'],purple:['#C27BFF','#9A55D6'],blue:['#1CB0F6','#1590CC'],orange:['#FF9F1C','#D77D00'],teal:['#18C5B1','#0E9A8A']};
+const pct=s=>s.total?Math.round(s.done/s.total*100):0;
 const BADGES=[
-  {id:'first',name:'Bài đầu tiên',desc:'Hoàn thành 1 bài',ic:'rocket',test:s=>s.done>=1},
-  {id:'sc5',name:'Thợ Scratch',desc:'Hoàn thành 5 bài Scratch',ic:'cd5',test:s=>s.scDone>=5},
-  {id:'scall',name:'Bậc thầy Scratch',desc:'Hoàn thành mọi bài Scratch',ic:'cd5',test:s=>s.sc>0&&s.scDone>=s.sc},
-  {id:'debug',name:'Thám tử gỡ lỗi',desc:'Hoàn thành một bài gỡ lỗi',ic:'cd2',test:s=>s.debug>=1},
-  {id:'streak3',name:'Chuỗi 3 ngày',desc:'Học 3 ngày liên tiếp',ic:'cd4',test:s=>s.streak>=3},
-  {id:'time60',name:'Chăm chỉ',desc:'Học tổng cộng 60 phút',ic:'cd1',test:s=>s.mins>=60},
-  {id:'ask1',name:'Hỏi AI lần đầu',desc:'Gửi câu hỏi đầu tiên cho gia sư AI',ic:'chat',test:s=>s.asks>=1},
-  {id:'post1',name:'Nhà sáng tạo',desc:'Đăng dự án đầu tiên lên Gallery',ic:'rocket',test:s=>s.posts>=1},
-  {id:'help1',name:'Người giúp đỡ',desc:'Trả lời một câu hỏi trong Hỏi đáp',ic:'cd3',test:s=>s.answers>=1},
-  {id:'friend1',name:'Bạn đồng hành',desc:'Kết bạn với một bạn',ic:'user',test:s=>s.friends>=1}
+ {id:'first',name:'Bài đầu tiên',desc:'Hoàn thành bài tập.',unit:'bài',th:()=>[1,5,15],val:s=>s.done,g:'flag',tile:'green',v:{a:'#FFD23F',b:'#2E7D0A',c:'#F2F7E6',d:'#FFFFFF'}},
+ {id:'scratch',name:'Thợ Scratch',desc:'Hoàn thành bài tập Scratch.',unit:'bài Scratch',th:s=>[1,5,Math.max(6,s.sc)],val:s=>s.scDone,g:'blocks',tile:'orange',v:{a:'#FFFFFF',b:'#FFE08A',c:'#8A4B00',d:'#7C5CFF'}},
+ {id:'debug',name:'Thám tử gỡ lỗi',desc:'Hoàn thành bài gỡ lỗi.',unit:'bài gỡ lỗi',th:()=>[1,3,6],val:s=>s.debug,g:'bug',tile:'blue',v:{a:'#FF5A5A',b:'#7A1F1F',c:'#FFFFFF',d:'#CFF1FF'}},
+ {id:'streak3',name:'Chuỗi ngày học',desc:'Học nhiều ngày liên tiếp.',unit:'ngày liên tiếp',th:()=>[3,7,14],val:s=>s.streak,g:'flame',tile:'red',v:{a:'#FFA51F',b:'#FFD23F',c:'#8A2A00',d:'#FFF5C2'}},
+ {id:'time60',name:'Chăm chỉ',desc:'Tổng thời gian học.',unit:'phút',th:()=>[30,120,300],val:s=>s.mins,g:'glass',tile:'blue',v:{a:'#FFD23F',b:'#FFB000',c:'#7A4A12',d:'#FFFFFF'}},
+ {id:'ask1',name:'Hỏi gia sư AI',desc:'Gửi câu hỏi cho gia sư AI.',unit:'câu hỏi',th:()=>[1,10,30],val:s=>s.asks,g:'chat',tile:'purple',v:{a:'#FFFFFF',b:'#FFD23F',c:'#5B3DF5',d:'#7C5CFF'}},
+ {id:'post1',name:'Nhà sáng tạo',desc:'Đăng dự án lên Gallery.',unit:'dự án',th:()=>[1,3,8],val:s=>s.posts,g:'rocket',tile:'blue',v:{a:'#FF5A5A',b:'#FFB000',c:'#2B4A7A',d:'#FFFFFF'}},
+ {id:'help1',name:'Người giúp đỡ',desc:'Trả lời câu hỏi của bạn trong Hỏi đáp.',unit:'câu trả lời',th:()=>[1,5,15],val:s=>s.answers,g:'bulb',tile:'green',v:{a:'#FFD23F',b:'#FF9F1C',c:'#2E5A12',d:'#FFFFFF'}},
+ {id:'friend1',name:'Bạn đồng hành',desc:'Kết bạn trong lớp.',unit:'người bạn',th:()=>[1,3,8],val:s=>s.friends,g:'pals',tile:'purple',v:{a:'#FFD7B0',b:'#8A5A3A',c:'#3A2A55',d:'#FFFFFF'}},
+ {id:'finish',name:'Chinh phục khóa học',desc:'Tỉ lệ bài đã hoàn thành.',unit:'% khóa học',th:()=>[25,60,100],val:pct,g:'cup',tile:'red',v:{a:'#FFD23F',b:'#FF9F1C',c:'#8A2A2A',d:'#FFFFFF'}},
+ {id:'dict',name:'Nhà sưu tầm khối',desc:'Gắn sao khối lệnh trong Từ điển khối.',unit:'khối đã gắn sao',th:()=>[1,5,15],val:s=>s.favs,g:'book',tile:'teal',v:{a:'#0E6F63',b:'#FFD23F',c:'#0A4A42',d:'#FFFFFF'}},
+ {id:'explore',name:'Nhà thám hiểm',desc:'Học ở nhiều chủ đề khác nhau.',unit:'chủ đề',th:s=>[2,4,Math.max(5,s.topics3)],val:s=>s.topics,g:'compass',tile:'green',v:{a:'#FFFFFF',b:'#FF5A5A',c:'#2E5A12',d:'#E8F9D8'}}
 ];
+BADGES.forEach(b=>{b.lv=s=>{const t=b.th(s),v=b.val(s);return t.filter(x=>v>=x).length};b.test=s=>b.lv(s)>=1});
+const GOLD={a:'#EE8A00',b:'#F7B53A',c:'#C96F00',d:'#FFE7A6'};
+function badgeTile(b,s,open){
+  const lv=b.lv(s),th=b.th(s),on=lv>0,gold=lv>=3,pal=BP[b.tile];
+  const v=gold?GOLD:b.v;
+  const sty=on?(gold?`--bc:#FFC93C;--bd:#E3A21A;--a:${v.a};--b:${v.b};--c:${v.c};--d:${v.d}`:`--bc:${pal[0]};--bd:${pal[1]};--a:${v.a};--b:${v.b};--c:${v.c};--d:${v.d}`):`--bc:var(--surface2);--bd:var(--line);--a:var(--muted);--b:var(--muted);--c:var(--muted);--d:var(--surface)`;
+  const lab=on?'CẤP '+lv:'CHƯA MỞ';
+  return `<button class="bt ${on?'on':'off'} ${gold?'gold':''} ${lv===2?'l2':''} ${open?'sel':''}" style="${sty}" data-act="bopen" data-id="${b.id}" aria-label="${esc(b.name)}, ${on?'cấp '+lv:'chưa mở'}" aria-expanded="${open?'true':'false'}"><svg viewBox="0 0 64 64" aria-hidden="true">${BADGE_GLYPH[b.g]}</svg><span class="lvl">${lab}</span></button>`;
+}
+function badgeDetail(b,s,got){
+  const lv=b.lv(s),th=b.th(s),v=b.val(s),nx=th[lv];
+  const pcn=nx?Math.min(100,Math.round(v/nx*100)):100;
+  const gotDate=got[b.id]?' · đạt lần đầu '+fmtDate(got[b.id]):'';
+  return `<div class="card bdet"><div class="bdet-t"><div class="bdet-ic">${badgeTile(b,s,false).replace('data-act="bopen"','tabindex="-1" disabled')}</div><div><h3>${esc(b.name)}</h3><p class="help">${esc(b.desc)}</p></div></div>
+   <div class="prog-row" style="margin:12px 0 4px"><div class="lab"><span>${nx?'Tới cấp '+(lv+1):'Đã đạt cấp cao nhất'}</span><span>${Math.min(v,nx||v)}/${nx||th[2]} ${esc(b.unit)}</span></div><div class="progress"><i style="width:${pcn}%"></i></div></div>
+   <p class="help">Cấp 1: ${th[0]} · Cấp 2: ${th[1]} · Cấp 3: ${th[2]} ${esc(b.unit)}${gotDate}</p></div>`;
+}
 function checkBadges(){
   const u=me();if(!u||u.role==='admin')return;
   const s=statsOf(u),all=store.get('badges',{}),mine=all[u.id]||{};
@@ -2420,7 +2470,8 @@ function statsPage(){
         <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Biểu đồ cột số phút học mỗi ngày trong 7 ngày: ${days.map(x=>x.w+' '+x.m+' phút').join(', ')}" style="width:100%;height:auto;color:var(--fg)"><line x1="${pl}" y1="${H-pb}" x2="${W}" y2="${H-pb}" stroke="var(--line)"/>${bars}</svg></div>
       <div class="card"><h3 style="margin-bottom:14px">Tiến độ theo chủ đề</h3><div style="display:flex;flex-direction:column;gap:14px">${topics}</div></div></div>
     <h2 style="font-size:1.4rem;margin:28px 0 12px">Huy hiệu</h2>
-    <div class="bgrid">${BADGES.map(b=>{const ok=s.badgeIds.includes(b.id);return `<div class="card bdg ${ok?'on':''}"><span class="bic">${icon(b.ic,26)}</span><b>${b.name}</b><span class="help">${b.desc}</span>${ok?`<span class="pill ok">Đã đạt${got[b.id]?' · '+fmtDate(got[b.id]):''}</span>`:'<span class="pill">Chưa đạt</span>'}</div>`}).join('')}</div>
+    ${state.bopen&&BADGES.find(b=>b.id===state.bopen)?badgeDetail(BADGES.find(b=>b.id===state.bopen),s,got):`<p class="help" style="margin-bottom:10px">Bấm vào huy hiệu để xem điều kiện và tiến độ.</p>`}
+    <div class="bgrid2">${BADGES.map(b=>badgeTile(b,s,state.bopen===b.id)).join('')}</div>
     <p style="margin-top:24px"><button class="btn" data-act="go" data-go="friends">Xem tiến độ bạn bè</button></p></div>`;
 }
 
@@ -2876,6 +2927,7 @@ function onClick(e){
       const pw='ct'+Math.floor(100000+Math.random()*900000);
       hashPw(pw,id).then(h=>{u.hash=h;u.mustChange=true;u.resetRequested=false;store.set('users',us);state.tempPw={name:u.name,pw};render()});break}
     case 'pushlessons':{if(!isAdmin()||!SV.ok)break;svPushLessons().then(()=>toast('Đã đưa '+lessonsAll().length+' bài tập lên máy chủ'));break}
+    case 'bopen':state.bopen=state.bopen===id?null:id;render();{const t=$('.bdet');if(t)t.scrollIntoView({block:'nearest'})}break;
     case 'closetemp':state.tempPw=null;render();break;
     case 'lockuser':{if(!isAdmin())break;
       if(SV.ok){const x=SV.list.find(a=>a.id===id);if(!x)break;rpc('app_admin_lock',{p_token:SV.token,p_user:id,p_locked:!x.locked}).then(()=>svAdminLoad()).then(()=>render()).catch(er=>toast(svMsg(er)));break}
