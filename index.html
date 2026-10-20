@@ -321,6 +321,42 @@ form.f{display:flex;flex-direction:column;gap:14px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .kpi b{font-size:2rem;display:block;line-height:1.2}.kpi small{font-size:1rem;color:var(--muted);font-weight:500}
 .bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:12px}
+
+.fqx{margin-bottom:8px;max-width:640px;border-radius:24px;overflow:hidden;border:2px solid var(--line);background:var(--surface);position:relative}
+.fq-head{background:linear-gradient(180deg,#F25DB2,#F872C0);padding:0 0 18px;color:#fff}
+.fq-tabs{display:flex}.fq-tabs button{flex:1;border:0;background:none;color:rgba(255,255,255,.6);font-weight:800;font-size:.95rem;font-family:inherit;letter-spacing:.06em;padding:16px 8px 12px;cursor:pointer;border-bottom:3px solid transparent}
+.fq-tabs button[aria-selected=true]{color:#fff;border-bottom-color:rgba(255,255,255,.75)}
+.fq-sum{margin:14px 16px 0;background:var(--surface);color:var(--fg);border-radius:16px;padding:16px}
+.fq-sum b{display:block;margin-bottom:10px}
+.fq-bar{position:relative;height:30px;border-radius:16px;background:var(--surface2);display:flex;align-items:center;justify-content:center;margin-right:26px}
+.fq-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:16px;background:linear-gradient(180deg,#FF8FCB,#F25DB2);min-width:0;transition:width .4s}
+.fq-bar span{position:relative;font-weight:800;color:var(--muted);font-size:.9rem}
+.fq-bar .fq-chest{position:absolute;right:-30px;top:50%;transform:translateY(-50%);width:42px;height:42px}
+.fq-bar.big{height:34px;background:var(--surface2)}.fq-bar.big i{background:linear-gradient(180deg,#8E6BFF,#6B45F0)}
+.fq-body{padding:18px 16px 20px;display:flex;flex-direction:column;gap:14px}
+.fq-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.fq-row h2{font-size:1.35rem}
+.fq-days{display:inline-flex;gap:6px;align-items:center;color:#E98A00;font-weight:800;font-size:.85rem;letter-spacing:.04em}
+.fq-card{border:2px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.fq-card.win{border-color:#FFC93C;background:color-mix(in srgb,#FFC93C 10%,var(--surface))}
+.fq-card h3{font-size:1.1rem}
+.fq-ok{color:var(--green);font-weight:700;font-size:.92rem}
+.fq-duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-top:2px solid var(--line);padding-top:14px;text-align:center}
+.fq-duo>div{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}.fq-duo b{overflow-wrap:anywhere}
+.fq-duo .c1{color:#E0A400;font-weight:800;font-size:.9rem}.fq-duo .c2{color:#B061F0;font-weight:800;font-size:.9rem}
+.fq-av{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:1.4rem;box-shadow:inset 0 -3px 0 rgba(0,0,0,.15)}
+.fq-rec{display:flex;flex-direction:column;gap:6px;font-size:.9rem;color:var(--muted)}.fq-rec span{display:flex;gap:8px;align-items:center}
+.fq-btn{border:0;border-radius:16px;padding:14px 16px;background:#1CB0F6;color:#fff;font-weight:800;font-size:1rem;font-family:inherit;letter-spacing:.06em;box-shadow:0 5px 0 #1590CC;cursor:pointer;transition:transform .12s,box-shadow .12s;width:100%}
+.fq-btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 #1590CC}.fq-btn:disabled{background:var(--surface2);color:var(--muted);box-shadow:0 5px 0 var(--line);cursor:not-allowed}
+.fq-btn:focus-visible,.fq-opt:focus-visible,.fq-x:focus-visible,.fq-tabs button:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+.fq-ov{position:fixed;inset:0;background:rgba(10,15,31,.55);z-index:60}
+.fq-sheet{position:fixed;left:0;right:0;bottom:0;z-index:61;margin:0 auto;max-width:640px;background:var(--surface);border-radius:24px 24px 0 0;padding:14px 16px max(18px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;box-shadow:0 -10px 40px rgba(0,0,0,.3)}
+.fq-sh-top{display:flex;align-items:center;gap:12px;justify-content:center;position:relative;min-height:36px}.fq-sh-top b{color:var(--muted)}
+.fq-x{position:absolute;left:0;border:0;background:none;font-size:2rem;line-height:1;color:var(--muted);cursor:pointer;padding:0 8px}
+.fq-bub{display:flex;gap:12px;align-items:center;border:2px solid var(--line);border-radius:18px;padding:12px;background:var(--bg)}.fq-bub p{flex:1;font-weight:700}
+.fq-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.fq-opt{aspect-ratio:1;border:2px solid var(--line);border-bottom-width:4px;border-radius:16px;background:var(--surface);display:grid;place-items:center;cursor:pointer;padding:10px}
+.fq-opt svg{width:100%;height:100%}.fq-opt.on{border-color:#1CB0F6;background:color-mix(in srgb,#1CB0F6 14%,var(--surface))}
+@media(prefers-reduced-motion:reduce){.fq-bar i,.fq-btn{transition:none}}
 .bgrid2{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:560px}
 @media(max-width:560px){.bgrid2{grid-template-columns:repeat(3,1fr);gap:10px}}
 .bt{position:relative;aspect-ratio:1/1.08;border:0;border-radius:18px;background:var(--bc);box-shadow:0 5px 0 var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:10px 6px 7px;cursor:pointer;color:#fff;font-family:inherit;transition:transform .12s,box-shadow .12s;overflow:hidden}
@@ -1357,7 +1393,7 @@ async function seed(){
 
 /* ---------- state & routing ---------- */
 const state={route:{name:'home',id:null},filter:{cd:'',q:''},authTab:'login',adminTab:'stats',editing:null,show:{},tempPw:null,seen:{},note:'',palTab:'motion',g:{sort:'new',form:false,open:null},qa:{tag:'',q:'',open:null,form:false},dict:{q:'',cat:'all',fav:false,open:{}},
-  chat:{lp:false,convs:[],key:null,cur:null,busy:false,ctl:null,ctx:null,draft:'',hint:false,sb:false,ren:null,q:''},ai:'pending'};
+  fq:{tab:'q',pick:null,kind:'lessons',sheet:null,cheer:'bolt'},chat:{lp:false,convs:[],key:null,cur:null,busy:false,ctl:null,ctx:null,draft:'',hint:false,sb:false,ren:null,q:''},ai:'pending'};
 const ROUTES=['home','auth','lessons','lesson','ask','blocks','portfolio','gallery','qa','friends','stats','account','admin','about','contact','privacy'];
 function parseHash(){
   let h='';try{h=(location.hash||'').replace('#','')}catch(e){}
@@ -2161,7 +2197,7 @@ function adminMsgs(){
 
 /* ================= COMMUNITY: shared data layer ================= */
 const CM={db:null,uid:null,canWrite:null,mode:'local',inited:false,lastProf:'',err:null,
-  d:{profiles:{},gallery:{},reacts:{},comments:{},qa:{},answers:{},friends:{},settings:{},usage:{}}};
+  d:{profiles:{},gallery:{},reacts:{},comments:{},qa:{},answers:{},friends:{},settings:{},usage:{},quests:{},cheers:{}}};
 const CM_KEYS=Object.keys(CM.d);
 CM_KEYS.forEach(k=>{CM.d[k]=store.get('cm_'+k,{})});
 const cmRows=k=>Object.entries(CM.d[k]).map(([id,v])=>({...v,id}));
@@ -2274,11 +2310,14 @@ function statsOf(u){
   const ent=Object.entries(d).sort((a,b)=>b[1]-a[1])[0];
   const lastL=ent?lessonsAll().find(l=>l.id===ent[0]):null;
   const favs=(store.get('favblocks',[])||[]).length,topics=new Set(all.filter(l=>d[l.id]).map(l=>l.cd)).size,topics3=new Set(all.map(l=>l.cd)).size;
-  const s={done,total:all.length,sc:sc.length,scDone,debug,mins,streak,asks,posts,answers,friends,favs,topics,topics3,t,last:lastL?{id:lastL.id,title:lastL.title}:null};
+  const qdone=fqDone(u),cheers=cheersSent(u);
+  const s={done,total:all.length,sc:sc.length,scDone,debug,mins,streak,asks,posts,answers,friends,favs,topics,topics3,t,qdone,cheers,last:lastL?{id:lastL.id,title:lastL.title}:null};
   s.badgeIds=BADGES.filter(b=>b.test(s)).map(b=>b.id);
   return s;
 }
 const BADGE_GLYPH={
+duo:'<circle cx="21" cy="20" r="9" fill="var(--a)"/><path d="M5 52a16 14 0 0 1 32 0z" fill="var(--a)"/><circle cx="43" cy="24" r="9" fill="var(--b)"/><path d="M27 54a16 14 0 0 1 32 0z" fill="var(--b)"/><path d="M32 4l2.6 5.2 5.8.8-4.2 4 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.2-4 5.8-.8z" fill="var(--d)"/>',
+megaphone:'<path d="M8 24h12l26-14v44L20 40H8z" fill="var(--a)"/><rect x="14" y="40" width="10" height="14" rx="3" fill="var(--c)"/><path d="M52 22c4 4 4 16 0 20M57 16c7 8 7 24 0 32" stroke="var(--b)" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M20 24l26-14v8L20 30z" fill="var(--d)" opacity=".5"/>',
 flag:'<rect x="15" y="8" width="5" height="46" rx="2.5" fill="var(--c)"/><path d="M20 10h30l-7 10 7 10H20z" fill="var(--a)"/><path d="M20 10h30l-2.6 3.6H20z" fill="var(--d)" opacity=".55"/><ellipse cx="17.5" cy="55" rx="11" ry="3.6" fill="var(--b)"/><circle cx="31" cy="20" r="3.2" fill="var(--d)" opacity=".8"/>',
 blocks:'<rect x="9" y="10" width="34" height="13" rx="4" fill="var(--a)"/><rect x="14" y="21" width="9" height="4" rx="2" fill="var(--a)"/><rect x="21" y="25" width="34" height="13" rx="4" fill="var(--b)"/><rect x="26" y="36" width="9" height="4" rx="2" fill="var(--b)"/><rect x="9" y="40" width="34" height="13" rx="4" fill="var(--d)"/><circle cx="16" cy="16.5" r="3" fill="var(--d)"/><circle cx="28" cy="31.5" r="3" fill="var(--d)"/><circle cx="16" cy="46.5" r="3" fill="var(--c)"/>',
 bug:'<circle cx="27" cy="27" r="17" fill="var(--d)" opacity=".35"/><circle cx="27" cy="27" r="17" fill="none" stroke="var(--c)" stroke-width="5"/><path d="M40 40l15 15" stroke="var(--c)" stroke-width="7" stroke-linecap="round"/><ellipse cx="27" cy="30" rx="8" ry="9.5" fill="var(--a)"/><circle cx="27" cy="19" r="5" fill="var(--a)"/><path d="M27 21v18M13 24l7 3M41 24l-7 3M13 36l7-3M41 36l-7-3" stroke="var(--b)" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="24.5" cy="18" r="1.4" fill="var(--d)"/><circle cx="29.5" cy="18" r="1.4" fill="var(--d)"/>',
@@ -2306,6 +2345,8 @@ const BADGES=[
  {id:'friend1',name:'Bạn đồng hành',desc:'Kết bạn trong lớp.',unit:'người bạn',th:()=>[1,3,8],val:s=>s.friends,g:'pals',tile:'purple',v:{a:'#FFD7B0',b:'#8A5A3A',c:'#3A2A55',d:'#FFFFFF'}},
  {id:'finish',name:'Chinh phục khóa học',desc:'Tỉ lệ bài đã hoàn thành.',unit:'% khóa học',th:()=>[25,60,100],val:pct,g:'cup',tile:'red',v:{a:'#FFD23F',b:'#FF9F1C',c:'#8A2A2A',d:'#FFFFFF'}},
  {id:'dict',name:'Nhà sưu tầm khối',desc:'Gắn sao khối lệnh trong Từ điển khối.',unit:'khối đã gắn sao',th:()=>[1,5,15],val:s=>s.favs,g:'book',tile:'teal',v:{a:'#0E6F63',b:'#FFD23F',c:'#0A4A42',d:'#FFFFFF'}},
+ {id:'duo',grp:'duo',name:'Cặp đôi ăn ý',desc:'Cùng bạn hoàn thành nhiệm vụ tuần.',unit:'nhiệm vụ',th:()=>[1,3,8],val:s=>s.qdone,g:'duo',tile:'purple',v:{a:'#FFD7B0',b:'#FFFFFF',c:'#3A2A55',d:'#FFD23F'}},
+ {id:'cheer',grp:'duo',name:'Người cổ vũ',desc:'Gửi lời cổ vũ cho bạn bè.',unit:'lời cổ vũ',th:()=>[1,10,30],val:s=>s.cheers,g:'megaphone',tile:'orange',v:{a:'#FFFFFF',b:'#FFE08A',c:'#8A4B00',d:'#7C5CFF'}},
  {id:'explore',name:'Nhà thám hiểm',desc:'Học ở nhiều chủ đề khác nhau.',unit:'chủ đề',th:s=>[2,4,Math.max(5,s.topics3)],val:s=>s.topics,g:'compass',tile:'green',v:{a:'#FFFFFF',b:'#FF5A5A',c:'#2E5A12',d:'#E8F9D8'}}
 ];
 BADGES.forEach(b=>{b.lv=s=>{const t=b.th(s),v=b.val(s);return t.filter(x=>v>=x).length};b.test=s=>b.lv(s)>=1});
@@ -2336,6 +2377,7 @@ function checkBadges(){
 }
 async function syncProfile(){
   const u=me();if(!u||u.role==='admin'||!CM.inited)return;
+  syncWeek();
   const old=CM.d.profiles[u.login];
   if(old&&old.uid&&CM.uid&&old.uid!==CM.uid)return;
   const s=statsOf(u);
@@ -2597,7 +2639,8 @@ function friendsPage(){
   return `<div class="view wrap" style="padding-block:40px">
     <div class="head"><span class="eyebrow">Bạn bè</span><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Học cùng bạn bè</h1><p class="lead">Thêm bạn, xem bạn đang học đến đâu và cùng cố gắng. Không có bảng xếp hạng.</p></div>
     ${cmBanner()}
-    <div class="split">
+    ${questSection(u,ok)}
+    <div class="split" style="margin-top:24px">
       <div class="card"><h3 style="margin-bottom:8px">Mã bạn bè của bạn</h3>
         <p><code class="fcode">${esc(u.login)}</code> <button class="btn small" data-act="fcopy">Sao chép</button></p>
         <label class="check" style="margin-top:12px"><input type="checkbox" id="shareProg" ${u.share?'checked':''}><span>Cho bạn bè xem tiến độ học của mình (bài đã học, chuỗi ngày, huy hiệu). Không hiện email hay mật khẩu.</span></label></div>
@@ -2609,6 +2652,103 @@ function friendsPage(){
     <div class="grid g3">${ok.map(fcard).join('')||'<div class="empty">Chưa có bạn bè nào. Gửi lời mời bằng tên đăng nhập.</div>'}</div>
     ${outgoing.length?`<h2 style="font-size:1.3rem;margin:24px 0 10px">Đã gửi lời mời</h2><div class="grid g3">${outgoing.map(f=>`<div class="card fr"><b>${pname(f.to)}</b><p class="help">Đang chờ đồng ý</p><button class="btn small" data-act="funf" data-id="${esc(f.to)}">Hủy lời mời</button></div>`).join('')}</div>`:''}</div>`;
 }
+/* ================= FRIEND QUESTS ================= */
+const FQ_KIND={lessons:{t:8,unit:'bài',title:n=>`Cùng hoàn thành ${n} bài tập`,pick:'Hoàn thành bài tập'},mins:{t:90,unit:'phút',title:n=>`Cùng học ${n} phút`,pick:'Thời gian học'},posts:{t:2,unit:'dự án',title:n=>`Cùng đăng ${n} dự án lên Gallery`,pick:'Đăng dự án'}};
+const FQ_CHEER={
+  bolt:{n:'Bứt tốc',msg:'Bứt tốc nào, mình sắp về đích rồi!',svg:'<path d="M36 4L12 36h15l-4 24 25-34H33z" fill="#FFC93C"/><path d="M36 4L12 36h15z" fill="#FFE28A"/>'},
+  thumb:{n:'Giỏi lắm',msg:'Làm tốt lắm, cố lên bạn nhé!',svg:'<rect x="8" y="26" width="12" height="28" rx="4" fill="#7C5CFF"/><path d="M24 28l8-20c5 0 8 4 7 9l-2 8h14c4 0 7 4 5 8l-5 18a6 6 0 0 1-6 4H24z" fill="#B79BFF"/><path d="M24 28l8-20c2 0 4 1 5 2l-8 18z" fill="#fff" opacity=".35"/>'},
+  rocket:{n:'Lên đỉnh',msg:'Cả đội cùng lên đỉnh thôi!',svg:BADGE_GLYPH_FQ('rocket')},
+  star:{n:'Ngôi sao',msg:'Bạn là ngôi sao của đội mình!',svg:'<path d="M32 5l7.4 15.6 17 2.2-12.5 11.8 3.2 16.9L32 43l-15.1 8.5 3.2-16.9L7.6 22.8l17-2.2z" fill="#FFC93C"/><path d="M32 5l7.4 15.6-7.4 4-7.4-4z" fill="#FFE28A"/>'}
+};
+function BADGE_GLYPH_FQ(k){return `<g style="--a:#FF5A5A;--b:#FFB000;--c:#2B4A7A;--d:#F4F7FF">${BADGE_GLYPH[k]}</g>`}
+const AVC=['#FF6B8B','#7C5CFF','#18C5B1','#FF9F1C','#1CB0F6','#58CC02'];
+const avCol=l=>{let h=0;for(const c of String(l))h=(h*31+c.charCodeAt(0))>>>0;return AVC[h%AVC.length]};
+const wkStart=t=>{const d=new Date(t||Date.now());d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return d};
+const wkKey=t=>dayKey(wkStart(t));
+function wkLeft(){const e=wkStart().getTime()+7*86400e3;return Math.max(1,Math.ceil((e-Date.now())/86400e3))}
+function weekVals(u,wk){
+  const st=wkStart(wk?Date.parse(wk+'T00:00:00'):Date.now()).getTime(),en=st+7*86400e3;
+  const d=doneOf(u.id);let done=0;Object.values(d).forEach(ts=>{if(ts>=st&&ts<en)done++});
+  const t=(store.get('time',{})[u.id])||{};let sec=0;Object.entries(t).forEach(([k,v])=>{const x=Date.parse(k+'T00:00:00');if(x>=st&&x<en)sec+=v});
+  const posts=cmRows('gallery').filter(g=>g.a===u.login&&g.ts>=st&&g.ts<en).length;
+  return {done,mins:Math.round(sec/60),posts};
+}
+const kindVal=(v,k)=>k==='lessons'?v.done:k==='mins'?v.mins:v.posts;
+function memberVal(q,login,u){
+  if(u&&login===u.login&&q.w===wkKey())return kindVal(weekVals(u),q.kind);
+  const r=CM.d.usage[login+'__w'+q.w];return r?kindVal(r,q.kind):0;
+}
+function questInfo(q,u){
+  const a=memberVal(q,q.a,u),b=memberVal(q,q.b,u),tot=a+b,tg=+q.target||1;
+  return {a,b,tot,tg,done:tot>=tg,pct:Math.min(100,Math.round(tot/tg*100))};
+}
+const myQuests=u=>cmRows('quests').filter(q=>q.a===u.login||q.b===u.login);
+const fqDone=u=>myQuests(u).filter(q=>questInfo(q,u).done).length;
+const cheersSent=u=>cmRows('cheers').filter(c=>c.from===u.login).length;
+let _wk='';
+function syncWeek(){
+  const u=me();if(!u||u.role==='admin'||!CM.inited)return;
+  const wk=wkKey(),v=weekVals(u,wk),key=wk+JSON.stringify(v);
+  if(_wk===key)return;_wk=key;
+  const old=CM.d.usage[u.login+'__w'+wk];
+  if(old&&old.done===v.done&&old.mins===v.mins&&old.posts===v.posts)return;
+  cmSet('usage',u.login+'__w'+wk,{login:u.login,wk,done:v.done,mins:v.mins,posts:v.posts,ts:Date.now()});
+}
+const avatar=(l,n)=>`<span class="fq-av" style="background:${avCol(l)}" aria-hidden="true">${esc(String(n||l).trim().charAt(0).toUpperCase())}</span>`;
+const chestSVG=on=>`<svg viewBox="0 0 48 48" class="fq-chest" aria-hidden="true"><rect x="5" y="18" width="38" height="24" rx="4" fill="${on?'#FFC93C':'#C9CFEA'}"/><path d="M5 22a4 4 0 0 1 4-4h30a4 4 0 0 1 4 4v3H5z" fill="${on?'#FFB000':'#AEB6DA'}"/><rect x="5" y="25" width="38" height="4" fill="${on?'#7C5CFF':'#8E97C4'}"/><rect x="20" y="22" width="8" height="12" rx="2" fill="${on?'#7C5CFF':'#8E97C4'}"/><circle cx="24" cy="28" r="2" fill="#fff"/>${on?'<path d="M10 12l2-5 2 5 5 2-5 2-2 5-2-5-5-2z" fill="#FFE28A" transform="translate(14 -4) scale(.8)"/>':''}</svg>`;
+function questSection(u,friends){
+  const S=state.fq,P=CM.d.profiles;
+  const tabs=`<div class="fq-tabs" role="tablist"><button role="tab" aria-selected="${S.tab==='q'}" data-act="fqtab" data-v="q">NHIỆM VỤ</button><button role="tab" aria-selected="${S.tab==='b'}" data-act="fqtab" data-v="b">HUY HIỆU</button></div>`;
+  const st=statsOf(u);
+  if(S.tab==='b'){
+    const list=BADGES.filter(b=>b.grp==='duo'),got=store.get('badges',{})[u.id]||{},det=list.find(b=>b.id===state.bopen);
+    return `<section class="fqx"><div class="fq-head">${tabs}</div><div class="fq-body">${det?badgeDetail(det,st,got):'<p class="help" style="margin-bottom:10px">Bấm vào huy hiệu để xem điều kiện.</p>'}<div class="bgrid2">${list.map(b=>badgeTile(b,st,state.bopen===b.id)).join('')}</div></div></section>`;
+  }
+  const qs=myQuests(u).filter(q=>q.w===wkKey());
+  const nx=[1,3,8].find(x=>fqDone(u)<x),tot=fqDone(u);
+  const top=`<div class="fq-sum"><b>${nx?`Hoàn thành ${nx} nhiệm vụ cùng bạn`:'Bạn đã đạt cấp cao nhất'}</b><div class="fq-bar"><i style="width:${nx?Math.min(100,Math.round(tot/nx*100)):100}%"></i><span>${tot}${nx?' / '+nx:''}</span>${chestSVG(!nx)}</div></div>`;
+  let cards='';
+  qs.forEach(q=>{
+    const I=questInfo(q,u),o=q.a===u.login?q.b:q.a,on=(P[o]&&P[o].name)||o,K=FQ_KIND[q.kind]||FQ_KIND.lessons;
+    const rec=cmRows('cheers').filter(c=>c.to===u.login&&c.from===o&&Date.now()-c.ts<7*86400e3).sort((x,y)=>y.ts-x.ts).slice(0,2);
+    cards+=`<div class="fq-card${I.done?' win':''}"><h3>${esc(K.title(q.target))}</h3>
+      <div class="fq-bar big"><i style="width:${I.pct}%"></i><span>${I.tot} / ${I.tg}</span>${chestSVG(I.done)}</div>
+      ${I.done?'<p class="fq-ok">Cả đội đã hoàn thành! Huy hiệu "Cặp đôi ăn ý" được tính.</p>':''}
+      <div class="fq-duo"><div>${avatar(u.login,u.name)}<b>Bạn</b><span class="c1">${q.a===u.login?I.a:I.b} ${esc(K.unit)}</span></div><div>${avatar(o,on)}<b>${esc(on)}</b><span class="c2">${q.a===u.login?I.b:I.a} ${esc(K.unit)}</span></div></div>
+      ${rec.length?`<div class="fq-rec">${rec.map(c=>`<span><svg viewBox="0 0 64 64" width="22" height="22" aria-hidden="true">${(FQ_CHEER[c.k]||FQ_CHEER.star).svg}</svg> ${esc(on)}: ${esc((FQ_CHEER[c.k]||FQ_CHEER.star).msg)}</span>`).join('')}</div>`:''}
+      <button class="fq-btn" data-act="fqcheer" data-id="${esc(o)}">CỔ VŨ ${esc(String(on).toUpperCase())}</button></div>`;
+  });
+  if(!qs.length){
+    const busy=new Set();qs.forEach(q=>{busy.add(q.a);busy.add(q.b)});
+    cards=friends.length?`<div class="fq-card"><h3>Lập đội với một người bạn</h3><p class="help">Chọn bạn và mục tiêu chung của tuần này. Hai bạn cùng góp sức để mở rương.</p>
+      <div class="chips" role="radiogroup" aria-label="Chọn bạn">${friends.map(l=>`<button class="chip" role="radio" aria-checked="${S.pick===l}" aria-pressed="${S.pick===l}" data-act="fqpick" data-id="${esc(l)}">${esc((P[l]&&P[l].name)||l)}</button>`).join('')}</div>
+      <div class="chips" style="margin-top:10px" role="radiogroup" aria-label="Chọn mục tiêu">${Object.entries(FQ_KIND).map(([k,K])=>`<button class="chip" role="radio" aria-checked="${S.kind===k}" aria-pressed="${S.kind===k}" data-act="fqkind" data-id="${k}">${esc(K.pick)} (${K.t} ${esc(K.unit)})</button>`).join('')}</div>
+      <button class="fq-btn" data-act="fqstart" ${S.pick?'':'disabled'}>BẮT ĐẦU NHIỆM VỤ</button></div>`
+      :`<div class="fq-card"><h3>Chưa có bạn để lập đội</h3><p class="help">Kết bạn ở phía dưới, rồi quay lại đây để cùng làm nhiệm vụ tuần.</p></div>`;
+  }
+  const sheet=S.sheet?cheerSheet(u,S.sheet):'';
+  return `<section class="fqx"><div class="fq-head">${tabs}${top}</div><div class="fq-body"><div class="fq-row"><h2>Nhiệm vụ cùng bạn</h2><span class="fq-days">${icon('cd1',16)} CÒN ${wkLeft()} NGÀY</span></div>${cards}</div>${sheet}</section>`;
+}
+function cheerSheet(u,to){
+  const P=CM.d.profiles,nm=(P[to]&&P[to].name)||to,S=state.fq,c=FQ_CHEER[S.cheer]||FQ_CHEER.bolt;
+  return `<div class="fq-ov" data-act="fqclose"></div><div class="fq-sheet" role="dialog" aria-label="Cổ vũ ${esc(nm)}"><div class="fq-sh-top"><button class="fq-x" data-act="fqclose" aria-label="Đóng">${'&times;'}</button><b>Cổ vũ ${esc(nm)}</b></div>
+   <div class="fq-bub"><svg viewBox="0 0 64 64" width="52" height="52" aria-hidden="true">${c.svg}</svg><p>${esc(c.msg)}</p>${avatar(u.login,u.name)}</div>
+   <div class="fq-opts" role="radiogroup" aria-label="Chọn lời cổ vũ">${Object.entries(FQ_CHEER).map(([k,x])=>`<button class="fq-opt${S.cheer===k?' on':''}" role="radio" aria-checked="${S.cheer===k}" aria-label="${esc(x.n)}" data-act="fqsel" data-id="${k}"><svg viewBox="0 0 64 64" aria-hidden="true">${x.svg}</svg></button>`).join('')}</div>
+   <button class="fq-btn" data-act="fqsend" data-id="${esc(to)}">GỬI CHO ${esc(String(nm).toUpperCase())}!</button></div>`;
+}
+async function fqStart(){
+  const u=me(),S=state.fq;if(!u||!S.pick||!rate('fqs',4))return;
+  const [a,b]=[u.login,S.pick].sort(),K=FQ_KIND[S.kind],w=wkKey();
+  if(!friendsOf(u.login).includes(S.pick)){toast('Hai bạn cần là bạn bè trước.');return}
+  if(await cmSet('quests','q~'+w+'~'+a+'~'+b,{w,a,b,kind:S.kind,target:K.t,by:u.login,ts:Date.now()})){S.pick=null;toast('Đã lập đội! Hãy cùng cố gắng nhé.');render()}
+}
+async function fqSend(to){
+  const u=me(),S=state.fq;if(!u)return;
+  const today=cmRows('cheers').filter(c=>c.from===u.login&&Date.now()-c.ts<86400e3).length;
+  if(today>=5){toast('Hôm nay bạn đã gửi đủ 5 lời cổ vũ rồi.');return}
+  if(await cmSet('cheers','c~'+u.login+'~'+to+'~'+Date.now().toString(36),{from:u.login,to,k:S.cheer,ts:Date.now()})){S.sheet=null;toast('Đã gửi lời cổ vũ!');render()}
+}
+
 async function sendFriend(login){
   const u=me();if(!u||!rate('friend',6))return;
   const l=norm(login);
@@ -2722,6 +2862,14 @@ function commClick(a,el,id){
     case 'lperm':(async()=>{try{const pm=await window.claude.use('permissions');await pm.manage()}catch(e){toast('Hãy mở menu Permissions của trang để chỉnh quyền.')}})();return true;
     case 'fcopy':if(u)copyText(u.login);return true;
     case 'fquick':sendFriend(id);return true;
+    case 'fqtab':state.fq.tab=el.dataset.v;render();return true;
+    case 'fqpick':state.fq.pick=state.fq.pick===id?null:id;render();return true;
+    case 'fqkind':state.fq.kind=id;render();return true;
+    case 'fqstart':fqStart();return true;
+    case 'fqcheer':state.fq.sheet=id;render();return true;
+    case 'fqclose':state.fq.sheet=null;render();return true;
+    case 'fqsel':state.fq.cheer=id;render();return true;
+    case 'fqsend':fqSend(id);return true;
     case 'facc':{const f=CM.d.friends[id+'__'+(u&&u.login)];if(f)cmSet('friends',id+'__'+u.login,{...f,s:'ok',ts:Date.now()}).then(()=>toast('Hai bạn đã kết bạn!'));return true}
     case 'funf':{if(!u)return true;const k1=id+'__'+u.login,k2=u.login+'__'+id;if(CM.d.friends[k1])cmDel('friends',k1);if(CM.d.friends[k2])cmDel('friends',k2);return true}
   }
