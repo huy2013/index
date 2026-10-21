@@ -357,6 +357,30 @@ form.f{display:flex;flex-direction:column;gap:14px}
 .fq-opt{aspect-ratio:1;border:2px solid var(--line);border-bottom-width:4px;border-radius:16px;background:var(--surface);display:grid;place-items:center;cursor:pointer;padding:10px}
 .fq-opt svg{width:100%;height:100%}.fq-opt.on{border-color:#1CB0F6;background:color-mix(in srgb,#1CB0F6 14%,var(--surface))}
 @media(prefers-reduced-motion:reduce){.fq-bar i,.fq-btn{transition:none}}
+.av{display:inline-grid;place-items:center;border-radius:50%;overflow:hidden;color:#fff;font-weight:800;flex:none;box-shadow:inset 0 -3px 0 rgba(0,0,0,.12);line-height:1}
+.av img,.av svg{width:100%;height:100%;display:block;object-fit:cover}
+.avrow{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.avbtns{display:flex;gap:8px;flex-wrap:wrap}.avfile{cursor:pointer}
+.avgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:300px}
+.avopt{aspect-ratio:1;border:3px solid transparent;border-radius:50%;padding:0;background:none;cursor:pointer;overflow:hidden}.avopt.on{border-color:var(--violet)}.avopt:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+.ave-ov{position:fixed;inset:0;background:rgba(10,15,31,.65);z-index:80;display:grid;place-items:center;padding:16px}
+.ave{background:var(--surface);color:var(--fg);border-radius:20px;padding:20px;max-width:340px;width:100%;display:flex;flex-direction:column;gap:12px}
+.ave-cv{width:240px;height:240px;border-radius:50%;overflow:hidden;margin:0 auto;border:3px solid var(--violet);touch-action:none;cursor:grab}.ave-cv canvas{display:block}
+.ave-z{display:flex;flex-direction:column;gap:6px;font-size:.9rem;color:var(--muted)}
+.fd-h{font-size:.85rem;letter-spacing:.08em;color:var(--muted);margin:22px 0 10px}
+.sgstrip{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity}
+.sgc{position:relative;flex:0 0 168px;scroll-snap-align:start;border-radius:18px;background:var(--surface2);padding:16px 12px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.sgc b{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sgc .help{min-height:2.6em;font-size:.82rem}
+.sgx{position:absolute;top:4px;right:6px;border:0;background:none;font-size:1.4rem;color:var(--muted);cursor:pointer;line-height:1}
+.fq-btn.small{padding:9px 12px;font-size:.85rem;box-shadow:0 4px 0 #1590CC}
+.fdlist{max-width:640px;display:flex;flex-direction:column}
+.fd{padding:18px 0;border-bottom:2px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.fd-top{display:flex;gap:12px;align-items:center}.fd-who{display:flex;flex-direction:column;min-width:0;flex:1}.fd-who b{overflow-wrap:anywhere}.fd-ic{margin-left:auto;display:flex;align-items:center}
+.fd-flame{display:flex;flex-direction:column;align-items:center;line-height:1}.fd-flame b{font-size:2rem;color:#FF9F1C;font-weight:900}
+.fd-t{font-size:1.05rem}
+.fd-like{align-self:flex-start;display:inline-flex;gap:8px;align-items:center;border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;background:var(--surface);color:var(--fg);padding:6px 16px;font-weight:800;cursor:pointer;font-family:inherit}
+.fd-like.on{color:#F25D5D;border-color:#F25D5D}.fd-like:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+.fd-liked{margin-top:-2px}
+.bt.mini{width:84px;cursor:default;padding:7px 4px 5px;border-radius:14px;box-shadow:0 4px 0 var(--bd)}.bt.mini .lvl{font-size:.6rem}
 .bgrid2{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:560px}
 @media(max-width:560px){.bgrid2{grid-template-columns:repeat(3,1fr);gap:10px}}
 .bt{position:relative;aspect-ratio:1/1.08;border:0;border-radius:18px;background:var(--bc);box-shadow:0 5px 0 var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:10px 6px 7px;cursor:pointer;color:#fff;font-family:inherit;transition:transform .12s,box-shadow .12s;overflow:hidden}
@@ -1294,6 +1318,7 @@ async function svAfterLogin(){
     const has=SVDB.docs.lessons&&SVDB.docs.lessons.all;
     if(!has&&lessonsAll().length)svPushLessons();}
   CM.lastProf='';
+  svAvatars();
   svStartPoll();
 }
 function svSetSession(r){
@@ -1354,6 +1379,7 @@ function svStartPoll(){
     SV.tick++;
     await svPoll();
     if(SV.token&&Object.keys(SV.dirty).length)svFlush();
+    if(SV.tick%3===1)svAvatars();
     if(SV.user&&SV.user.role==='admin'&&SV.tick%3===0){await svAdminLoad();if(state.route.name==='admin')scheduleRender()}
     if(SV.token&&SV.tick%6===0){try{const u=await rpc('app_me',{p_token:SV.token});SV.user=svUser(u);if(SV.user.locked)svExpire()}catch(e){if(e.code==='unauthorized')svExpire()}}
   },10000);
@@ -1393,7 +1419,7 @@ async function seed(){
 
 /* ---------- state & routing ---------- */
 const state={route:{name:'home',id:null},filter:{cd:'',q:''},authTab:'login',adminTab:'stats',editing:null,show:{},tempPw:null,seen:{},note:'',palTab:'motion',g:{sort:'new',form:false,open:null},qa:{tag:'',q:'',open:null,form:false},dict:{q:'',cat:'all',fav:false,open:{}},
-  fq:{tab:'q',pick:null,kind:'lessons',sheet:null,cheer:'bolt'},chat:{lp:false,convs:[],key:null,cur:null,busy:false,ctl:null,ctx:null,draft:'',hint:false,sb:false,ren:null,q:''},ai:'pending'};
+  fq:{tab:'q',pick:null,kind:'lessons',sheet:null,cheer:'bolt'},fr:{tab:'feed',n:8},chat:{lp:false,convs:[],key:null,cur:null,busy:false,ctl:null,ctx:null,draft:'',hint:false,sb:false,ren:null,q:''},ai:'pending'};
 const ROUTES=['home','auth','lessons','lesson','ask','blocks','portfolio','gallery','qa','friends','stats','account','admin','about','contact','privacy'];
 function parseHash(){
   let h='';try{h=(location.hash||'').replace('#','')}catch(e){}
@@ -2111,6 +2137,7 @@ function account(){
     <div class="split">
       <div class="card"><h3 style="margin-bottom:14px">Tiến độ học</h3><div style="display:flex;flex-direction:column;gap:14px">${rows}</div>
         <p class="help" style="margin-top:14px">Đã học ${all.filter(l=>d[l.id]).length}/${all.length} bài.</p>${u.role!=='admin'?`<p style="margin-top:12px"><button class="btn small" data-act="go" data-go="stats">Xem tiến bộ và huy hiệu</button></p>`:''}</div>
+      ${u.role!=='admin'?avatarCard(u):''}
       <div class="card"><h3 style="margin-bottom:14px">Đổi mật khẩu</h3>
         <form class="f" data-form="chpw" novalidate>
           ${field('c_old','Mật khẩu hiện tại','<input id="c_old" name="old" type="password" autocomplete="current-password">')}
@@ -2184,9 +2211,9 @@ function adminStudents(){
   const st=users().filter(u=>u.role==='student'),pr=progressAll();
   const tp=state.tempPw?`<div class="notice warn" style="margin-bottom:16px"><b>Mật khẩu tạm của ${esc(state.tempPw.name)}: <span style="font-family:var(--f-mono)">${esc(state.tempPw.pw)}</span></b><br>Hãy đưa cho học sinh. Bạn ấy sẽ được yêu cầu đổi mật khẩu khi đăng nhập. <button class="crumb" style="padding:0;text-decoration:underline" data-act="closetemp">Đóng</button></div>`:'';
   return `${tp}${st.length?`<div class="tbl"><table><thead><tr><th>Họ tên</th><th>Đăng nhập</th><th>Lớp</th><th>Đã học</th><th>AI hôm nay</th><th>Hạn mức riêng</th><th>Trạng thái</th><th></th></tr></thead><tbody>
-  ${st.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.login)}</td><td>${esc(u.cls||u.grade)}</td><td>${Object.keys(pr[u.id]||{}).length}</td><td>${usedToday(u.login)}/${limitOf(u.login)} <span class="help">(7 ngày: ${usedWeek(u.login)})</span></td><td><input class="qinp" type="number" min="0" max="200" data-id="${esc(u.login)}" placeholder="mặc định" value="${(quotaCfg().per||{})[u.login]!=null?(quotaCfg().per||{})[u.login]:''}" aria-label="Hạn mức riêng của ${esc(u.name)}"></td>
+  ${st.map(u=>`<tr><td><span style="display:flex;gap:8px;align-items:center">${av(u.login,u.name,32)}${esc(u.name)}</span></td><td>${esc(u.login)}</td><td>${esc(u.cls||u.grade)}</td><td>${Object.keys(pr[u.id]||{}).length}</td><td>${usedToday(u.login)}/${limitOf(u.login)} <span class="help">(7 ngày: ${usedWeek(u.login)})</span></td><td><input class="qinp" type="number" min="0" max="200" data-id="${esc(u.login)}" placeholder="mặc định" value="${(quotaCfg().per||{})[u.login]!=null?(quotaCfg().per||{})[u.login]:''}" aria-label="Hạn mức riêng của ${esc(u.name)}"></td>
    <td>${u.locked?'<span class="pill bad">Đã khóa</span>':u.resetRequested?'<span class="pill warn">Xin cấp lại mật khẩu</span>':'<span class="pill ok">Hoạt động</span>'}</td>
-   <td><div class="acts"><button class="btn small" data-act="resetpw" data-id="${u.id}">Đặt lại mật khẩu</button><button class="btn small" data-act="lockuser" data-id="${u.id}">${u.locked?'Mở khóa':'Khóa'}</button><button class="btn small danger" data-act="deluser" data-id="${u.id}">Xóa</button></div></td></tr>`).join('')}
+   <td><div class="acts"><button class="btn small" data-act="resetpw" data-id="${u.id}">Đặt lại mật khẩu</button>${AVS[u.login]?`<button class="btn small" data-act="avrm" data-id="${esc(u.login)}">Gỡ ảnh</button>`:''}<button class="btn small" data-act="lockuser" data-id="${u.id}">${u.locked?'Mở khóa':'Khóa'}</button><button class="btn small danger" data-act="deluser" data-id="${u.id}">Xóa</button></div></td></tr>`).join('')}
   </tbody></table></div>`:'<div class="empty">Chưa có học sinh nào đăng ký.</div>'}
   <p class="help" style="margin-top:12px">Mật khẩu của học sinh được mã hóa, giáo viên không xem được mật khẩu cũ, chỉ cấp lại mật khẩu tạm.</p>`;
 }
@@ -2197,7 +2224,7 @@ function adminMsgs(){
 
 /* ================= COMMUNITY: shared data layer ================= */
 const CM={db:null,uid:null,canWrite:null,mode:'local',inited:false,lastProf:'',err:null,
-  d:{profiles:{},gallery:{},reacts:{},comments:{},qa:{},answers:{},friends:{},settings:{},usage:{},quests:{},cheers:{}}};
+  d:{profiles:{},gallery:{},reacts:{},comments:{},qa:{},answers:{},friends:{},settings:{},usage:{},quests:{},cheers:{},feed:{}}};
 const CM_KEYS=Object.keys(CM.d);
 CM_KEYS.forEach(k=>{CM.d[k]=store.get('cm_'+k,{})});
 const cmRows=k=>Object.entries(CM.d[k]).map(([id,v])=>({...v,id}));
@@ -2278,7 +2305,7 @@ function cmBanner(){
 
 /* ---- reactions ---- */
 function reactIdx(){
-  const m={p:{},a:{}};
+  const m={p:{},a:{},f:{}};
   cmRows('reacts').forEach(r=>{if(m[r.t]){(m[r.t][r.k]=m[r.t][r.k]||new Set()).add(r.u)}});
   return m;
 }
@@ -2378,10 +2405,11 @@ function checkBadges(){
 async function syncProfile(){
   const u=me();if(!u||u.role==='admin'||!CM.inited)return;
   syncWeek();
+  feedSync();
   const old=CM.d.profiles[u.login];
   if(old&&old.uid&&CM.uid&&old.uid!==CM.uid)return;
   const s=statsOf(u);
-  const p={login:u.login,name:firstName(u.name),cls:u.cls||'',uid:CM.uid||(old&&old.uid)||null,share:!!u.share};
+  const p={login:u.login,name:firstName(u.name),cls:u.cls||'',uid:CM.uid||(old&&old.uid)||null,share:!!u.share,av:curKind(u)};
   if(u.share){p.done=s.done;p.total=s.total;p.streak=s.streak;p.badges=s.badgeIds.length;p.last=s.last}
   const key=JSON.stringify(p);
   if(CM.lastProf===key)return;
@@ -2635,12 +2663,14 @@ function friendsPage(){
     const body=p.share?`<div class="progress"><i style="width:${p.total?Math.round((p.done||0)/p.total*100):0}%"></i></div>
       <p class="help">Đã học ${p.done||0}/${p.total||0} bài · chuỗi ${p.streak||0} ngày · ${p.badges||0} huy hiệu</p>
       <p class="help">${p.last?'Bài gần nhất: '+esc(p.last.title):'Chưa học bài nào'}</p>`:'<p class="help">Bạn này chưa chia sẻ tiến độ.</p>';
-    return `<div class="card fr"><div class="row"><b>${pname(l)}</b><button class="mact" data-act="funf" data-id="${esc(l)}">Bỏ kết bạn</button></div>${body}</div>`};
+    return `<div class="card fr"><div class="row"><span style="display:flex;gap:10px;align-items:center;min-width:0">${av(l,p.name,36)}<b>${pname(l)}</b></span><button class="mact" data-act="funf" data-id="${esc(l)}">Bỏ kết bạn</button></div>${body}</div>`};
   return `<div class="view wrap" style="padding-block:40px">
     <div class="head"><span class="eyebrow">Bạn bè</span><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Học cùng bạn bè</h1><p class="lead">Thêm bạn, xem bạn đang học đến đâu và cùng cố gắng. Không có bảng xếp hạng.</p></div>
     ${cmBanner()}
-    ${questSection(u,ok)}
-    <div class="split" style="margin-top:24px">
+    <div class="tabs" role="tablist" style="margin:18px 0 8px"><button role="tab" aria-selected="${state.fr.tab==='feed'}" data-act="frtab" data-v="feed">Bảng tin</button><button role="tab" aria-selected="${state.fr.tab==='quest'}" data-act="frtab" data-v="quest">Nhiệm vụ</button><button role="tab" aria-selected="${state.fr.tab==='friends'}" data-act="frtab" data-v="friends">Bạn bè (${ok.length})</button></div>
+    ${state.fr.tab==='feed'?feedTab(u,ok,known):state.fr.tab==='quest'?questSection(u,ok):''}
+    <div ${state.fr.tab==='friends'?'':'hidden'}>
+    <div class="split" style="margin-top:16px">
       <div class="card"><h3 style="margin-bottom:8px">Mã bạn bè của bạn</h3>
         <p><code class="fcode">${esc(u.login)}</code> <button class="btn small" data-act="fcopy">Sao chép</button></p>
         <label class="check" style="margin-top:12px"><input type="checkbox" id="shareProg" ${u.share?'checked':''}><span>Cho bạn bè xem tiến độ học của mình (bài đã học, chuỗi ngày, huy hiệu). Không hiện email hay mật khẩu.</span></label></div>
@@ -2650,7 +2680,7 @@ function friendsPage(){
     ${incoming.length?`<h2 style="font-size:1.3rem;margin:24px 0 10px">Lời mời đến</h2><div class="grid g3">${incoming.map(f=>`<div class="card fr"><b>${pname(f.from)}</b><div class="cta"><button class="btn small primary" data-act="facc" data-id="${esc(f.from)}">Đồng ý</button><button class="btn small" data-act="funf" data-id="${esc(f.from)}">Từ chối</button></div></div>`).join('')}</div>`:''}
     <h2 style="font-size:1.3rem;margin:24px 0 10px">Bạn bè (${ok.length})</h2>
     <div class="grid g3">${ok.map(fcard).join('')||'<div class="empty">Chưa có bạn bè nào. Gửi lời mời bằng tên đăng nhập.</div>'}</div>
-    ${outgoing.length?`<h2 style="font-size:1.3rem;margin:24px 0 10px">Đã gửi lời mời</h2><div class="grid g3">${outgoing.map(f=>`<div class="card fr"><b>${pname(f.to)}</b><p class="help">Đang chờ đồng ý</p><button class="btn small" data-act="funf" data-id="${esc(f.to)}">Hủy lời mời</button></div>`).join('')}</div>`:''}</div>`;
+    ${outgoing.length?`<h2 style="font-size:1.3rem;margin:24px 0 10px">Đã gửi lời mời</h2><div class="grid g3">${outgoing.map(f=>`<div class="card fr"><b>${pname(f.to)}</b><p class="help">Đang chờ đồng ý</p><button class="btn small" data-act="funf" data-id="${esc(f.to)}">Hủy lời mời</button></div>`).join('')}</div>`:''}</div></div>`;
 }
 /* ================= FRIEND QUESTS ================= */
 const FQ_KIND={lessons:{t:8,unit:'bài',title:n=>`Cùng hoàn thành ${n} bài tập`,pick:'Hoàn thành bài tập'},mins:{t:90,unit:'phút',title:n=>`Cùng học ${n} phút`,pick:'Thời gian học'},posts:{t:2,unit:'dự án',title:n=>`Cùng đăng ${n} dự án lên Gallery`,pick:'Đăng dự án'}};
@@ -2694,7 +2724,7 @@ function syncWeek(){
   if(old&&old.done===v.done&&old.mins===v.mins&&old.posts===v.posts)return;
   cmSet('usage',u.login+'__w'+wk,{login:u.login,wk,done:v.done,mins:v.mins,posts:v.posts,ts:Date.now()});
 }
-const avatar=(l,n)=>`<span class="fq-av" style="background:${avCol(l)}" aria-hidden="true">${esc(String(n||l).trim().charAt(0).toUpperCase())}</span>`;
+const avatar=(l,n)=>av(l,n,56);
 const chestSVG=on=>`<svg viewBox="0 0 48 48" class="fq-chest" aria-hidden="true"><rect x="5" y="18" width="38" height="24" rx="4" fill="${on?'#FFC93C':'#C9CFEA'}"/><path d="M5 22a4 4 0 0 1 4-4h30a4 4 0 0 1 4 4v3H5z" fill="${on?'#FFB000':'#AEB6DA'}"/><rect x="5" y="25" width="38" height="4" fill="${on?'#7C5CFF':'#8E97C4'}"/><rect x="20" y="22" width="8" height="12" rx="2" fill="${on?'#7C5CFF':'#8E97C4'}"/><circle cx="24" cy="28" r="2" fill="#fff"/>${on?'<path d="M10 12l2-5 2 5 5 2-5 2-2 5-2-5-5-2z" fill="#FFE28A" transform="translate(14 -4) scale(.8)"/>':''}</svg>`;
 function questSection(u,friends){
   const S=state.fq,P=CM.d.profiles;
@@ -2747,6 +2777,171 @@ async function fqSend(to){
   const today=cmRows('cheers').filter(c=>c.from===u.login&&Date.now()-c.ts<86400e3).length;
   if(today>=5){toast('Hôm nay bạn đã gửi đủ 5 lời cổ vũ rồi.');return}
   if(await cmSet('cheers','c~'+u.login+'~'+to+'~'+Date.now().toString(36),{from:u.login,to,k:S.cheer,ts:Date.now()})){S.sheet=null;toast('Đã gửi lời cổ vũ!');render()}
+}
+
+/* ================= AVATARS, FEED, SUGGESTIONS ================= */
+const AVS={};
+const SKIN=['#F7D2B5','#E8B58A','#C98B5E','#8D5A3B'],HAIR=['#2B2B3A','#6B3F1D','#C9822B','#1B1B1B','#B5445E','#4A5BD6'],AVBG=['#FF9BCB','#9B8CFF','#7FDCCB','#FFC76B','#7CCBFF','#9EE37D','#FF8A8A','#C9A6FF'],SHIRT=['#7C5CFF','#FF6B8B','#18C5B1','#FF9F1C','#1CB0F6','#58CC02','#F25D5D','#8E6BFF'];
+function drawnAvatar(i){
+  const bg=AVBG[i%8],sk=SKIN[i%4],hr=HAIR[(i*2+1)%6],sh=SHIRT[i%8],st=i%4;
+  const hair=[
+    `<path d="M17 30a15 16 0 0 1 30 0c-6-7-24-7-30 0z" fill="${hr}"/>`,
+    `<path d="M17 30a15 16 0 0 1 30 0c-6-7-24-7-30 0z" fill="${hr}"/><circle cx="32" cy="12" r="5.5" fill="${hr}"/>`,
+    `<path d="M16 34a16 18 0 0 1 32 0v14h-6V31c-6-4-14-4-20 0v17h-6z" fill="${hr}"/>`,
+    `<path d="M17 31l2-10 5 6 4-9 4 9 5-6 2 10c-8-6-14-6-22 0z" fill="${hr}"/>`][st];
+  return `<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="${bg}"/><path d="M8 66a24 20 0 0 1 48 0z" fill="${sh}"/><rect x="28" y="40" width="8" height="8" fill="${sk}"/><circle cx="32" cy="31" r="14" fill="${sk}"/>${hair}<circle cx="26.5" cy="32" r="1.9" fill="#2B2B3A"/><circle cx="37.5" cy="32" r="1.9" fill="#2B2B3A"/><path d="M27 38c2.5 3 7.5 3 10 0" stroke="#2B2B3A" stroke-width="2" stroke-linecap="round" fill="none"/></svg>`;
+}
+function curKind(u){u=u||me();if(!u)return '';const k=store.get('avk_'+u.id,null);return k!==null?k:((CM.d.profiles[u.login]||{}).av||'')}
+function av(login,name,sz){
+  sz=sz||40;const u=me(),P=CM.d.profiles[login]||{},self=u&&u.login===login;
+  const kind=self?curKind(u):(P.av||'');
+  const img=AVS[login]||(self?store.get('avimg_'+u.id,''):'');
+  const st=`width:${sz}px;height:${sz}px`;
+  if(kind==='p'&&img)return `<span class="av" style="${st}"><img src="${img}" alt="" width="${sz}" height="${sz}"></span>`;
+  if(/^g[0-7]$/.test(kind))return `<span class="av" style="${st}">${drawnAvatar(+kind[1])}</span>`;
+  const n=String(name||P.name||login||'?').trim();
+  return `<span class="av" style="${st};background:${avCol(login)};font-size:${Math.round(sz*.44)}px" aria-hidden="true">${esc(n.charAt(0).toUpperCase())}</span>`;
+}
+async function svAvatars(){
+  if(!SV.ok||!SV.token)return;
+  try{
+    const m=await rpc('app_avatars',{p_token:SV.token})||{};
+    const old=JSON.stringify(AVS);Object.keys(AVS).forEach(k=>delete AVS[k]);Object.assign(AVS,m);
+    if(JSON.stringify(AVS)!==old&&['friends','account','admin','qa','gallery'].includes(state.route.name))scheduleRender();
+  }catch(e){}
+}
+function setKind(kind){
+  const u=me();if(!u)return;
+  store.set('avk_'+u.id,kind);CM.lastProf='';syncProfile();render();
+}
+async function avSavePhoto(url){
+  const u=me();if(!u)return false;
+  if(SV.ok&&SV.token){
+    try{await rpc('app_avatar_set',{p_token:SV.token,p_img:url})}catch(e){toast(e.code==='bad_data'?'Ảnh chưa hợp lệ, hãy thử ảnh khác.':svMsg(e));return false}
+  }
+  AVS[u.login]=url;store.set('avimg_'+u.id,url);setKind('p');return true;
+}
+async function avRemove(){
+  const u=me();if(!u)return;
+  if(SV.ok&&SV.token){try{await rpc('app_avatar_clear',{p_token:SV.token})}catch(e){toast(svMsg(e));return}}
+  delete AVS[u.login];store.set('avimg_'+u.id,'');setKind('');toast('Đã gỡ ảnh, bạn đang dùng chữ cái.');
+}
+function openAvEditor(file){
+  if(!file)return;
+  if(!/^image\//.test(file.type)){toast('Hãy chọn một tệp ảnh.');return}
+  if(file.size>10*1024*1024){toast('Ảnh lớn quá, hãy chọn ảnh nhỏ hơn 10MB.');return}
+  const url=URL.createObjectURL(file),img=new Image();
+  img.onerror=()=>{URL.revokeObjectURL(url);toast('Không đọc được ảnh này. Hãy thử ảnh JPG hoặc PNG.')};
+  img.onload=()=>{
+    URL.revokeObjectURL(url);
+    const V=240,W=img.naturalWidth,H=img.naturalHeight,s0=V/Math.min(W,H);
+    let zoom=1,ox=0,oy=0;
+    const ov=document.createElement('div');ov.className='ave-ov';
+    ov.innerHTML=`<div class="ave" role="dialog" aria-label="Chọn vùng ảnh đại diện"><h3>Chọn vùng ảnh đại diện</h3><div class="ave-cv"><canvas width="${V}" height="${V}" aria-label="Kéo để di chuyển ảnh"></canvas></div><label class="ave-z">Thu phóng<input type="range" min="1" max="3" step="0.01" value="1" aria-label="Thu phóng"></label><p class="help">Kéo ảnh để chỉnh. Ảnh được thu nhỏ ngay trên máy bạn, chỉ bạn bè và giáo viên nhìn thấy. Đừng dùng ảnh của người khác.</p><div class="cta"><button class="btn primary" data-k="ok">Lưu ảnh</button><button class="btn" data-k="no">Hủy</button></div></div>`;
+    document.body.appendChild(ov);
+    const cv=ov.querySelector('canvas'),cx=cv.getContext('2d'),rg=ov.querySelector('input');
+    const clamp=()=>{const sc=s0*zoom,mx=Math.max(0,(W*sc-V)/2),my=Math.max(0,(H*sc-V)/2);ox=Math.max(-mx,Math.min(mx,ox));oy=Math.max(-my,Math.min(my,oy))};
+    const draw=(ctx,size)=>{const f=size/V,sc=s0*zoom*f;ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);ctx.drawImage(img,size/2+ox*f-W*sc/2,size/2+oy*f-H*sc/2,W*sc,H*sc)};
+    const paint=()=>{clamp();draw(cx,V)};paint();
+    rg.addEventListener('input',()=>{zoom=+rg.value;paint()});
+    let drag=null;
+    cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,ox,oy};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+    cv.addEventListener('pointermove',e=>{if(!drag)return;ox=drag.ox+(e.clientX-drag.x);oy=drag.oy+(e.clientY-drag.y);paint()});
+    const end=()=>{drag=null};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+    const close=()=>ov.remove();
+    ov.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+    ov.querySelector('[data-k=no]').addEventListener('click',close);
+    ov.querySelector('[data-k=ok]').addEventListener('click',async()=>{
+      let size=96,q=.72,out='';
+      for(let i=0;i<12;i++){const o=document.createElement('canvas');o.width=o.height=size;draw(o.getContext('2d'),size);out=o.toDataURL('image/jpeg',q);if(out.length<=6500)break;if(q>.4)q-=.08;else{size=Math.max(64,size-8)}}
+      if(out.length>8500){toast('Ảnh còn quá nặng, hãy chọn ảnh khác.');return}
+      if(await avSavePhoto(out)){close();toast('Đã cập nhật ảnh đại diện')}
+    });
+    rg.focus();
+  };
+  img.src=url;
+}
+function avatarCard(u){
+  const k=curKind(u),has=!!(AVS[u.login]||store.get('avimg_'+u.id,''));
+  return `<div class="card"><h3 style="margin-bottom:12px">Ảnh đại diện</h3>
+    <div class="avrow">${av(u.login,u.name,84)}<div class="avbtns"><label class="btn small primary avfile" tabindex="0">Chọn ảnh từ máy<input type="file" id="avFile" accept="image/*" hidden></label>${(k==='p'||has||k)?`<button class="btn small" data-act="avdel">Dùng chữ cái</button>`:''}</div></div>
+    <p class="help" style="margin:12px 0 8px">Hoặc chọn hình vẽ có sẵn:</p>
+    <div class="avgrid" role="radiogroup" aria-label="Avatar hình vẽ">${[0,1,2,3,4,5,6,7].map(i=>`<button class="avopt${k==='g'+i?' on':''}" role="radio" aria-checked="${k==='g'+i}" aria-label="Avatar ${i+1}" data-act="avpick" data-id="g${i}">${av_g(i)}</button>`).join('')}</div>
+    <p class="help" style="margin-top:12px">Ảnh của bạn chỉ bạn bè và giáo viên nhìn thấy. Người lạ chỉ thấy chữ cái. Đừng dùng ảnh của người khác.</p></div>`;
+}
+const av_g=i=>`<span class="av" style="width:100%;height:100%">${drawnAvatar(i)}</span>`;
+
+/* ---- feed ---- */
+const ago=ts=>{const s=Math.max(0,(Date.now()-ts)/1000);return s<60?'Vừa xong':s<3600?Math.floor(s/60)+' phút trước':s<86400?Math.floor(s/3600)+' giờ trước':Math.floor(s/86400)+' ngày trước'};
+const heartSVG=on=>`<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z" fill="${on?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`;
+function miniBadge(b,lv){
+  const gold=lv>=3,pal=BP[b.tile],v=gold?GOLD:b.v;
+  const sty=`--bc:${gold?'#FFC93C':pal[0]};--bd:${gold?'#E3A21A':pal[1]};--a:${v.a};--b:${v.b};--c:${v.c};--d:${v.d}`;
+  return `<span class="bt mini ${gold?'gold':''} ${lv===2?'l2':''}" style="${sty}"><svg viewBox="0 0 64 64" aria-hidden="true">${BADGE_GLYPH[b.g]}</svg><span class="lvl">CẤP ${lv}</span></span>`;
+}
+function feedIcon(e){
+  if(e.k==='streak')return `<span class="fd-flame"><svg viewBox="0 0 64 64" width="54" height="54" style="--a:#FF9F1C;--b:#FFC93C;--d:#FFF1B8" aria-hidden="true">${BADGE_GLYPH.flame}</svg><b>${esc(e.v)}</b></span>`;
+  if(e.k==='badge'){const b=BADGES.find(x=>x.id===e.v);return b?miniBadge(b,+e.l||1):''}
+  if(e.k==='quest')return chestSVG(true).replace('class="fq-chest"','class="fq-chest" width="56" height="56"');
+  if(e.k==='done')return `<svg viewBox="0 0 64 64" width="54" height="54" style="--a:#58CC02;--b:#43A000;--c:#7A5A1E;--d:#FFFFFF" aria-hidden="true">${BADGE_GLYPH.flag}</svg>`;
+  return `<svg viewBox="0 0 64 64" width="54" height="54" style="--a:#FF5A5A;--b:#FFB000;--c:#2B4A7A;--d:#7CCBFF" aria-hidden="true">${BADGE_GLYPH.rocket}</svg>`;
+}
+function feedText(e,nameOf){
+  if(e.k==='streak')return `Đã đạt chuỗi ${e.v} ngày học liên tiếp!`;
+  if(e.k==='badge'){const b=BADGES.find(x=>x.id===e.v);return b?`Nhận huy hiệu “${b.name}” cấp ${e.l||1}`:'Nhận huy hiệu mới'}
+  if(e.k==='done')return `Đã hoàn thành ${e.v} bài tập!`;
+  if(e.k==='quest')return `Cùng ${nameOf(e.v)} hoàn thành nhiệm vụ tuần`;
+  return `Đăng dự án “${esc(e.v)}” lên Gallery`;
+}
+function feedList(u,ok){
+  const P=CM.d.profiles,R=reactIdx().f||{};
+  const nameOf=l=>(P[l]&&P[l].name)||l;
+  const ev=cmRows('feed').filter(e=>e.u===u.login||(ok.includes(e.u)&&P[e.u]&&P[e.u].share)).sort((a,b)=>b.ts-a.ts).slice(0,state.fr.n);
+  if(!ev.length)return `<div class="empty">Chưa có hoạt động nào. Hoàn thành bài, giữ chuỗi ngày hoặc nhận huy hiệu để hoạt động xuất hiện ở đây.</div>`;
+  return ev.map(e=>{
+    const L=R[e.id]?[...R[e.id]]:[],liked=L.includes(u.login),others=L.filter(x=>x!==u.login);
+    const who=liked?'Bạn':nameOf(others[0]),rest=L.length-1;
+    return `<article class="fd"><div class="fd-top">${av(e.u,nameOf(e.u),48)}<div class="fd-who"><b>${esc(e.u===u.login?'Bạn':nameOf(e.u))}</b><span class="help">${ago(e.ts)}</span></div><div class="fd-ic">${feedIcon(e)}</div></div>
+      <p class="fd-t">${e.k==='post'?feedText(e,nameOf):esc(feedText(e,nameOf))}</p>
+      <button class="fd-like${liked?' on':''}" data-act="flike" data-id="${esc(e.id)}" aria-pressed="${liked}" aria-label="Thả tim, hiện có ${L.length}">${heartSVG(liked)}<span>${L.length}</span></button>
+      ${L.length?`<p class="help fd-liked">${esc(who)}${rest>0?' và <b>'+rest+' bạn khác</b>':''} đã thích</p>`:''}</article>`}).join('')+(cmRows('feed').length>state.fr.n?`<p style="text-align:center"><button class="btn" data-act="fmore">Xem thêm</button></p>`:'');
+}
+function suggestions(u,ok,known){
+  const P=CM.d.profiles,mine=new Set(ok),hide=new Set(store.get('fhide',[]));
+  return Object.values(P).filter(p=>p.login&&!known.has(p.login)&&!hide.has(p.login)).map(p=>{
+    const mutual=friendsOf(p.login).filter(x=>mine.has(x));let score=mutual.length*10,why='Cùng học Tin học 8';
+    if(p.cls&&p.cls===u.cls){score+=5;why='Cùng lớp '+p.cls}
+    if(mutual.length)why='Bạn chung: '+((P[mutual[0]]&&P[mutual[0]].name)||mutual[0])+(mutual.length>1?' và '+(mutual.length-1)+' bạn khác':'');
+    return {p,score,why};
+  }).sort((a,b)=>b.score-a.score).slice(0,10);
+}
+function feedTab(u,ok,known){
+  const sg=suggestions(u,ok,known);
+  return `${u.share?'':`<div class="notice warn" style="margin:16px 0"><b>Bạn chưa chia sẻ tiến độ.</b> Hoạt động của bạn sẽ không hiện trên bảng tin của bạn bè. <button class="btn small" data-act="shareon">Bật chia sẻ</button></div>`}
+  ${sg.length?`<h2 class="fd-h">GỢI Ý KẾT BẠN</h2><div class="sgstrip">${sg.map(({p,why})=>`<div class="sgc"><button class="sgx" data-act="fhide" data-id="${esc(p.login)}" aria-label="Ẩn gợi ý ${esc(p.name)}">&times;</button>${av(p.login,p.name,64)}<b>${esc(p.name)}</b><span class="help">${esc(why)}</span><button class="fq-btn small" data-act="fquick" data-id="${esc(p.login)}">KẾT BẠN</button></div>`).join('')}</div>`:''}
+  <h2 class="fd-h">BẢNG TIN</h2><div class="fdlist">${feedList(u,ok)}</div>`;
+}
+let _fb=false;
+async function feedSync(){
+  const u=me();if(!u||u.role==='admin'||!u.share||!CM.inited||_fb)return;
+  const s=statsOf(u),c=[];
+  [3,7,14,30,60,100].filter(m=>s.streak>=m).slice(-1).forEach(m=>c.push({id:`f~${u.login}~streak~${m}`,d:{k:'streak',v:m}}));
+  [5,10,20].filter(m=>s.done>=m).slice(-1).forEach(m=>c.push({id:`f~${u.login}~done~${m}`,d:{k:'done',v:m}}));
+  BADGES.forEach(b=>{const l=b.lv(s);if(l>0)c.push({id:`f~${u.login}~badge~${b.id}~${l}`,d:{k:'badge',v:b.id,l}})});
+  myQuests(u).filter(q=>questInfo(q,u).done).forEach(q=>{const o=q.a===u.login?q.b:q.a;c.push({id:`f~${u.login}~quest~${q.w}~${o}`,d:{k:'quest',v:o}})});
+  cmRows('gallery').filter(g=>g.a===u.login&&g.approved&&!g.hidden).forEach(g=>c.push({id:`f~${u.login}~post~${g.id}`,d:{k:'post',v:String(g.title||'').slice(0,60)}}));
+  const bk='fbase_'+u.id;let base=store.get(bk,null);
+  if(base===null){store.set(bk,c.map(x=>x.id));return}
+  const fresh=c.filter(x=>!base.includes(x.id)&&!CM.d.feed[x.id]).slice(0,3);
+  if(!fresh.length)return;
+  _fb=true;
+  try{for(const x of fresh){base=[...base,x.id];store.set(bk,base);await cmSet('feed',x.id,{u:u.login,ts:Date.now(),...x.d})}}finally{_fb=false}
+}
+function setShare(v){
+  const u=me();if(!u)return;
+  if(SV.ok&&SV.user){SV.user.share=v;rpc('app_set_share',{p_token:SV.token,p_share:v}).catch(()=>{})}
+  else{const us=users(),x=us.find(a=>a.id===u.id);if(x){x.share=v;store.set('users',us)}}
+  CM.lastProf='';syncProfile();render();toast(v?'Bạn bè đã xem được tiến độ của bạn':'Đã ẩn tiến độ khỏi bạn bè');
 }
 
 async function sendFriend(login){
@@ -2862,6 +3057,14 @@ function commClick(a,el,id){
     case 'lperm':(async()=>{try{const pm=await window.claude.use('permissions');await pm.manage()}catch(e){toast('Hãy mở menu Permissions của trang để chỉnh quyền.')}})();return true;
     case 'fcopy':if(u)copyText(u.login);return true;
     case 'fquick':sendFriend(id);return true;
+    case 'frtab':state.fr.tab=el.dataset.v;render();return true;
+    case 'fmore':state.fr.n+=8;render();return true;
+    case 'fhide':{const h=store.get('fhide',[]);store.set('fhide',[...h,id]);render();return true}
+    case 'flike':toggleReact('f',id);return true;
+    case 'shareon':setShare(true);return true;
+    case 'avpick':setKind(id);return true;
+    case 'avdel':avRemove();return true;
+    case 'avrm':if(isAdmin()&&SV.ok)rpc('app_avatar_clear_admin',{p_token:SV.token,p_login:id}).then(()=>svAvatars()).then(()=>{toast('Đã gỡ ảnh đại diện');render()}).catch(er=>toast(svMsg(er)));return true;
     case 'fqtab':state.fq.tab=el.dataset.v;render();return true;
     case 'fqpick':state.fq.pick=state.fq.pick===id?null:id;render();return true;
     case 'fqkind':state.fq.kind=id;render();return true;
@@ -3091,6 +3294,7 @@ const us=users(),u=us.find(x=>x.id===id);u.locked=!u.locked;store.set('users',us
 }
 function onInput(e){
   const t=e.target;
+  if(t.id==='avFile'){const f=t.files&&t.files[0];t.value='';openAvEditor(f);return}
   if(t.id==='flt_q'){state.filter.q=t.value;updateList()}
   else if(t.id==='chatIn'){state.chat.draft=t.value;growBox()}
   else if(t.classList&&t.classList.contains('qinp')&&e.type==='change'){if(isAdmin()){const c=quotaCfg(),per={...(c.per||{})};if(t.value==='')delete per[t.dataset.id];else per[t.dataset.id]=Math.max(0,Math.min(200,parseInt(t.value,10)||0));cmSet('settings','quota',{...c,per});toast('Đã lưu hạn mức riêng')}}
