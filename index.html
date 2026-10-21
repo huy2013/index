@@ -510,6 +510,7 @@ footer button{background:none;border:0;color:var(--muted);cursor:pointer;padding
 .fxfly{position:absolute;width:56px;height:56px}.fxfly svg{width:100%;height:100%}
 .bt:not(.mini):hover{filter:brightness(1.05)}
 @media(prefers-reduced-motion:reduce){.rip,#fxlayer{display:none}.fq-card.win .fq-chest{animation:none}}
+.capw{min-height:78px;display:flex;justify-content:center;align-items:center;margin:6px 0 2px;overflow:hidden}.capw>div{max-width:100%}#r_submit:disabled{opacity:.55;cursor:not-allowed}
 </style>
 
 <a class="skip" href="#main">Bỏ qua đến nội dung</a>
@@ -1266,8 +1267,57 @@ const visLessons=()=>lessonsAll().filter(l=>l.visible);
 /* ---------- PRIME server (Supabase) ---------- */
 const EPOCH='1970-01-01T00:00:00Z';
 const SV={url:'https://nzacrwbwuuycbmvrkpca.supabase.co',key:'sb_publishable_9_L5w1YQZxeY6z3eYsIjng_olz1Rv49',ok:false,token:null,user:null,list:[],msgs:[],prog:{},since:EPOCH,dirty:{},timers:{},polling:false,tick:0,pt:null,off:false};
-const SV_ERR={unauthorized:'Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.',forbidden:'Bạn không có quyền thực hiện thao tác này.',bad_login:'Tên đăng nhập 3 đến 20 ký tự: chữ không dấu, số, dấu _ hoặc dấu chấm.',login_taken:'Tên đăng nhập này đã có người dùng, hãy chọn tên khác.',bad_name:'Họ và tên chưa hợp lệ.',bad_class:'Nhập tên lớp bắt đầu bằng số 8, ví dụ 8A.',bad_pw:'Mật khẩu cần ít nhất 8 ký tự, gồm cả chữ và số.',busy:'Máy chủ đang bận, hãy thử lại sau ít phút.',too_many:'Bạn nhập sai quá nhiều lần. Hãy đợi khoảng 10 phút rồi thử lại.',bad_credentials:'Sai tên đăng nhập hoặc mật khẩu. Kiểm tra lại nhé.',locked:'Tài khoản đang bị khóa. Hãy liên hệ giáo viên.',bad_old:'Mật khẩu hiện tại chưa đúng.',too_big:'Nội dung quá lớn.',bad_input:'Thông tin chưa hợp lệ.',not_found:'Không tìm thấy.',bad_coll:'Dữ liệu không hợp lệ.',bad_id:'Dữ liệu không hợp lệ.',bad_data:'Dữ liệu không hợp lệ.',net:'Không kết nối được máy chủ PRIME. Kiểm tra mạng rồi thử lại.'};
+const SV_ERR={captcha:'Xác minh CAPTCHA chưa đúng hoặc đã hết hạn, hãy tích lại nhé.',cap_cfg:'Hệ thống xác minh chưa được cấu hình. Hãy báo giáo viên.',cap_net:'Không kết nối được dịch vụ xác minh, hãy thử lại sau.',unauthorized:'Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.',forbidden:'Bạn không có quyền thực hiện thao tác này.',bad_login:'Tên đăng nhập 3 đến 20 ký tự: chữ không dấu, số, dấu _ hoặc dấu chấm.',login_taken:'Tên đăng nhập này đã có người dùng, hãy chọn tên khác.',bad_name:'Họ và tên chưa hợp lệ.',bad_class:'Nhập tên lớp bắt đầu bằng số 8, ví dụ 8A.',bad_pw:'Mật khẩu cần ít nhất 8 ký tự, gồm cả chữ và số.',busy:'Máy chủ đang bận, hãy thử lại sau ít phút.',too_many:'Bạn nhập sai quá nhiều lần. Hãy đợi khoảng 10 phút rồi thử lại.',bad_credentials:'Sai tên đăng nhập hoặc mật khẩu. Kiểm tra lại nhé.',locked:'Tài khoản đang bị khóa. Hãy liên hệ giáo viên.',bad_old:'Mật khẩu hiện tại chưa đúng.',too_big:'Nội dung quá lớn.',bad_input:'Thông tin chưa hợp lệ.',not_found:'Không tìm thấy.',bad_coll:'Dữ liệu không hợp lệ.',bad_id:'Dữ liệu không hợp lệ.',bad_data:'Dữ liệu không hợp lệ.',net:'Không kết nối được máy chủ PRIME. Kiểm tra mạng rồi thử lại.'};
 const svMsg=e=>SV_ERR[e&&e.code]||SV_ERR[e&&e.message]||'Có lỗi xảy ra, bạn thử lại sau nhé.';
+/* ================= CAPTCHA ĐĂNG KÝ ================= */
+const RECAPTCHA_KEY='6Ldyh_otAAAAAMkxePGsXqlIB7_J-OX4x6fQwrU0';
+const CAP={on:null,wid:null,loading:null,t0:0,a:0,b:0,
+  dark(){const r=document.documentElement,t=r.getAttribute('data-theme');return t?t==='dark':!(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)},
+  load(){
+    if(window.grecaptcha&&grecaptcha.render)return Promise.resolve();
+    if(this.loading)return this.loading;
+    return this.loading=new Promise((ok,no)=>{
+      const s=document.createElement('script');s.src='https://www.google.com/recaptcha/api.js?render=explicit&hl=vi';s.async=true;
+      let n=0;const w=()=>{if(window.grecaptcha&&grecaptcha.ready)grecaptcha.ready(ok);else if(++n>200){this.loading=null;no(new Error('load'))}else setTimeout(w,50)};
+      s.onload=w;s.onerror=()=>{this.loading=null;no(new Error('load'))};document.head.appendChild(s);
+    });
+  },
+  btn(on){const b=document.getElementById('r_submit');if(b)b.disabled=!on},
+  err(m){const e=document.getElementById('e_r_cap');if(e)e.textContent=m||''},
+  reset(){try{if(this.wid!==null&&window.grecaptcha)grecaptcha.reset(this.wid)}catch(e){}if(this.on)this.btn(false)},
+  token(){try{return this.wid!==null&&window.grecaptcha?grecaptcha.getResponse(this.wid):''}catch(e){return ''}},
+  async mount(){
+    const box=document.getElementById('cap');if(!box)return;
+    this.t0=Date.now();this.wid=null;
+    if(!SV.ok){
+      this.on=false;this.a=2+Math.floor(Math.random()*8);this.b=2+Math.floor(Math.random()*8);
+      box.innerHTML=field('r_capq','Câu hỏi chống spam: '+this.a+' + '+this.b+' = ?','<input id="r_capq" name="capq" inputmode="numeric" autocomplete="off" maxlength="3">');
+      return;
+    }
+    if(this.on===null){try{this.on=!!(await rpc('app_captcha_on'))}catch(e){this.on=false}}
+    if(document.getElementById('cap')!==box)return;
+    if(!this.on){box.innerHTML='';return}
+    box.innerHTML='<div class="capw" id="capw"><span class="help">Đang tải xác minh…</span></div>';
+    this.btn(false);
+    try{await this.load()}catch(e){this.err('Không tải được CAPTCHA. Hãy kiểm tra mạng rồi tải lại trang.');const w=document.getElementById('capw');if(w)w.innerHTML='';return}
+    const w=document.getElementById('capw');if(!w||document.getElementById('cap')!==box)return;
+    w.innerHTML='';
+    try{this.wid=grecaptcha.render(w,{sitekey:RECAPTCHA_KEY,theme:this.dark()?'dark':'light',
+      callback:()=>{this.err('');this.btn(true)},
+      'expired-callback':()=>{this.btn(false);this.err('CAPTCHA đã hết hạn, hãy tích lại nhé.')},
+      'error-callback':()=>{this.btn(false);this.err('CAPTCHA gặp lỗi, hãy thử lại sau.')}})}
+    catch(e){this.err('Không hiển thị được CAPTCHA.')}
+  },
+  async pass(tok){
+    let r;
+    try{r=await fetch(SV.url+'/functions/v1/captcha-verify',{method:'POST',headers:{'apikey':SV.key,'Content-Type':'application/json'},body:JSON.stringify({response:tok})})}
+    catch(e){const x=new Error('net');x.code='net';x.net=true;throw x}
+    let j=null;try{j=await r.json()}catch(e){}
+    if(!r.ok||!j||!j.pass){const x=new Error('captcha');x.code=(j&&j.error==='not_configured')?'cap_cfg':(j&&j.error==='upstream')?'cap_net':'captcha';throw x}
+    return j.pass;
+  }
+};
+
 async function rpc(fn,args,ms){
   const ctl=typeof AbortController==='function'?new AbortController():null;
   const t=setTimeout(()=>{try{ctl&&ctl.abort()}catch(e){}},ms||9000);
@@ -1762,7 +1812,9 @@ function auth(){
       ${field('r_pw2','Nhập lại mật khẩu','<input id="r_pw2" name="pw2" type="password" autocomplete="new-password">')}
       <label class="check"><input type="checkbox" id="r_ok" name="ok"><span>Mình đã đọc <button type="button" class="crumb" style="padding:0;text-decoration:underline" data-act="go" data-go="privacy">chính sách bảo mật</button>. Nếu dưới 16 tuổi, mình đã báo với phụ huynh.</span></label>
       <p class="err" id="e_r_ok" role="alert"></p>
-      <button class="btn primary" type="submit">Tạo tài khoản</button></form>`;
+      <div id="cap"></div><p class="err" id="e_r_cap" role="alert"></p>
+      <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+      <button class="btn primary" type="submit" id="r_submit">Tạo tài khoản</button></form>`;
   }else{
     body=`<form class="f" data-form="forgot" novalidate>
       <p class="help">Nhập tên đăng nhập đã đăng ký. Yêu cầu sẽ gửi tới giáo viên, thầy cô sẽ cấp mật khẩu tạm cho bạn.</p>
@@ -3231,6 +3283,7 @@ function render(){
   try{checkBadges()}catch(e){}
   setTimeout(syncProfile,400);
   svStatus();
+  try{CAP.mount()}catch(e){}
 }
 
 /* ---------- forms ---------- */
@@ -3276,10 +3329,19 @@ async function onSubmit(e){
     if(!strong(fd.pw||''))ok=bad(f,'r_pw','Mật khẩu cần ít nhất 8 ký tự, gồm cả chữ và số.');
     if(fd.pw!==fd.pw2)ok=bad(f,'r_pw2','Hai mật khẩu chưa giống nhau.');
     if(!fd.ok)ok=bad(f,'r_ok','Bạn cần đồng ý với chính sách bảo mật.');
+    if(fd.website)return;
+    if(!SV.ok&&Number(String(fd.capq||'').trim())!==CAP.a+CAP.b){ok=bad(f,'r_capq','Chưa đúng, hãy tính lại nhé.')}
     if(!ok)return firstBad(f);
+    if(Date.now()-CAP.t0<2000){CAP.err('Bạn thao tác hơi nhanh, hãy thử lại sau một giây.');return}
     if(SV.ok){
-      try{const r=await rpc('app_register',{p_login:lg,p_name:fd.name.trim(),p_cls:cls,p_pw:fd.pw});svSetSession(r);await svAfterLogin();toast('Chào mừng bạn đến với PRIME!');go('lessons')}
-      catch(er){const m={login_taken:'r_login',bad_login:'r_login',bad_name:'r_name',bad_class:'r_class',bad_pw:'r_pw'}[er.code];if(m){bad(f,m,svMsg(er));firstBad(f)}else toast(svMsg(er))}
+      let pass=null;
+      if(CAP.on){
+        const tok=CAP.token();
+        if(!tok){CAP.err('Hãy tích vào ô "Tôi không phải là người máy".');return}
+        try{pass=await CAP.pass(tok)}catch(er){CAP.reset();CAP.err(svMsg(er));return}
+      }
+      try{const r=await rpc('app_register',{p_login:lg,p_name:fd.name.trim(),p_cls:cls,p_pw:fd.pw,p_pass:pass});svSetSession(r);await svAfterLogin();toast('Chào mừng bạn đến với PRIME!');go('lessons')}
+      catch(er){if(er.code==='captcha'){CAP.reset();CAP.err(svMsg(er));return}CAP.reset();const m={login_taken:'r_login',bad_login:'r_login',bad_name:'r_name',bad_class:'r_class',bad_pw:'r_pw'}[er.code];if(m){bad(f,m,svMsg(er));firstBad(f)}else toast(svMsg(er))}
       return;
     }
     const id=uid('u_');const us=users();
