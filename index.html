@@ -607,6 +607,7 @@ b,strong{font-weight:600}
 .fxp.confetti{border-radius:2px}
 @media(max-width:560px){h1{font-size:2.25rem}}
 .fq-bar i+span,.fq-bar span{color:var(--fg);text-shadow:0 0 3px var(--surface)}.fq-btn:active:not(:disabled){transform:scale(.98)}
+.permrow{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}.permrow:last-of-type{border-bottom:0}.permrow input{width:20px;height:20px;margin-top:3px;flex:none;accent-color:var(--violet)}.ptbl{width:100%;border-collapse:collapse;font-size:.92rem}.ptbl th,.ptbl td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}.ptbl th{font-weight:600;color:var(--muted)}
 </style>
 
 <a class="skip" href="#main">Bỏ qua đến nội dung</a>
@@ -627,6 +628,7 @@ b,strong{font-weight:600}
     <nav aria-label="Liên kết chân trang">
       <button data-act="go" data-go="about">Giới thiệu</button>
       <button data-act="go" data-go="contact">Liên hệ</button>
+      <button data-act="go" data-go="perm">Quyền và Claude</button>
       <button data-act="go" data-go="privacy">Chính sách bảo mật</button>
     </nav>
   </div>
@@ -1435,13 +1437,15 @@ const DK={
   aiuse:{g:u=>store.get('aiuse',{})[u.login],s:(u,v)=>{const m=store.get('aiuse',{});m[u.login]=v;store.set('aiuse',m,1)}},
   favblocks:{g:u=>store.get('favblocks',[]),s:(u,v)=>store.set('favblocks',v,1)},
   convs:{g:u=>store.get('convs_'+u.id,undefined),s:(u,v)=>store.set('convs_'+u.id,v,1)},
-  badgeInit:{g:u=>store.get('badgeInit_'+u.id,false),s:(u,v)=>store.set('badgeInit_'+u.id,v,1)}
+  badgeInit:{g:u=>store.get('badgeInit_'+u.id,false),s:(u,v)=>store.set('badgeInit_'+u.id,v,1)},
+  perms:{g:u=>store.get('perms_'+u.id,undefined),s:(u,v)=>store.set('perms_'+u.id,v,1)}
 };
 const mergeMax=(a,b)=>{const o={...(a||{})};Object.entries(b||{}).forEach(([k,v])=>{if(typeof v==='number')o[k]=Math.max(+o[k]||0,v);else if(v&&typeof v==='object')o[k]=mergeMax(o[k],v);else if(!(k in o))o[k]=v});return o};
 function svKeyOf(k){
   const u=SV.user;if(!u)return null;
   if(['progress','time','asks','badges','aiuse','favblocks'].includes(k))return k;
-  if(k==='convs_'+u.id)return 'convs';
+  if(k==='convs_'+u.id)return perms().hist===false?null:'convs';
+  if(k==='perms_'+u.id)return 'perms';
   if(k==='badgeInit_'+u.id)return 'badgeInit';
   return null;
 }
@@ -1502,6 +1506,7 @@ async function svAfterLogin(){
   CM.lastProf='';
   svAvatars();
   svStartPoll();
+  AIL.load();
 }
 function svSetSession(r){
   SV.token=r.token;SV.user=svUser(r.user);
@@ -1602,7 +1607,7 @@ async function seed(){
 /* ---------- state & routing ---------- */
 const state={route:{name:'home',id:null},filter:{cd:'',q:''},authTab:'login',adminTab:'stats',editing:null,show:{},tempPw:null,seen:{},note:'',palTab:'motion',g:{sort:'new',form:false,open:null},qa:{tag:'',q:'',open:null,form:false},dict:{q:'',cat:'all',fav:false,open:{}},
   fq:{tab:'q',pick:null,kind:'lessons',sheet:null,cheer:'bolt'},fr:{tab:'feed',n:8},chat:{lp:false,convs:[],key:null,cur:null,busy:false,ctl:null,ctx:null,draft:'',hint:false,sb:false,ren:null,q:''},ai:'pending'};
-const ROUTES=['home','auth','lessons','lesson','ask','blocks','portfolio','gallery','qa','friends','stats','account','admin','about','contact','privacy'];
+const ROUTES=['home','auth','lessons','lesson','ask','blocks','portfolio','gallery','qa','friends','stats','account','admin','about','contact','privacy','perm'];
 function parseHash(){
   let h='';try{h=(location.hash||'').replace('#','')}catch(e){}
   if(!h)return null;
@@ -2045,6 +2050,7 @@ function statusHTML(){
   <button class="lchip ${lc}" data-act="lpanel" aria-expanded="${!!state.chat.lp}">${lt}</button>`;
 }
 function linkPanelHTML(){
+  if(!nativeSample&&aiReadyP&&state.ai!=='pending')return AIL.panel();
   const st=linkState(),busy=state.linkBusy;
   let msg='';
   if(st==='none')msg='Trang này chưa nối được với Claude. Hãy mở trang trong Claude khi đã đăng nhập tài khoản của bạn.';
@@ -2058,7 +2064,7 @@ function linkPanelHTML(){
   return `<div class="lpanel"><p><b>Liên kết tài khoản Claude của bạn</b></p>
     <p class="help">${msg}</p>
     <p class="help">Trang không bao giờ thấy mật khẩu hay khóa API của bạn. Mỗi câu hỏi dùng lượt Claude của bạn, và PRIME còn có hạn mức riêng mỗi ngày. Khi một trong hai hết, AI sẽ tạm dừng.</p>
-    <div class="row" style="justify-content:flex-start;gap:8px;flex-wrap:wrap">
+    <div class="row" style="display:flex;justify-content:flex-start;gap:8px;flex-wrap:wrap">
       ${sampleFn&&st!=='ok'?`<button class="btn small primary" data-act="lconnect" ${busy?'disabled':''}>${busy?'Đang kết nối…':'Kết nối Claude'}</button>`:''}
       ${sampleFn?`<button class="btn small" data-act="lconnect" ${busy?'disabled':''}>Thử kết nối</button>`:''}
       ${sampleFn&&st!=='off'?`<button class="btn small" data-act="ldisc">Ngắt kết nối</button>`:''}
@@ -2088,7 +2094,7 @@ function initAI(){
     try{
       if(window.claude&&typeof window.claude.use==='function'){
         const s=await window.claude.use('sample');
-        sampleFn=s||null;
+        sampleFn=s||null;nativeSample=sampleFn;
       }
     }catch(e){sampleFn=null}
     state.ai=sampleFn?'ready':'none';
@@ -2096,6 +2102,181 @@ function initAI(){
     if(state.route.name==='ask')refreshAIBanner();
   })();
 }
+/* ================= KẾT NỐI CLAUDE + TRANG QUYỀN ================= */
+let nativeSample=null;
+const PERM_DEF={ai:false,ctx:true,hist:true,share:false};
+const PERM_LIST=[
+  ['ai','Dùng gia sư AI (Claude)','Cho phép gửi câu hỏi của bạn tới Claude để nhận câu trả lời. Phải bật mục này thì khung chat AI mới hoạt động.'],
+  ['ctx','Gửi kèm nội dung bài đang xem','Claude biết bạn đang hỏi về bài nào nên trả lời sát hơn. Tắt thì chỉ có câu hỏi của bạn được gửi đi.'],
+  ['hist','Lưu lịch sử trò chuyện trên máy chủ','Bạn xem lại được các cuộc trò chuyện trên mọi thiết bị. Tắt thì lịch sử chỉ nằm trên máy này.'],
+  ['share','Cho bạn bè xem tiến độ học','Bạn bè đã kết bạn thấy số bài đã học và huy hiệu của bạn. Giáo viên luôn xem được tiến độ lớp.']
+];
+function perms(){
+  const u=me();const o=store.get(u?'perms_'+u.id:'perms_guest',null)||{};
+  const b={...PERM_DEF,...o};if(u&&typeof u.share==='boolean')b.share=u.share;return b;
+}
+function applyShare(v){
+  if(SV.ok&&SV.user){SV.user.share=v;rpc('app_set_share',{p_token:SV.token,p_share:v}).catch(()=>{})}
+  else{const us=users(),x=us.find(a=>a.id===(me()||{}).id);if(x){x.share=v;store.set('users',us)}}
+  try{syncProfile()}catch(e){}
+}
+function setPerm(k,v,quiet){
+  const u=me();if(!u)return;
+  const o={...perms(),[k]:v,at:Date.now()};delete o.share;
+  store.set('perms_'+u.id,o);
+  if(k==='share')applyShare(v);
+  if(k==='ai')AIL.sync();
+  if(!quiet){toast(v?'Đã bật quyền':'Đã tắt quyền');render()}
+}
+const AIL_ERR={bad_key_format:'Khóa chưa đúng dạng. Khóa Claude bắt đầu bằng sk-ant-.',bad_key:'Khóa không dùng được. Hãy kiểm tra lại hoặc tạo khóa mới.',no_credit:'Tài khoản của khóa này chưa có số dư để dùng.',rate_limited:'Khóa đang bị giới hạn tốc độ. Hãy đợi một lúc rồi thử lại.',no_consent:'Hãy bật quyền “Dùng gia sư AI” trước.',blocked:'Giáo viên đã tắt AI cho tài khoản của bạn.',ai_off:'Giáo viên đang tắt AI cho cả lớp.',not_connected:'Bạn chưa kết nối Claude.',limit:'Hôm nay bạn đã dùng hết lượt AI trên máy chủ. Mai thử lại nhé.',not_configured:'Máy chủ chưa cấu hình mã hóa khóa. Hãy báo giáo viên.',upstream:'Claude đang bận, hãy thử lại sau ít phút.',unauthorized:'Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.',net:'Không kết nối được máy chủ, hãy kiểm tra mạng.',too_large:'Cuộc trò chuyện quá dài, hãy bắt đầu cuộc mới.'};
+const AIL={st:null,adm:null,busy:false,
+  async fn(body,signal){
+    let r;
+    try{r=await fetch(SV.url+'/functions/v1/claude-link',{method:'POST',headers:{'apikey':SV.key,'Content-Type':'application/json'},body:JSON.stringify({...body,token:SV.token}),signal})}
+    catch(e){if(e&&e.name==='AbortError'){const x=new Error('cancelled');x.code='cancelled';throw x}const x=new Error('net');x.code='net';throw x}
+    let j=null;try{j=await r.json()}catch(e){}
+    if(!r.ok||!j||j.error){const x=new Error((j&&j.error)||'upstream');x.code=(j&&j.error)||'upstream';throw x}
+    return j;
+  },
+  usable(){const s=this.st;return !!(s&&s.connected&&s.global&&!s.blocked)},
+  async load(){
+    try{if(aiReadyP)await aiReadyP}catch(e){}
+    if(!SV.ok||!SV.token||!SV.user){this.st=null;this.sync();return}
+    try{this.st=await rpc('app_ai_status',{p_token:SV.token})}catch(e){this.st=null}
+    this.sync();
+    if(SV.user&&SV.user.role==='admin'){try{this.adm=await rpc('app_ai_admin_list',{p_token:SV.token})}catch(e){}}
+    if(state.route.name==='perm')render();
+  },
+  sync(){
+    if(nativeSample)return;
+    sampleFn=this.usable()?this.call:null;
+    state.ai=sampleFn?'ready':'none';
+    if(sampleFn){state.link='ok';store.set('claudeOff',false)}
+    try{refreshLink();if(state.route.name==='ask')refreshAIBanner()}catch(e){}
+  },
+  why(){
+    const u=me();
+    if(nativeSample)return 'AI chưa dùng được ở chế độ xem này.';
+    if(!u)return 'Hãy đăng nhập rồi kết nối Claude ở trang Quyền để dùng gia sư AI.';
+    if(!SV.ok)return 'AI chỉ dùng được trên bản web chính thức của PRIME hoặc khi mở trong Claude.';
+    const s=this.st;
+    if(s&&!s.global)return 'Giáo viên đang tắt AI cho cả lớp.';
+    if(s&&s.blocked)return 'Giáo viên đã tắt AI cho tài khoản của bạn.';
+    if(!perms().ai)return 'Bạn chưa bật quyền “Dùng gia sư AI”. Mở trang Quyền để bật.';
+    if(!s||!s.connected)return 'Bạn chưa kết nối Claude. Mở trang Quyền để dán khóa API của bạn.';
+    return 'AI chưa dùng được lúc này.';
+  },
+  call:async(input,opts)=>{
+    opts=opts||{};
+    let j;
+    try{j=await AIL.fn({action:'chat',messages:input},opts.signal)}
+    catch(e){
+      const c=e.code,x=new Error(c);
+      x.code=c==='cancelled'?'cancelled':c==='unauthorized'?'session_expired':['no_consent','blocked','ai_off','not_connected','bad_key'].includes(c)?'not_granted':(c==='rate_limited'||c==='limit'||c==='no_credit')?'rate_limited':c==='too_large'?'prompt_too_large':'error';
+      if(['bad_key','no_consent','blocked','ai_off','not_connected'].includes(c))AIL.load();
+      throw x;
+    }
+    if(j.refused){const x=new Error('refused');x.code='refused';throw x}
+    try{opts.onText&&opts.onText({text:j.text})}catch(e){}
+    return{text:j.text,truncated:!!j.truncated};
+  },
+  async connect(){
+    const inp=$('#ail_key'),key=inp?inp.value.trim():'';
+    const err=$('#e_ail_key');
+    if(!SV.ok||!SV.user)return;
+    if(!perms().ai){if(err)err.textContent='Hãy bật quyền “Dùng gia sư AI” ở phía dưới trước.';return}
+    if(!/^sk-ant-/.test(key)){if(err)err.textContent=AIL_ERR.bad_key_format;return}
+    if(err)err.textContent='';this.busy=true;render();
+    try{
+      for(let i=0;i<20&&SV.flushing;i++)await new Promise(r=>setTimeout(r,150));
+      SV.dirty.perms=1;await svFlush();
+      const r=await this.fn({action:'connect',key});
+      toast('Đã kết nối Claude (khóa ••••'+r.last4+')');
+    }catch(e){
+      this.busy=false;render();
+      const e2=$('#e_ail_key');if(e2)e2.textContent=AIL_ERR[e.code]||'Chưa kết nối được, bạn thử lại nhé.';
+      return;
+    }
+    this.busy=false;await this.load();render();
+  },
+  async off(){
+    try{await rpc('app_ai_clear',{p_token:SV.token});toast('Đã ngắt kết nối và xóa khóa khỏi máy chủ')}catch(e){toast('Chưa ngắt được, hãy thử lại.')}
+    await this.load();render();
+  },
+  async wipe(){
+    if(!confirm('Xóa toàn bộ lịch sử trò chuyện AI và khóa Claude của bạn?'))return;
+    const u=me();if(!u)return;
+    state.chat.convs=[];state.chat.cur=null;store.set('convs_'+u.id,[],1);state.chat.key=null;
+    if(SV.ok&&SV.token){try{await rpc('app_data_set',{p_token:SV.token,p_key:'convs',p_val:[]});await rpc('app_ai_clear',{p_token:SV.token})}catch(e){}}
+    toast('Đã xóa dữ liệu AI của bạn');await this.load();render();
+  },
+  async revoke(){
+    if(!confirm('Tắt mọi quyền và ngắt kết nối Claude?'))return;
+    ['ai','ctx','hist','share'].forEach(k=>setPerm(k,false,true));
+    if(SV.ok&&SV.token){try{await rpc('app_ai_clear',{p_token:SV.token})}catch(e){}}
+    toast('Đã thu hồi tất cả quyền');await this.load();render();
+  },
+  async global(on){try{await rpc('app_ai_set_global',{p_token:SV.token,p_on:on});toast(on?'Đã bật AI cho cả lớp':'Đã tắt AI cho cả lớp')}catch(e){toast('Chưa lưu được.')}await this.load()},
+  async block(id,blocked){try{await rpc('app_ai_set_blocked',{p_token:SV.token,p_user:id,p_blocked:blocked});toast(blocked?'Đã tắt AI cho bạn này':'Đã bật lại AI cho bạn này')}catch(e){toast('Chưa lưu được.')}await this.load()},
+  panel(){
+    const u=me();
+    return `<div class="lpanel"><p><b>Kết nối Claude</b></p><p class="help">${esc(this.why())}</p><div class="row" style="display:flex;justify-content:flex-start;gap:8px"><button class="btn small primary" data-act="go" data-go="perm">Mở trang Quyền và kết nối</button></div></div>`;
+  }
+};
+function permPage(){
+  const u=me();
+  const head=`<div class="head"><span class="eyebrow">Quyền và kết nối</span><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Quyền và kết nối Claude</h1><p class="lead">Bạn quyết định web được làm gì với dữ liệu của bạn. Có thể đổi hoặc thu hồi bất cứ lúc nào.</p></div>`;
+  if(!u)return `<div class="view wrap" style="padding-block:40px">${head}<div class="empty">Hãy đăng nhập để xem và chỉnh quyền. <button class="crumb" data-act="authgo" data-tab="login">Đăng nhập</button></div></div>`;
+  const p=perms(),s=AIL.st;
+  let conn='';
+  if(nativeSample){
+    const [lt,lc]=LINK_TXT[linkState()]||LINK_TXT.none;
+    conn=`<p><span class="pill ${lc}">${lt}</span></p><p class="help">Trang đang mở trong Claude nên dùng lượt Claude của chính tài khoản bạn. Trang không thấy mật khẩu hay khóa của bạn. Quyền bên dưới vẫn áp dụng.</p>
+      <div class="row" style="display:flex;justify-content:flex-start;gap:8px;flex-wrap:wrap"><button class="btn small primary" data-act="lconnect">Kết nối hoặc thử lại</button><button class="btn small" data-act="ldisc">Ngắt kết nối</button><button class="btn small ghost" data-act="lperm">Quản lý quyền của Claude</button></div>`;
+  }else if(!SV.ok){
+    conn=`<p class="notice warn">Kết nối bằng khóa API chỉ có trên bản web chính thức của PRIME (có máy chủ). Ở chế độ xem này, hãy mở trang trong Claude để dùng gia sư AI.</p>`;
+  }else if(s&&!s.global){
+    conn=`<p class="notice warn">Giáo viên đang tắt AI cho cả lớp. Khi bật lại bạn sẽ dùng được.</p>`;
+  }else if(s&&s.blocked){
+    conn=`<p class="notice warn">Giáo viên đã tắt AI cho tài khoản của bạn. Hãy hỏi thầy cô nếu cần dùng.</p>`;
+  }else if(s&&s.connected){
+    conn=`<p><span class="pill ok">Đã kết nối</span> <span class="help">Khóa ••••${esc(s.last4||'')}${s.since?' · từ '+esc(new Date(s.since).toLocaleDateString('vi-VN')):''}</span></p>
+      <p class="help">Hôm nay bạn đã hỏi ${+s.used||0}/${+s.limit>=9999?'không giới hạn':+s.limit} lượt trên máy chủ. Mỗi câu hỏi dùng số dư của khóa này.</p>
+      <div class="row" style="display:flex;justify-content:flex-start;gap:8px"><button class="btn small danger" data-act="ailoff">Ngắt kết nối và xóa khóa</button></div>`;
+  }else{
+    conn=`<p><span class="pill">Chưa kết nối</span></p>
+      <p class="help">Dán khóa API Claude của bạn để dùng gia sư AI. Khóa được mã hóa trên máy chủ, không hiện lại và không gửi về trình duyệt. Mỗi câu hỏi tính vào số dư của khóa đó, nên học sinh hãy nhờ phụ huynh hoặc thầy cô tạo khóa tại console.anthropic.com.</p>
+      <form class="f" onsubmit="return false"><div class="field"><label for="ail_key">Khóa API Claude</label><input id="ail_key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…" ${AIL.busy?'disabled':''}><p class="err" id="e_ail_key" role="alert"></p></div>
+      <div class="row" style="justify-content:flex-start"><button class="btn primary" type="button" data-act="ailconnect" ${AIL.busy?'disabled':''}>${AIL.busy?'Đang kết nối…':'Kết nối Claude'}</button></div></form>`;
+  }
+  const rows=PERM_LIST.map(([k,t,d])=>`<label class="permrow"><input type="checkbox" data-perm="${k}" ${p[k]?'checked':''}><span><b>${t}</b><br><span class="help">${d}</span></span></label>`).join('');
+  const consent=store.get('perms_'+u.id,{}).at;
+  let teacher='';
+  if(u.role==='admin'){
+    const A=AIL.adm;
+    if(!SV.ok)teacher=`<div class="card"><h3>Quản lý AI của lớp</h3><p class="help">Có trên bản web chính thức có máy chủ.</p></div>`;
+    else if(!A)teacher=`<div class="card"><h3>Quản lý AI của lớp</h3><p class="help">Đang tải…</p></div>`;
+    else teacher=`<div class="card"><h3 style="margin-bottom:10px">Quản lý AI của lớp</h3>
+      <label class="permrow"><input type="checkbox" id="aiGlobal" ${A.global?'checked':''}><span><b>Bật AI cho cả lớp</b><br><span class="help">Tắt thì không ai dùng được AI, kể cả khi đã kết nối.</span></span></label>
+      <div style="overflow-x:auto"><table class="ptbl"><thead><tr><th>Học sinh</th><th>Lớp</th><th>Đã kết nối</th><th>Lượt hôm nay</th><th>Tắt AI</th></tr></thead><tbody>
+      ${(A.users||[]).map(x=>`<tr><td>${esc(x.name)}<br><small class="help">${esc(x.login)}</small></td><td>${esc(x.cls||'')}</td><td>${x.connected?'Có':'Chưa'}</td><td>${+x.used||0}</td><td><input type="checkbox" data-aiblock="${esc(x.id)}" ${x.blocked?'checked':''} aria-label="Tắt AI cho ${esc(x.name)}"></td></tr>`).join('')||'<tr><td colspan="5" class="help">Chưa có học sinh.</td></tr>'}
+      </tbody></table></div><p class="help" style="margin-top:8px">Giáo viên không xem được khóa API của học sinh.</p></div>`;
+  }
+  return `<div class="view wrap" style="padding-block:40px">${head}
+    <div class="grid" style="gap:16px;max-width:760px">
+    <div class="card"><h3 style="margin-bottom:10px">Kết nối Claude</h3>${conn}</div>
+    <div class="card"><h3 style="margin-bottom:6px">Quyền của bạn</h3>${rows}
+      <p class="help" style="margin-top:10px">${consent?'Bạn chỉnh quyền lần cuối lúc '+esc(new Date(consent).toLocaleString('vi-VN'))+'.':'Bạn chưa đồng ý quyền nào.'}</p></div>
+    <div class="card"><h3 style="margin-bottom:8px">Dữ liệu nào được gửi đi</h3>
+      <p><b>Có gửi tới Claude:</b> nội dung câu hỏi, vài tin nhắn gần nhất trong cuộc trò chuyện, và (nếu bạn bật) tên cùng nội dung bài đang xem.</p>
+      <p style="margin-top:8px"><b>Không gửi:</b> mật khẩu, họ tên, lớp, ảnh đại diện, tiến độ học, tin nhắn của bạn bè.</p>
+      <p class="help" style="margin-top:8px">Đừng nhập thông tin cá nhân vào khung chat. Học sinh dưới 16 tuổi nên có phụ huynh biết trước khi dùng AI.</p></div>
+    ${teacher}
+    <div class="card"><h3 style="margin-bottom:8px">Quản lý dữ liệu</h3>
+      <div class="row" style="display:flex;justify-content:flex-start;gap:8px;flex-wrap:wrap"><button class="btn small danger" data-act="permrevoke">Thu hồi tất cả quyền</button><button class="btn small danger" data-act="aiwipe">Xóa dữ liệu AI của tôi</button><button class="btn small ghost" data-act="go" data-go="privacy">Chính sách bảo mật</button></div></div>
+    </div></div>`;
+}
+
 function paletteForPrompt(){
   return PAL.map(p=>p.name+': '+p.items.map(i=>i[0].replace(/\n/g,' ⏎ ')).join(' | ')).join('\n');
 }
@@ -2161,7 +2342,7 @@ function loadConvs(){
   c.convs=list.filter(x=>x&&Array.isArray(x.turns));
 }
 const curConv=()=>state.chat.convs.find(x=>x.id===state.chat.cur)||null;
-const curCtx=()=>{const cv=curConv();const id=cv?cv.ctx:state.chat.ctx;return id?lessonsAll().find(x=>x.id===id)||null:null};
+const curCtx=()=>{if(me()&&!perms().ctx)return null;const cv=curConv();const id=cv?cv.ctx:state.chat.ctx;return id?lessonsAll().find(x=>x.id===id)||null:null};
 function saveChat(){store.set(state.chat.key,state.chat.convs.filter(x=>x.turns.length).slice(0,40).map(x=>({...x,turns:x.turns.slice(-40)})))}
 
 /* ---- nhận diện câu hỏi ---- */
@@ -2308,9 +2489,9 @@ async function sendQ(q,regen){
   if(cv.title==='Cuộc trò chuyện mới')cv.title=q.slice(0,40);
   cv.ts=Date.now();saveChat();renderMsgs();refreshList();
   if(state.ai==='pending'&&aiReadyP)await aiReadyP;
-  const off=store.get('claudeOff',false);
-  if(!sampleFn||off){
-    const ids=localSearch(q),why=off?'Bạn đã ngắt kết nối Claude (bấm nhãn “Claude” phía trên để kết nối lại).':'AI chưa dùng được ở chế độ xem này.';
+  const off=store.get('claudeOff',false),noPerm=!!me()&&!perms().ai;
+  if(!sampleFn||off||noPerm){
+    const ids=localSearch(q),why=noPerm?'Bạn chưa bật quyền “Dùng gia sư AI”. Mở trang Quyền (menu tài khoản) để bật.':off?'Bạn đã ngắt kết nối Claude (bấm nhãn “Claude” phía trên để kết nối lại).':AIL.why();
     cv.turns.push({role:'assistant',local:true,ids,content:ids.length?why+' Đây là các bài có sẵn gần với câu hỏi của bạn:':why+' Mình chưa tìm thấy bài nào gần với câu hỏi. Hãy thử từ khóa ngắn hơn, ví dụ “vòng lặp”, “biến”, “SUM”.'});
     saveChat();renderMsgs();return;
   }
@@ -2427,6 +2608,7 @@ function account(){
     <div class="split">
       <div class="card"><h3 style="margin-bottom:14px">Tiến độ học</h3><div style="display:flex;flex-direction:column;gap:14px">${rows}</div>
         <p class="help" style="margin-top:14px">Đã học ${all.filter(l=>d[l.id]).length}/${all.length} bài.</p>${u.role!=='admin'?`<p style="margin-top:12px"><button class="btn small" data-act="go" data-go="stats">Xem tiến bộ và huy hiệu</button></p>`:''}</div>
+      <div class="card"><h3 style="margin-bottom:8px">Quyền và Claude</h3><p class="help" style="margin-bottom:12px">Kết nối Claude, bật hoặc tắt từng quyền và xóa dữ liệu AI của bạn.</p><button class="btn small" data-act="go" data-go="perm">Mở trang Quyền</button></div>
       ${u.role!=='admin'?avatarCard(u):''}
       <div class="card"><h3 style="margin-bottom:14px">Đổi mật khẩu</h3>
         <form class="f" data-form="chpw" novalidate>
@@ -2787,7 +2969,7 @@ function dictList(){
       <p><span class="pill" style="border-color:${cat.color}">${cat.name} · ${cat.vi}</span></p>
       <p>${esc(vi)}</p>
       <p class="help"><b>Dùng khi:</b> ${esc(useOf(cat,code))}</p>
-      <div class="row" style="justify-content:flex-start;gap:8px;flex-wrap:wrap">
+      <div class="row" style="display:flex;justify-content:flex-start;gap:8px;flex-wrap:wrap">
         <button class="btn small" data-act="dopen" data-i="${esc(key)}">${open?'Ẩn ví dụ':'Xem ví dụ'}</button>
         <button class="btn small ghost" data-act="dask" data-i="${esc(key)}">Hỏi AI về khối này</button></div>
       ${open?`<div class="dex">${ws(exampleOf(code))}${ls.length?`<p class="help" style="margin-top:8px">Bài tập dùng khối này: ${ls.map(l=>`<button class="crumb" style="text-decoration:underline" data-act="go" data-go="lesson" data-id="${l.id}">${esc(l.title)}</button>`).join(', ')}</p>`:''}</div>`:''}
@@ -2913,12 +3095,12 @@ function qaPage(){
     detail=`<div class="card qdet"><button class="crumb" data-act="qclose">← Danh sách câu hỏi</button>
       <h2 style="font-size:1.4rem;margin:8px 0">${esc(open.title)}</h2><p><span class="pill">${tagName(open.tag)}</span> <span class="help">${esc(open.n)} · ${fmtDate(open.ts)}</span></p>
       ${open.body?`<p style="white-space:pre-wrap;margin-block:10px">${esc(open.body)}</p>`:''}
-      <div class="row" style="justify-content:flex-start;gap:8px;flex-wrap:wrap"><button class="btn small" data-act="qai" data-id="${open.id}">Nhờ AI trả lời thử</button>
+      <div class="row" style="display:flex;justify-content:flex-start;gap:8px;flex-wrap:wrap"><button class="btn small" data-act="qai" data-id="${open.id}">Nhờ AI trả lời thử</button>
         ${u&&(u.login===open.a||canMod())?`<button class="btn small danger" data-act="qdel" data-id="${open.id}">Xóa câu hỏi</button>`:`<button class="mact" data-act="report" data-c="qa" data-id="${open.id}">Báo cáo</button>`}</div>
       <h3 style="margin:18px 0 8px">${as.length} trả lời</h3>
       ${as.map(a=>{const th=R.a[a.id]?R.a[a.id].size:0,mine=u&&R.a[a.id]&&R.a[a.id].has(u.login);
         return `<div class="ans ${open.best===a.id?'best':''}">${open.best===a.id?'<span class="pill ok">Câu trả lời hay nhất</span>':''}<p style="white-space:pre-wrap">${esc(a.text)}</p>
-        <div class="row" style="justify-content:flex-start;gap:8px;flex-wrap:wrap"><span class="help">${esc(a.n)} · ${fmtDate(a.ts)}${a.hidden?' · đã ẩn':''}</span>
+        <div class="row" style="display:flex;justify-content:flex-start;gap:8px;flex-wrap:wrap"><span class="help">${esc(a.n)} · ${fmtDate(a.ts)}${a.hidden?' · đã ẩn':''}</span>
         <button class="btn small ${mine?'primary':''}" data-act="qthanks" data-id="${a.id}" aria-pressed="${!!mine}">Cảm ơn ${th}</button>
         ${canBest?`<button class="btn small" data-act="qbest" data-id="${a.id}">${open.best===a.id?'Bỏ chọn':'Chọn hay nhất'}</button>`:''}
         ${u&&(u.login===a.a||canMod())?`<button class="mact" data-act="adel" data-id="${a.id}">Xóa</button>`:`<button class="mact" data-act="report" data-c="answers" data-id="${a.id}">Báo cáo</button>`}
@@ -3345,7 +3527,11 @@ function commClick(a,el,id){
     case 'lpanel':state.chat.lp=!state.chat.lp;refreshLink();return true;
     case 'lconnect':testLink();return true;
     case 'ldisc':store.set('claudeOff',true);toast('Đã ngắt kết nối Claude trên trang này');refreshLink();return true;
-    case 'lperm':(async()=>{try{const pm=await window.claude.use('permissions');await pm.manage()}catch(e){toast('Hãy mở menu Permissions của trang để chỉnh quyền.')}})();return true;
+    case 'ailconnect':AIL.connect();return true;
+    case 'ailoff':AIL.off();return true;
+    case 'aiwipe':AIL.wipe();return true;
+    case 'permrevoke':AIL.revoke();return true;
+    case 'lperm':if(!nativeSample){go('perm');return true}(async()=>{try{const pm=await window.claude.use('permissions');await pm.manage()}catch(e){toast('Hãy mở menu Permissions của trang để chỉnh quyền.')}})();return true;
     case 'fcopy':if(u)copyText(u.login);return true;
     case 'fquick':sendFriend(id);return true;
     case 'frtab':state.fr.tab=el.dataset.v;render();return true;
@@ -3372,7 +3558,7 @@ function commClick(a,el,id){
 
 /* ---------- render ---------- */
 function render(){
-  const v={home,auth,lessons,lesson,ask,blocks:blocksPage,portfolio:gallery,gallery,qa:qaPage,friends:friendsPage,stats:statsPage,account,admin,about,contact,privacy}[state.route.name]||home;
+  const v={home,auth,lessons,lesson,ask,blocks:blocksPage,portfolio:gallery,gallery,qa:qaPage,friends:friendsPage,stats:statsPage,account,admin,about,contact,privacy,perm:permPage}[state.route.name]||home;
   FX.swap(()=>{$('#main').innerHTML=v(state.route.id)});
   renderChrome();
   document.title='PRIME Tin học 8';
@@ -3524,7 +3710,7 @@ function onClick(e){
     case 'logout':{
       if(SV.ok&&SV.token){const t=SV.token;svFlush().then(()=>rpc('app_logout',{p_token:t})).catch(()=>{});SV.token=null;SV.user=null;SV.list=[];SV.prog={};SV.msgs=[];store.set('sbsess',null)}
       else store.set('session',null);
-      state.chat.key=null;CM.lastProf='';toast('Đã đăng xuất');go('home');break}
+      state.chat.key=null;CM.lastProf='';AIL.st=null;AIL.adm=null;AIL.sync();toast('Đã đăng xuất');go('home');break}
     case 'topicgo':state.filter={cd:el.dataset.v,q:''};go('lessons');break;
     case 'topic':state.filter.cd=el.dataset.v;updateList();break;
     case 'paltab':state.palTab=el.dataset.v;render();break;
@@ -3604,6 +3790,9 @@ function onInput(e){
   else if(t.id==='dq'){state.dict.q=t.value;const l=$('#dlist');if(l)l.innerHTML=dictList()}
   else if(t.id==='dfavonly'){state.dict.fav=t.checked;const l=$('#dlist');if(l)l.innerHTML=dictList()}
   else if(t.id==='qsearch'){state.qa.q=t.value;render();const e=$('#qsearch');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}}
+  else if(t.dataset&&t.dataset.perm&&e.type==='change'){setPerm(t.dataset.perm,t.checked)}
+  else if(t.dataset&&t.dataset.aiblock&&e.type==='change'){AIL.block(t.dataset.aiblock,t.checked)}
+  else if(t.id==='aiGlobal'&&e.type==='change'){AIL.global(t.checked)}
   else if(t.id==='shareProg'&&SV.ok&&SV.user){const v=t.checked;SV.user.share=v;rpc('app_set_share',{p_token:SV.token,p_share:v}).catch(()=>{});syncProfile();toast(v?'Bạn bè đã xem được tiến độ của bạn':'Đã ẩn tiến độ khỏi bạn bè')}
   else if(t.id==='shareProg'){const us=users(),x=us.find(a=>a.id===(me()||{}).id);if(x){x.share=t.checked;store.set('users',us);syncProfile();toast(t.checked?'Bạn bè đã xem được tiến độ của bạn':'Đã ẩn tiến độ khỏi bạn bè')}}
   else if(t.id==='csearch'){state.chat.q=t.value;refreshList()}
