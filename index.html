@@ -2128,14 +2128,14 @@ function setPerm(k,v,quiet){
   if(k==='ai')AIL.sync();
   if(!quiet){toast(v?'Đã bật quyền':'Đã tắt quyền');render()}
 }
-const AIL_ERR={bad_key_format:'Khóa chưa đúng dạng. Khóa Claude bắt đầu bằng sk-ant-.',bad_key:'Khóa không dùng được. Hãy kiểm tra lại hoặc tạo khóa mới.',no_credit:'Tài khoản của khóa này chưa có số dư để dùng.',rate_limited:'Khóa đang bị giới hạn tốc độ. Hãy đợi một lúc rồi thử lại.',no_consent:'Hãy bật quyền “Dùng gia sư AI” trước.',blocked:'Giáo viên đã tắt AI cho tài khoản của bạn.',ai_off:'Giáo viên đang tắt AI cho cả lớp.',not_connected:'Bạn chưa kết nối Claude.',limit:'Hôm nay bạn đã dùng hết lượt AI trên máy chủ. Mai thử lại nhé.',not_configured:'Máy chủ chưa cấu hình mã hóa khóa. Hãy báo giáo viên.',upstream:'Claude đang bận, hãy thử lại sau ít phút.',unauthorized:'Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.',net:'Không kết nối được máy chủ, hãy kiểm tra mạng.',too_large:'Cuộc trò chuyện quá dài, hãy bắt đầu cuộc mới.'};
+const AIL_ERR={bad_key_format:'Khóa chưa đúng dạng. Khóa Claude bắt đầu bằng sk-ant-.',bad_key:'Khóa không dùng được. Hãy kiểm tra lại hoặc tạo khóa mới.',no_credit:'Tài khoản của khóa này chưa có số dư để dùng.',rate_limited:'Khóa đang bị giới hạn tốc độ. Hãy đợi một lúc rồi thử lại.',no_consent:'Hãy bật quyền “Dùng gia sư AI” trước.',blocked:'Giáo viên đã tắt AI cho tài khoản của bạn.',ai_off:'Giáo viên đang tắt AI cho cả lớp.',not_connected:'Bạn chưa kết nối Claude.',limit:'Hôm nay bạn đã dùng hết lượt AI trên máy chủ. Mai thử lại nhé.',not_configured:'Máy chủ chưa cấu hình mã hóa khóa. Hãy báo giáo viên.',upstream:'Claude báo lỗi khi xử lý yêu cầu.',unauthorized:'Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.',net:'Không kết nối được máy chủ, hãy kiểm tra mạng.',too_large:'Cuộc trò chuyện quá dài, hãy bắt đầu cuộc mới.'};
 const AIL={st:null,adm:null,busy:false,
   async fn(body,signal){
     let r;
     try{r=await fetch(SV.url+'/functions/v1/claude-link',{method:'POST',headers:{'apikey':SV.key,'Content-Type':'application/json'},body:JSON.stringify({...body,token:SV.token}),signal})}
     catch(e){if(e&&e.name==='AbortError'){const x=new Error('cancelled');x.code='cancelled';throw x}const x=new Error('net');x.code='net';throw x}
     let j=null;try{j=await r.json()}catch(e){}
-    if(!r.ok||!j||j.error){const x=new Error((j&&j.error)||'upstream');x.code=(j&&j.error)||'upstream';throw x}
+    if(!r.ok||!j||j.error){const x=new Error((j&&j.error)||'upstream');x.code=(j&&j.error)||'upstream';x.detail=j&&j.msg?('['+(j.status||'')+'] '+j.msg):'';throw x}
     return j;
   },
   usable(){const s=this.st;return !!(s&&s.connected&&s.global&&!s.blocked)},
@@ -2174,6 +2174,7 @@ const AIL={st:null,adm:null,busy:false,
       const c=e.code,x=new Error(c);
       x.code=c==='cancelled'?'cancelled':c==='unauthorized'?'session_expired':['no_consent','blocked','ai_off','not_connected','bad_key'].includes(c)?'not_granted':(c==='rate_limited'||c==='limit'||c==='no_credit')?'rate_limited':c==='too_large'?'prompt_too_large':'error';
       if(['bad_key','no_consent','blocked','ai_off','not_connected'].includes(c))AIL.load();
+      x.detail=e.detail;x.raw=c;
       throw x;
     }
     if(j.refused){const x=new Error('refused');x.code='refused';throw x}
@@ -2194,7 +2195,7 @@ const AIL={st:null,adm:null,busy:false,
       toast('Đã kết nối Claude (khóa ••••'+r.last4+')');
     }catch(e){
       this.busy=false;render();
-      const e2=$('#e_ail_key');if(e2)e2.textContent=AIL_ERR[e.code]||'Chưa kết nối được, bạn thử lại nhé.';
+      const e2=$('#e_ail_key');if(e2)e2.textContent=(AIL_ERR[e.code]||'Chưa kết nối được, bạn thử lại nhé.')+(e.code==='upstream'&&e.detail?' Chi tiết: '+e.detail:'');
       return;
     }
     this.busy=false;await this.load();render();
@@ -2535,6 +2536,8 @@ async function sendQ(q,regen){
       else if(code==='session_expired'){state.link='expired';refreshLink();msg='Phiên đăng nhập Claude đã hết hạn. Hãy đăng nhập lại Claude rồi hỏi tiếp.'}
       else if(code==='refused')msg='AI không trả lời câu hỏi này. Bạn thử diễn đạt lại theo bài Tin học 8 nhé.';
       else if(code==='prompt_too_large')msg='Cuộc trò chuyện đã quá dài. Hãy bấm “Cuộc trò chuyện mới” rồi hỏi lại.';
+      if(code==='error'&&e.detail)msg+=' (Chi tiết: '+e.detail+')';
+      if(code==='error'&&e.raw==='bad_key')msg='Khóa Claude của bạn không còn dùng được. Hãy kết nối lại ở trang Quyền.';
       cv.turns.push({role:'assistant',err:true,content:msg});
       saveChat();renderMsgs();
     }
