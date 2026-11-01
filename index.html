@@ -626,6 +626,15 @@ b,strong{font-weight:600}
 .qznav{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
 .qzprev{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px;background:var(--bg)}
 .qzpq{padding:8px 0;border-bottom:1px solid var(--line);font-size:.92rem}.qzpq:last-child{border-bottom:0}.qzpq div{padding-left:10px;color:var(--muted)}.qzpq div.good{color:var(--green);font-weight:600}
+.qzcard{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px;background:var(--surface)}.qzcard.bad{border-color:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 12%,transparent)}
+.qzch{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.qzcb{display:flex;gap:4px;flex-wrap:wrap}
+.qzlb{display:block;font-weight:600;font-size:.875rem;margin:8px 0 4px}
+.qzin{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:42px;font:inherit;color:inherit}.qzin:focus{border-color:var(--violet);outline:none;box-shadow:0 0 0 3px rgba(194,65,12,.12)}.qzin.mono{font-family:var(--f-mono);font-size:.88rem;line-height:1.5}textarea.qzin{resize:vertical}
+.qzopts2{display:flex;flex-direction:column;gap:10px}.qzor{display:flex;gap:10px;align-items:flex-start}.qzof{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.qzrad{flex:none;cursor:pointer;margin-top:6px}.qzrad input{position:absolute;opacity:0;pointer-events:none}.qzrad .qzl{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--surface2);font-weight:600;border:2px solid transparent;transition:background .15s,border-color .15s}.qzrad:hover .qzl{border-color:var(--violet)}.qzrad input:checked+.qzl{background:var(--green);color:#fff}.qzrad input:focus-visible+.qzl{outline:2px solid var(--violet);outline-offset:2px}
+.qzsw{display:inline-flex;gap:6px;align-items:center;font-size:.85rem;color:var(--muted);cursor:pointer;white-space:nowrap}.qzsw input{accent-color:var(--violet)}.qzor>.qzsw{margin-top:10px}
+.qzpv{max-width:100%;overflow-x:auto}.qzpv[hidden]{display:none}.qzot{min-width:0;flex:1;overflow-x:auto}.qzopt .ws{margin:0}.qzl2{font-weight:600}
+.qzbar{margin-top:14px;position:sticky;bottom:0;background:var(--surface);padding:10px 0;border-top:1px solid var(--line)}
 </style>
 
 <a class="skip" href="#main">Bỏ qua đến nội dung</a>
@@ -1627,7 +1636,7 @@ async function seed(){
 
 /* ---------- state & routing ---------- */
 const state={route:{name:'home',id:null},filter:{cd:'',q:''},authTab:'login',adminTab:'stats',editing:null,show:{},tempPw:null,seen:{},note:'',palTab:'motion',g:{sort:'new',form:false,open:null},qa:{tag:'',q:'',open:null,form:false},dict:{q:'',cat:'all',fav:false,open:{}},
-  qz:{screen:'list',sel:null,cfg:{mode:'practice',shuffle:true,timer:false,mins:''},run:null,admin:{title:'',topic:'0',cls:'',text:'',prev:null,editId:null,view:null}},
+  qz:{screen:'list',sel:null,cfg:{mode:'practice',shuffle:true,timer:false,mins:''},run:null,admin:{title:'',topic:'0',cls:'',text:'',prev:null,editId:null,view:null,mode:'gui',cards:[{q:'',qs:'',qsOn:false,o:['','','',''],os:[0,0,0,0],a:-1,e:''}],errs:{},showPrev:false,inited:false,draft:false}},
   fq:{tab:'q',pick:null,kind:'lessons',sheet:null,cheer:'bolt'},fr:{tab:'feed',n:8},chat:{lp:false,convs:[],key:null,cur:null,busy:false,ctl:null,ctx:null,draft:'',hint:false,sb:false,ren:null,q:''},ai:'pending'};
 const ROUTES=['home','auth','lessons','lesson','ask','blocks','portfolio','gallery','qa','friends','stats','account','admin','about','contact','privacy','perm','quiz'];
 function parseHash(){
@@ -2446,6 +2455,54 @@ const QZ={res:null,tm:null,
     render();
   }
 };
+const qzBlank=()=>({q:'',qs:'',qsOn:false,o:['','','',''],os:[0,0,0,0],a:-1,e:''});
+const cardsFromSet=qs=>qs.map(x=>({q:x.q||'',qs:x.qs||'',qsOn:!!x.qs,o:[0,1,2,3].map(j=>x.o[j]||''),os:[0,1,2,3].map(j=>(x.os&&x.os[j])?1:0),a:x.a,e:x.e||''}));
+const cardBlank=c=>!c.q.trim()&&!c.qs.trim()&&c.o.every(t=>!t.trim())&&!c.e.trim();
+function cardToQ(c){
+  const q=c.q.trim(),qs=c.qsOn?c.qs.trim():'';
+  if(!q&&!qs)return{err:'Chưa có nội dung câu hỏi.'};
+  const o=[],os=[],map={};
+  c.o.forEach((t,j)=>{if(t.trim()){map[j]=o.length;o.push(t.trim().slice(0,c.os[j]?1500:300));os.push(c.os[j]?1:0)}});
+  if(o.length<2)return{err:'Cần ít nhất 2 đáp án.'};
+  if(c.a<0||map[c.a]===undefined)return{err:'Chưa chọn đáp án đúng (bấm vào chữ A, B, C hoặc D).'};
+  if(new Set(o).size<o.length)return{err:'Có đáp án trùng nhau.'};
+  const r={q:q.slice(0,500),o,a:map[c.a],e:c.e.trim().slice(0,600)};
+  if(qs)r.qs=qs.slice(0,1500);
+  if(os.some(x=>x))r.os=os;
+  return{q:r};
+}
+const pvSet=(id,code)=>{const el=document.getElementById(id);if(!el)return;let h='';try{h=code&&code.trim()?blocks(code):''}catch(e){h='<p class="help">Không vẽ được khối lệnh này.</p>'}el.innerHTML=h;el.hidden=!h};
+const qHTML=q=>(q.q?`<span>${esc(q.q)}</span>`:'')+(q.qs?`<div class="ws mini qzpv">${blocks(q.qs)}</div>`:'');
+const optHTML=(q,j)=>q.os&&q.os[j]?`<div class="ws mini qzpv">${blocks(q.o[j])}</div>`:esc(q.o[j]);
+function qzDraftSave(){const A=state.qz.admin;store.set('qzdraft',{title:A.title,topic:A.topic,cls:A.cls,cards:A.cards,editId:A.editId,mode:A.mode})}
+function qzInitDraft(){
+  const A=state.qz.admin;if(A.inited)return;A.inited=true;
+  const d=store.get('qzdraft',null);
+  if(d&&Array.isArray(d.cards)&&d.cards.length){A.title=d.title||'';A.topic=d.topic||'0';A.cls=d.cls||'';A.cards=d.cards.map(c=>({...qzBlank(),...c}));A.editId=d.editId||null;A.draft=true}
+}
+function qzCardHTML(c,k,A){
+  const opt=j=>{
+    const on=!!c.os[j],L='ABCD'[j];
+    return `<div class="qzor"><label class="qzrad" title="Chọn làm đáp án đúng"><input type="radio" name="qza_${k}" data-qf="a" data-j="${j}" ${c.a===j?'checked':''}><span class="qzl">${L}</span></label>
+      <div class="qzof">${on?`<textarea class="qzin mono" data-qf="o" data-j="${j}" rows="3" aria-label="Đáp án ${L} (khối lệnh)" placeholder="when @greenFlag clicked&#10;move (10) steps">${esc(c.o[j])}</textarea>`:`<input class="qzin" data-qf="o" data-j="${j}" maxlength="300" value="${esc(c.o[j])}" aria-label="Đáp án ${L}" placeholder="Đáp án ${L}">`}
+        <div class="ws mini qzpv" id="pv_o_${k}_${j}" ${on&&c.o[j].trim()?'':'hidden'}>${on&&c.o[j].trim()?blocks(c.o[j]):''}</div></div>
+      <label class="qzsw"><input type="checkbox" data-qf="os" data-j="${j}" ${on?'checked':''}> Scratch</label></div>`};
+  return `<div class="qzcard ${A.errs&&A.errs[k]?'bad':''}" data-k="${k}"><div class="qzch"><b>Câu ${k+1}</b>
+    <span class="qzcb"><button class="btn small ghost" data-act="qzcup" data-id="${k}" ${k===0?'disabled':''} aria-label="Chuyển lên">↑</button><button class="btn small ghost" data-act="qzcdown" data-id="${k}" ${k===A.cards.length-1?'disabled':''} aria-label="Chuyển xuống">↓</button><button class="btn small ghost" data-act="qzcdup" data-id="${k}">Nhân đôi</button><button class="btn small danger" data-act="qzcdel" data-id="${k}">Xóa</button></span></div>
+    ${A.errs&&A.errs[k]?`<p class="err" role="alert">${esc(A.errs[k])}</p>`:''}
+    <label class="qzlb" for="qq_${k}">Câu hỏi</label><textarea id="qq_${k}" class="qzin" data-qf="q" rows="2" maxlength="500" placeholder="Nhập nội dung câu hỏi">${esc(c.q)}</textarea>
+    <label class="qzsw" style="margin:6px 0"><input type="checkbox" data-qf="qson" ${c.qsOn?'checked':''}> Câu hỏi có khối lệnh Scratch</label>
+    ${c.qsOn?`<textarea class="qzin mono" data-qf="qs" rows="5" aria-label="Khối lệnh của câu hỏi" placeholder="when @greenFlag clicked&#10;repeat (4)&#10;  move (100) steps&#10;  turn @turnRight (90) degrees&#10;end">${esc(c.qs)}</textarea><div class="ws qzpv" id="pv_q_${k}" ${c.qs.trim()?'':'hidden'}>${c.qs.trim()?blocks(c.qs):''}</div>`:''}
+    <p class="help" style="margin:8px 0 4px">Bấm chữ A, B, C hoặc D để chọn đáp án đúng.</p>
+    <div class="qzopts2">${[0,1,2,3].map(opt).join('')}</div>
+    <label class="qzlb" for="qe_${k}">Giải thích (không bắt buộc)</label><input id="qe_${k}" class="qzin" data-qf="e" maxlength="600" value="${esc(c.e)}" placeholder="Vì sao đáp án này đúng?"></div>`;
+}
+function qzGuiForm(A){
+  return `<div id="qzcards">${A.cards.map((c,k)=>qzCardHTML(c,k,A)).join('')}</div>
+    <div class="cta" style="margin-top:10px"><button class="btn primary" type="button" data-act="qzcadd">+ Thêm câu mới</button></div>
+    ${A.showPrev?`<h4 style="margin:16px 0 6px">Xem trước (như học sinh thấy)</h4><div class="qzprev" style="max-height:none">${A.cards.filter(c=>!cardBlank(c)).map((c,i)=>{const r=cardToQ(c);if(r.err)return `<div class="qzpq"><b>Câu ${i+1}</b><div class="err">${esc(r.err)}</div></div>`;const q=r.q;return `<div class="qzpq"><b>${i+1}. ${qHTML(q)}</b>${q.o.map((t,j)=>`<div class="${j===q.a?'good':''}"><span class="qzl2">${'ABCD'[j]}.</span> ${optHTML(q,j)}</div>`).join('')}</div>`}).join('')||'<p class="help">Chưa có câu nào.</p>'}</div>`:''}`;
+}
+
 const pctClass=p=>p>=80?'ok':p>=50?'warn':'bad';
 function quizPage(){
   const S=QZ.S(),sc=S.screen,u=me();
@@ -2482,15 +2539,15 @@ function quizRun(r){
     let cls='qzopt';
     if(test&&chosen===oi)cls+=' sel';
     if(shown){if(oi===q.a)cls+=' good';else if(oi===chosen)cls+=' badc'}
-    return `<button class="${cls}" data-act="qzpick" data-id="${oi}" ${shown?'disabled':''}><span class="qzl">${'ABCD'[k]}</span><span>${esc(q.o[oi])}</span></button>`}).join('');
+    return `<button class="${cls}" data-act="qzpick" data-id="${oi}" ${shown?'disabled':''}><span class="qzl">${'ABCD'[k]}</span><span class="qzot">${optHTML(q,oi)}</span></button>`}).join('');
   const pal=test?`<div class="qzpal" aria-label="Danh sách câu">${r.items.map((_,k)=>`<button class="${k===r.i?'cur':''} ${r.ans[k]!==undefined?'ans':''} ${r.flag[k]?'flg':''}" data-act="qzgo" data-id="${k}" aria-label="Câu ${k+1}">${k+1}</button>`).join('')}</div>`:'';
   const left=r.deadline?Math.max(0,Math.round((r.deadline-Date.now())/1000)):0;
   return `<div class="view wrap" style="padding-block:28px"><div class="qzwrap">
     <div class="qztop"><button class="crumb" data-act="qzquit">← Thoát</button><span class="help">${esc(s.title)}</span>${r.deadline?`<span class="qztimer" id="qzTimer">${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}</span>`:''}</div>
     <div class="progress" style="margin:6px 0 4px"><i style="width:${pctDone}%"></i></div>
     <p class="help" style="margin-bottom:12px">Câu ${r.i+1}/${r.n}${test?' · đã trả lời '+answered:''}</p>
-    <div class="card qzq"><h2 style="font-size:1.25rem;line-height:1.4;margin-bottom:14px">${esc(q.q)}</h2><div class="qzopts">${opts}</div>
-    ${shown?`<div class="${chosen===q.a?'notice':'notice warn'}" style="margin-top:14px"><b>${chosen===q.a?'Chính xác!':'Chưa đúng.'}</b> Đáp án đúng là <b>${'ABCD'[it.ord.indexOf(q.a)]}. ${esc(q.o[q.a])}</b>.${q.e?'<br>'+esc(q.e):''}</div>`:''}</div>
+    <div class="card qzq"><h2 style="font-size:1.25rem;line-height:1.4;margin-bottom:14px">${qHTML(q)}</h2><div class="qzopts">${opts}</div>
+    ${shown?`<div class="${chosen===q.a?'notice':'notice warn'}" style="margin-top:14px"><b>${chosen===q.a?'Chính xác!':'Chưa đúng.'}</b> Đáp án đúng là <b>${'ABCD'[it.ord.indexOf(q.a)]}${q.os&&q.os[q.a]?'':'. '+esc(q.o[q.a])}</b>.${q.e?'<br>'+esc(q.e):''}</div>`:''}</div>
     ${pal}
     <div class="qznav">
       ${test?`<button class="btn small" data-act="qzprev" ${r.i===0?'disabled':''}>Câu trước</button><button class="btn small ghost" data-act="qzflag">${r.flag[r.i]?'Bỏ đánh dấu':'Đánh dấu xem lại'}</button>`:''}
@@ -2514,7 +2571,7 @@ function quizResult(r){
         ${cd?`<button class="btn small ghost" data-act="qzreview">Xem lại bài học chủ đề ${cd.n}</button>`:''}
         <button class="btn small ghost" data-act="qzback">Danh sách bộ đề</button></div></div>
     ${wrong.length?`<h3 style="margin:22px 0 10px">Các câu cần xem lại</h3><div class="grid" style="gap:12px">${wrong.map(({it,k})=>{const q=s.qs[it.si],ch=r.ans[k];
-      return `<div class="card"><p><b>${esc(q.q)}</b></p><p style="margin-top:8px"><span class="pill bad">Bạn chọn</span> ${ch===undefined?'<i>Chưa trả lời</i>':esc(q.o[ch])}</p><p style="margin-top:4px"><span class="pill ok">Đáp án đúng</span> ${esc(q.o[q.a])}</p>${q.e?`<p class="help" style="margin-top:8px">${esc(q.e)}</p>`:''}</div>`}).join('')}</div>`:''}
+      return `<div class="card"><p><b>${qHTML(q)}</b></p><div style="margin-top:8px"><span class="pill bad">Bạn chọn</span> ${ch===undefined?'<i>Chưa trả lời</i>':optHTML(q,ch)}</div><div style="margin-top:4px"><span class="pill ok">Đáp án đúng</span> ${optHTML(q,q.a)}</div>${q.e?`<p class="help" style="margin-top:8px">${esc(q.e)}</p>`:''}</div>`}).join('')}</div>`:''}
   </div></div>`;
 }
 function adminQuiz(){
@@ -2530,21 +2587,25 @@ function adminQuiz(){
       detail=`<div class="card" style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><h3>Kết quả: ${esc(s.title)}</h3><span><button class="btn small" data-act="qzadmrefresh">Làm mới</button> <button class="btn small ghost" data-act="qzadmview" data-id="">Đóng</button></span></div>
       ${rows.length?`<div class="tbl" style="margin-top:12px"><table><thead><tr><th>Học sinh</th><th>Lớp</th><th>Lần gần nhất</th><th>Cao nhất</th><th>Số lần</th></tr></thead><tbody>${rows.map(({u,m})=>`<tr><td>${esc(u.name)}</td><td>${esc(u.cls||'')}</td><td>${m.ok}/${m.n} (${m.last}%)</td><td>${m.best}%</td><td>${m.tries}</td></tr>`).join('')}</tbody></table></div>
       <p class="help" style="margin-top:8px">Trung bình lần gần nhất: ${Math.round(rows.reduce((a,x)=>a+x.m.last,0)/rows.length)}% · ${rows.length}/${users_.length} học sinh đã làm.</p>
-      ${top.length?`<h4 style="margin:14px 0 6px">Câu nhiều bạn sai nhất</h4><ol style="margin:0;padding-left:20px">${top.map(([i,c])=>`<li>${esc((s.qs[i]||{}).q||'')} <span class="help">(${c} bạn sai)</span></li>`).join('')}</ol>`:''}`
+      ${top.length?`<h4 style="margin:14px 0 6px">Câu nhiều bạn sai nhất</h4><ol style="margin:0;padding-left:20px">${top.map(([i,c])=>`<li>${esc((s.qs[i]||{}).q||'(câu hỏi dạng khối lệnh)')} <span class="help">(${c} bạn sai)</span></li>`).join('')}</ol>`:''}`
       :'<p class="help" style="margin-top:10px">Chưa có học sinh nào làm bộ đề này.</p>'}</div>`}
   }
-  const prev=A.prev;
+  qzInitDraft();
+  const prev=A.prev,gui=A.mode==='gui';
+  const nValid=gui?A.cards.filter(c=>!cardBlank(c)).length:(prev?prev.qs.length:0);
   const form=`<div class="card" style="margin-bottom:20px"><h3 style="margin-bottom:6px">${A.editId?'Sửa bộ đề':'Đăng bộ đề ôn tập mới'}</h3>
-    <p class="help" style="margin-bottom:12px">Dán câu hỏi vào ô bên dưới hoặc chọn file .txt / .csv. Mỗi câu gồm câu hỏi, các đáp án A, B, C, D và một dòng “Đáp án: X”. Dòng “Giải thích:” là tùy chọn.</p>
+    ${A.draft&&!A.editId?'<p class="notice" style="margin-bottom:10px">Đã khôi phục bản nháp chưa đăng của bạn.</p>':''}
     <form class="f" onsubmit="return false">
-    ${field('qz_title','Tên bộ đề',`<input id="qz_title" maxlength="90" value="${esc(A.title)}" placeholder="Ví dụ: Ôn tập bảng tính">`)}
+    ${field('qz_title','Tên bộ đề',`<input id="qz_title" maxlength="90" value="${esc(A.title)}" placeholder="Ví dụ: Ôn tập Scratch">`)}
     <div class="row2">${field('qz_topic','Chủ đề',`<select id="qz_topic"><option value="0" ${A.topic==='0'?'selected':''}>Tổng hợp</option>${CD.map(c=>`<option value="${c.n}" ${String(A.topic)===String(c.n)?'selected':''}>${c.n}. ${esc(c.name)}</option>`).join('')}</select>`)}
     ${field('qz_cls','Lớp (để trống = tất cả)',`<input id="qz_cls" maxlength="6" value="${esc(A.cls)}" placeholder="8A">`)}</div>
+    <div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="${gui}" data-act="qzmode" data-id="gui">Soạn từng câu</button><button type="button" role="tab" aria-selected="${!gui}" data-act="qzmode" data-id="text">Dán nhanh</button></div>
+    ${gui?qzGuiForm(A):`<p class="help">Dán câu hỏi hoặc chọn file .txt / .csv. Mỗi câu gồm câu hỏi, các đáp án A, B, C, D và dòng “Đáp án: X”. Chế độ này không nhập được khối lệnh Scratch, hãy dùng “Soạn từng câu” cho câu có khối lệnh.</p>
     <div class="field"><label for="qzFile">Chọn file câu hỏi</label><input type="file" id="qzFile" accept=".txt,.csv,.md,text/plain,text/csv"><p class="err" id="e_qzFile" role="alert"></p></div>
-    ${field('qz_text','Nội dung câu hỏi',`<textarea id="qz_text" style="min-height:220px;font-family:var(--f-mono)" placeholder="1. Câu hỏi?&#10;A. ...&#10;B. ...&#10;C. ...&#10;D. ...&#10;Đáp án: A">${esc(A.text)}</textarea>`,'Có thể đánh dấu sao * trước đáp án đúng thay cho dòng “Đáp án”. File .csv dùng cột: câu hỏi, A, B, C, D, đáp án, giải thích.')}
-    <div class="cta"><button class="btn small" type="button" data-act="qzsample">Chèn mẫu định dạng</button><button class="btn small" type="button" data-act="qzparse">Xem trước</button>
-      <button class="btn primary small" type="button" data-act="qzsaveset" ${prev&&prev.qs.length&&A.title.trim()?'':'disabled'}>${A.editId?'Lưu thay đổi':'Đăng bộ đề'}</button>${A.editId||A.text?`<button class="btn small ghost" type="button" data-act="qzclear">Xóa form</button>`:''}</div></form>
-    ${prev?`<div style="margin-top:14px"><p><b>${prev.qs.length}</b> câu hợp lệ${prev.errs.length?`, <b style="color:var(--red)">${prev.errs.length}</b> lỗi`:''}.</p>
+    ${field('qz_text','Nội dung câu hỏi',`<textarea id="qz_text" style="min-height:220px;font-family:var(--f-mono)" placeholder="1. Câu hỏi?&#10;A. ...&#10;B. ...&#10;C. ...&#10;D. ...&#10;Đáp án: A">${esc(A.text)}</textarea>`,'Có thể đánh dấu sao * trước đáp án đúng. File .csv dùng cột: câu hỏi, A, B, C, D, đáp án, giải thích.')}`}
+    <div class="cta qzbar">${gui?`<button class="btn small" type="button" data-act="qzgprev">${A.showPrev?'Ẩn xem trước':'Xem trước toàn bộ'}</button>`:`<button class="btn small" type="button" data-act="qzsample">Chèn mẫu định dạng</button><button class="btn small" type="button" data-act="qzparse">Xem trước</button>`}
+      <button class="btn primary small" type="button" data-act="qzsaveset">${A.editId?'Lưu thay đổi':'Đăng bộ đề'}${gui?' ('+nValid+' câu)':''}</button>${A.editId||A.text||nValid?`<button class="btn small ghost" type="button" data-act="qzclear">Xóa form</button>`:''}</div></form>
+    ${!gui&&prev?`<div style="margin-top:14px"><p><b>${prev.qs.length}</b> câu hợp lệ${prev.errs.length?`, <b style="color:var(--red)">${prev.errs.length}</b> lỗi`:''}.</p>
       ${prev.errs.length?`<ul class="err" style="padding-left:18px;margin:6px 0">${prev.errs.slice(0,12).map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`:''}
       ${prev.qs.length?`<div class="qzprev">${prev.qs.slice(0,50).map((x,i)=>`<div class="qzpq"><b>${i+1}. ${esc(x.q)}</b>${x.o.map((t,j)=>`<div class="${j===x.a?'good':''}">${'ABCD'[j]}. ${esc(t)}</div>`).join('')}${x.e?`<small class="help">${esc(x.e)}</small>`:''}</div>`).join('')}</div>`:''}</div>`:''}</div>`;
   const list=sets.length?`<div class="tbl"><table><thead><tr><th>Bộ đề</th><th>Chủ đề</th><th>Lớp</th><th>Số câu</th><th>Đã làm</th><th>Trạng thái</th><th></th></tr></thead><tbody>
@@ -2553,7 +2614,7 @@ function adminQuiz(){
     :'<div class="empty">Chưa có bộ đề nào. Hãy đăng bộ đề đầu tiên ở trên.</div>';
   return `${detail}${form}<h3 style="margin-bottom:10px">Các bộ đề đã đăng</h3>${list}`;
 }
-function qzAdminSync(){const A=state.qz.admin;const g=id=>{const e=document.getElementById(id);return e?e.value:null};['title','topic','cls','text'].forEach(k=>{const v=g('qz_'+k);if(v!==null)A[k]=v})}
+function qzAdminSync(){const A=state.qz.admin;const g=id=>{const e=document.getElementById(id);return e?e.value:null};['title','topic','cls','text'].forEach(k=>{const v=g('qz_'+k);if(v!==null)A[k]=v});if(A.mode==='gui')qzDraftSave()}
 async function qzAct(a,el,id){
   const S=state.qz,A=S.admin;
   switch(a){
@@ -2572,25 +2633,65 @@ async function qzAct(a,el,id){
       if(r.mode==='test'&&left>0&&!confirm('Bạn còn '+left+' câu chưa trả lời. Vẫn nộp bài?'))return true;
       QZ.finish();return true}
     case 'qzsample':qzAdminSync();A.text=QZ_SAMPLE;A.prev=null;render();return true;
-    case 'qzclear':A.title='';A.topic='0';A.cls='';A.text='';A.prev=null;A.editId=null;render();return true;
+    case 'qzclear':A.title='';A.topic='0';A.cls='';A.text='';A.prev=null;A.editId=null;A.cards=[qzBlank()];A.errs={};A.showPrev=false;A.draft=false;store.set('qzdraft',null);render();return true;
     case 'qzparse':{qzAdminSync();A.prev=parseQuiz(A.text);render();return true}
+    case 'qzmode':{
+      qzAdminSync();if(A.mode===id)return true;
+      if(id==='text'){
+        const ok=A.cards.filter(c=>!cardBlank(c));
+        if(ok.some(c=>c.qsOn||c.os.some(x=>x))){toast('Có câu dùng khối lệnh Scratch, không chuyển sang Dán nhanh được.');return true}
+        const qs=ok.map(c=>cardToQ(c)).filter(r=>r.q).map(r=>r.q);
+        A.text=serializeQuiz({qs});A.prev=null;A.mode='text';
+      }else{
+        const p=parseQuiz(A.text||'');
+        if(p.qs.length)A.cards=cardsFromSet(p.qs);
+        if(p.errs.length)toast(p.errs.length+' câu lỗi không được chuyển sang.');
+        A.mode='gui';A.errs={};
+      }
+      render();return true}
+    case 'qzgprev':A.showPrev=!A.showPrev;render();return true;
+    case 'qzcadd':{A.cards.push(qzBlank());qzDraftSave();render();setTimeout(()=>{const t=document.getElementById('qq_'+(A.cards.length-1));if(t){t.scrollIntoView({behavior:'smooth',block:'center'});t.focus({preventScroll:true})}},60);return true}
+    case 'qzcdel':{const k=+id,c=A.cards[k];if(!c)return true;if(!cardBlank(c)&&!confirm('Xóa câu '+(k+1)+'?'))return true;A.cards.splice(k,1);if(!A.cards.length)A.cards.push(qzBlank());A.errs={};qzDraftSave();render();return true}
+    case 'qzcdup':{const k=+id,c=A.cards[k];if(!c)return true;A.cards.splice(k+1,0,JSON.parse(JSON.stringify(c)));A.errs={};qzDraftSave();render();return true}
+    case 'qzcup':case 'qzcdown':{const k=+id,d=a==='qzcup'?-1:1,k2=k+d;if(k2<0||k2>=A.cards.length)return true;[A.cards[k],A.cards[k2]]=[A.cards[k2],A.cards[k]];A.errs={};qzDraftSave();render();return true}
     case 'qzsaveset':{
-      qzAdminSync();const p=parseQuiz(A.text);A.prev=p;
+      qzAdminSync();let qsOut=[];
+      if(A.mode==='gui'){
+        A.errs={};let bad=0;
+        A.cards.forEach((c,k)=>{if(cardBlank(c))return;const r=cardToQ(c);if(r.err){A.errs[k]=r.err;bad++}else qsOut.push(r.q)});
+        if(bad){render();toast('Có '+bad+' câu chưa hợp lệ, xem các thẻ viền đỏ.');setTimeout(()=>{const e=document.querySelector('.qzcard.bad');if(e)e.scrollIntoView({behavior:'smooth',block:'center'})},60);return true}
+      }else{
+        const p=parseQuiz(A.text);A.prev=p;qsOut=p.qs;
+        if(p.errs.length&&p.qs.length&&!confirm('Có '+p.errs.length+' câu bị lỗi và sẽ bị bỏ qua. Vẫn đăng '+p.qs.length+' câu hợp lệ?'))return true;
+      }
       if(!A.title.trim()){toast('Hãy nhập tên bộ đề');render();return true}
-      if(!p.qs.length){toast('Chưa có câu hỏi hợp lệ');render();return true}
-      if(p.errs.length&&!confirm('Có '+p.errs.length+' câu bị lỗi và sẽ bị bỏ qua. Vẫn đăng '+p.qs.length+' câu hợp lệ?'))return true;
+      if(!qsOut.length){toast('Chưa có câu hỏi hợp lệ');render();return true}
       const old=A.editId?QZ.get(A.editId):null;
-      const o={id:A.editId||('z~'+Date.now().toString(36)),title:A.title.trim().slice(0,90),topic:String(A.topic||'0'),cls:A.cls.trim().toUpperCase().slice(0,6),ts:old?old.ts:Date.now(),hidden:old?!!old.hidden:false,qs:p.qs};
-      try{await QZ.saveSet(o);toast('Đã đăng bộ đề “'+o.title+'”');A.title='';A.topic='0';A.cls='';A.text='';A.prev=null;A.editId=null;render()}
+      const o={id:A.editId||('z~'+Date.now().toString(36)),title:A.title.trim().slice(0,90),topic:String(A.topic||'0'),cls:A.cls.trim().toUpperCase().slice(0,6),ts:old?old.ts:Date.now(),hidden:old?!!old.hidden:false,qs:qsOut};
+      try{await QZ.saveSet(o);toast('Đã đăng bộ đề “'+o.title+'” ('+qsOut.length+' câu)');A.title='';A.topic='0';A.cls='';A.text='';A.prev=null;A.editId=null;A.cards=[qzBlank()];A.errs={};A.showPrev=false;A.draft=false;store.set('qzdraft',null);render()}
       catch(e){toast(e.code==='too_big'?'Bộ đề quá lớn, hãy chia nhỏ.':'Chưa lưu được, bạn thử lại nhé.')}
       return true}
-    case 'qzedit':{const s=QZ.get(id);if(!s)return true;A.editId=s.id;A.title=s.title;A.topic=String(s.topic||'0');A.cls=s.cls||'';A.text=serializeQuiz(s);A.prev=parseQuiz(A.text);render();scrollTo({top:0,behavior:'smooth'});return true}
+    case 'qzedit':{const s=QZ.get(id);if(!s)return true;A.editId=s.id;A.title=s.title;A.topic=String(s.topic||'0');A.cls=s.cls||'';A.cards=cardsFromSet(s.qs);A.mode='gui';A.errs={};A.showPrev=false;A.draft=false;qzDraftSave();render();scrollTo({top:0,behavior:'smooth'});return true}
     case 'qzhide':{const s=QZ.get(id);if(!s)return true;try{await QZ.saveSet({...s,hidden:!s.hidden});render()}catch(e){toast('Chưa lưu được.')}return true}
     case 'qzdel':{const s=QZ.get(id);if(!s||!confirm('Xóa bộ đề “'+s.title+'”? Không khôi phục được.'))return true;try{await QZ.delSet(id);if(A.view===id)A.view=null;if(A.editId===id)A.editId=null;toast('Đã xóa bộ đề');render()}catch(e){toast('Chưa xóa được.')}return true}
     case 'qzadmview':A.view=id||null;render();return true;
     case 'qzadmrefresh':QZ.loadAdm();toast('Đang làm mới…');return true;
   }
   return false;
+}
+function qzCardIn(t){
+  const A=state.qz.admin,ce=t.closest('[data-k]');if(!ce)return;
+  const k=+ce.dataset.k,c=A.cards[k];if(!c)return;
+  const f=t.dataset.qf,j=+t.dataset.j;
+  if(f==='q')c.q=t.value;
+  else if(f==='e')c.e=t.value;
+  else if(f==='qs'){c.qs=t.value;pvSet('pv_q_'+k,c.qs)}
+  else if(f==='o'){c.o[j]=t.value;if(c.os[j])pvSet('pv_o_'+k+'_'+j,t.value)}
+  else if(f==='a'){c.a=j}
+  else if(f==='qson'){c.qsOn=t.checked;qzDraftSave();render();return}
+  else if(f==='os'){c.os[j]=t.checked?1:0;qzDraftSave();render();return}
+  if(A.errs&&A.errs[k]){delete A.errs[k];ce.classList.remove('bad');const e=ce.querySelector('.err');if(e)e.remove()}
+  qzDraftSave();
 }
 async function qzFileIn(f){
   const A=state.qz.admin,err=document.getElementById('e_qzFile');
@@ -4112,7 +4213,8 @@ const us=users(),u=us.find(x=>x.id===id);u.locked=!u.locked;store.set('users',us
 function onInput(e){
   const t=e.target;
   if(t.id==='qzFile'){const f=t.files&&t.files[0];t.value='';qzFileIn(f);return}
-  if(t.id&&t.id.slice(0,3)==='qz_'){qzAdminSync();const b=document.querySelector('[data-act=qzsaveset]');if(b){const A=state.qz.admin;b.disabled=!(A.prev&&A.prev.qs.length&&A.title.trim())}return}
+  if(t.dataset&&t.dataset.qf){qzCardIn(t);return}
+  if(t.id&&t.id.slice(0,3)==='qz_'){qzAdminSync();return}
   if(t.dataset&&t.dataset.qz){const S=state.qz,c=S.cfg,v=t.dataset.qz;
     if(v.slice(0,5)==='mode:'){c.mode=v.slice(5);render()}
     else if(v==='shuffle'){c.shuffle=t.checked}
