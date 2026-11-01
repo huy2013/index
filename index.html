@@ -608,6 +608,24 @@ b,strong{font-weight:600}
 @media(max-width:560px){h1{font-size:2.25rem}}
 .fq-bar i+span,.fq-bar span{color:var(--fg);text-shadow:0 0 3px var(--surface)}.fq-btn:active:not(:disabled){transform:scale(.98)}
 .permrow{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}.permrow:last-of-type{border-bottom:0}.permrow input{width:20px;height:20px;margin-top:3px;flex:none;accent-color:var(--violet)}.ptbl{width:100%;border-collapse:collapse;font-size:.92rem}.ptbl th,.ptbl td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}.ptbl th{font-weight:600;color:var(--muted)}
+.qzwrap{max-width:720px;margin-inline:auto}
+.qztop{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.qztop .help{flex:1}
+.qztimer{font:600 1rem var(--f-mono);padding:4px 12px;border-radius:9999px;background:var(--surface2);border:1px solid var(--line)}.qztimer.low{color:var(--red);border-color:var(--red)}
+.qzopts{display:flex;flex-direction:column;gap:10px}
+.qzopt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;cursor:pointer;color:var(--fg);transition:border-color .15s,background .15s,transform .12s var(--ease)}
+.qzopt:hover:not(:disabled){border-color:var(--violet);background:var(--surface2)}
+.qzopt:active:not(:disabled){transform:scale(.99)}
+.qzopt .qzl{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);font-weight:600;font-size:.9rem}
+.qzopt.sel{border-color:var(--violet);background:color-mix(in srgb,var(--violet) 10%,var(--surface))}.qzopt.sel .qzl{background:var(--violet);color:#fff}
+.qzopt.good{border-color:var(--green);background:color-mix(in srgb,var(--green) 12%,var(--surface))}.qzopt.good .qzl{background:var(--green);color:#fff}
+.qzopt.badc{border-color:var(--red);background:color-mix(in srgb,var(--red) 10%,var(--surface))}.qzopt.badc .qzl{background:var(--red);color:#fff}
+.qzopt:disabled{cursor:default}
+.qzpal{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+.qzpal button{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;color:var(--muted)}
+.qzpal button.ans{background:var(--surface2);color:var(--fg)}.qzpal button.flg{border-color:var(--amber);box-shadow:inset 0 -3px 0 var(--amber)}.qzpal button.cur{border-color:var(--violet);color:var(--violet);background:color-mix(in srgb,var(--violet) 10%,var(--surface))}
+.qznav{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.qzprev{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px;background:var(--bg)}
+.qzpq{padding:8px 0;border-bottom:1px solid var(--line);font-size:.92rem}.qzpq:last-child{border-bottom:0}.qzpq div{padding-left:10px;color:var(--muted)}.qzpq div.good{color:var(--green);font-weight:600}
 </style>
 
 <a class="skip" href="#main">Bỏ qua đến nội dung</a>
@@ -1438,6 +1456,7 @@ const DK={
   favblocks:{g:u=>store.get('favblocks',[]),s:(u,v)=>store.set('favblocks',v,1)},
   convs:{g:u=>store.get('convs_'+u.id,undefined),s:(u,v)=>store.set('convs_'+u.id,v,1)},
   badgeInit:{g:u=>store.get('badgeInit_'+u.id,false),s:(u,v)=>store.set('badgeInit_'+u.id,v,1)},
+  quiz:{g:u=>store.get('quiz_'+u.id,undefined),s:(u,v)=>store.set('quiz_'+u.id,v,1)},
   perms:{g:u=>store.get('perms_'+u.id,undefined),s:(u,v)=>store.set('perms_'+u.id,v,1)}
 };
 const mergeMax=(a,b)=>{const o={...(a||{})};Object.entries(b||{}).forEach(([k,v])=>{if(typeof v==='number')o[k]=Math.max(+o[k]||0,v);else if(v&&typeof v==='object')o[k]=mergeMax(o[k],v);else if(!(k in o))o[k]=v});return o};
@@ -1446,6 +1465,7 @@ function svKeyOf(k){
   if(['progress','time','asks','badges','aiuse','favblocks'].includes(k))return k;
   if(k==='convs_'+u.id)return perms().hist===false?null:'convs';
   if(k==='perms_'+u.id)return 'perms';
+  if(k==='quiz_'+u.id)return 'quiz';
   if(k==='badgeInit_'+u.id)return 'badgeInit';
   return null;
 }
@@ -1484,6 +1504,7 @@ async function svPull(){
     else if(key==='time'||key==='aiuse'||key==='asks'){DK[key].s(u,key==='asks'?Math.max(+local||0,+sv||0):mergeMax(local,sv))}
     else if(key==='favblocks'){DK[key].s(u,Array.from(new Set([...(Array.isArray(local)?local:[]),...(Array.isArray(sv)?sv:[])])))}
     else if(key==='badgeInit'){DK[key].s(u,!!sv||!!local)}
+    else if(key==='quiz'){DK[key].s(u,mergeQuiz(local,sv))}
     else DK[key].s(u,sv);
     const nv=DK[key].g(u);if(JSON.stringify(nv)!==JSON.stringify(sv))SV.dirty[key]=1;
   });
@@ -1547,7 +1568,7 @@ async function svPoll(){
       const rows=await rpc('app_docs_list',{p_since:SV.since})||[];
       const ch=new Set();
       rows.forEach(r=>{const col=SVDB.docs[r.c]=SVDB.docs[r.c]||{};if(r.x)delete col[r.i];else col[r.i]=r.d;ch.add(r.c);if(r.u>SV.since)SV.since=r.u});
-      ch.forEach(c=>{if(c==='lessons')svLessonsIn();else SVDB.emit(c)});
+      ch.forEach(c=>{if(c==='lessons')svLessonsIn();else SVDB.emit(c);if(c==='qzset'&&['quiz','admin'].includes(state.route.name)&&state.qz.screen!=='run')scheduleRender()});
       if(rows.length<3000)break;
     }
   }catch(e){}
@@ -1606,8 +1627,9 @@ async function seed(){
 
 /* ---------- state & routing ---------- */
 const state={route:{name:'home',id:null},filter:{cd:'',q:''},authTab:'login',adminTab:'stats',editing:null,show:{},tempPw:null,seen:{},note:'',palTab:'motion',g:{sort:'new',form:false,open:null},qa:{tag:'',q:'',open:null,form:false},dict:{q:'',cat:'all',fav:false,open:{}},
+  qz:{screen:'list',sel:null,cfg:{mode:'practice',shuffle:true,timer:false,mins:''},run:null,admin:{title:'',topic:'0',cls:'',text:'',prev:null,editId:null,view:null}},
   fq:{tab:'q',pick:null,kind:'lessons',sheet:null,cheer:'bolt'},fr:{tab:'feed',n:8},chat:{lp:false,convs:[],key:null,cur:null,busy:false,ctl:null,ctx:null,draft:'',hint:false,sb:false,ren:null,q:''},ai:'pending'};
-const ROUTES=['home','auth','lessons','lesson','ask','blocks','portfolio','gallery','qa','friends','stats','account','admin','about','contact','privacy','perm'];
+const ROUTES=['home','auth','lessons','lesson','ask','blocks','portfolio','gallery','qa','friends','stats','account','admin','about','contact','privacy','perm','quiz'];
 function parseHash(){
   let h='';try{h=(location.hash||'').replace('#','')}catch(e){}
   if(!h)return null;
@@ -1755,7 +1777,7 @@ function twice(el,label){
 /* ---------- chrome ---------- */
 function renderChrome(){
   const r=state.route.name==='lesson'?'lessons':state.route.name==='portfolio'?'gallery':state.route.name;
-  const items=[['home','Trang chủ'],['lessons','Bài tập'],['ask','Hỏi AI'],['blocks','Từ điển khối'],['gallery','Gallery'],['qa','Hỏi đáp'],['friends','Bạn bè'],['stats','Tiến bộ']];
+  const items=[['home','Trang chủ'],['lessons','Bài tập'],['quiz','Ôn tập'],['ask','Hỏi AI'],['blocks','Từ điển khối'],['gallery','Gallery'],['qa','Hỏi đáp'],['friends','Bạn bè'],['stats','Tiến bộ']];
   $('#nav').innerHTML=items.map(([k,l])=>`<button data-act="go" data-go="${k}" ${r===k?'aria-current="page"':''}>${l}</button>`).join('');
   const u=me();
   const sn=FX.snd();
@@ -2278,6 +2300,308 @@ function permPage(){
     </div></div>`;
 }
 
+/* ================= ÔN TẬP TRẮC NGHIỆM ================= */
+const QZ_SAMPLE=`1. Thiết bị nào dưới đây là thiết bị đầu vào?
+A. Bàn phím
+B. Màn hình
+C. Loa
+D. Máy in
+Đáp án: A
+Giải thích: Bàn phím đưa dữ liệu vào máy tính nên là thiết bị vào.
+
+2. Hàm nào dùng để tính tổng trong bảng tính?
+A. AVERAGE
+B. SUM
+C. MAX
+D. MIN
+Đáp án: B`;
+function parseCSVLine(s){const o=[];let c='',q=false;for(let i=0;i<s.length;i++){const ch=s[i];if(q){if(ch==='"'){if(s[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}else if(ch==='"')q=true;else if(ch===','||ch===';'||ch==='\t'){o.push(c);c=''}else c+=ch}o.push(c);return o.map(x=>x.trim())}
+function parseQuiz(text){
+  const qs=[],errs=[];
+  const lines=String(text||'').replace(/\r/g,'').split('\n').map(x=>x.trim());
+  const first=lines.find(x=>x)||'';
+  const looksCSV=(first.match(/[,;\t]/g)||[]).length>=5&&!/^(câu\s*)?\d+\s*[.:)]/i.test(first)&&!/^[A-Da-d]\s*[.):]/.test(first);
+  const mk=(q,o,a,e,n)=>{
+    o=o.map(x=>String(x||'').trim());while(o.length&&!o[o.length-1])o.pop();
+    if(!q)errs.push('Câu '+n+': thiếu nội dung câu hỏi.');
+    else if(o.length<2||o.some(x=>!x))errs.push('Câu '+n+': cần ít nhất 2 đáp án liên tiếp (A, B…).');
+    else if(a<0||a>=o.length)errs.push('Câu '+n+': thiếu hoặc sai dòng “Đáp án”.');
+    else qs.push({q:q.slice(0,500),o:o.map(x=>x.slice(0,300)),a,e:String(e||'').slice(0,600)});
+  };
+  if(looksCSV){
+    lines.filter(x=>x).forEach((ln,i)=>{
+      const c=parseCSVLine(ln);
+      if(i===0&&/^(câu hỏi|cau hoi|question|q)$/i.test(c[0]))return;
+      const ans='ABCD'.indexOf(String(c[5]||'').trim().toUpperCase().slice(0,1));
+      mk(c[0],[c[1],c[2],c[3],c[4]],ans,c[6],qs.length+errs.length+1);
+    });
+    return{qs,errs};
+  }
+  let cur=null,last='',n=0;
+  const flush=()=>{if(cur){n++;mk(cur.q,cur.o,cur.a,cur.e,n)}cur=null};
+  const rxQ=/^(?:câu|cau)?\s*(\d{1,3})\s*[.:)]\s*(.+)$/i,rxO=/^(\*?)\s*([A-Da-d])\s*[.):]\s*(.*?)\s*(\*?)$/,rxA=/^(?:đáp án|dap an|đ\/a|answer|đa|ans)\s*[:=\-]?\s*([A-Da-d])\b/i,rxE=/^(?:giải thích|giai thich|gt|explain|lời giải)\s*[:\-]\s*(.*)$/i;
+  for(const ln of lines){
+    if(!ln){continue}
+    let m;
+    if((m=ln.match(rxA))&&cur){cur.a='ABCD'.indexOf(m[1].toUpperCase());last='a';continue}
+    if((m=ln.match(rxE))&&cur){cur.e=m[1];last='e';continue}
+    if((m=ln.match(rxO))&&cur&&m[3]!==''){
+      const i='ABCD'.indexOf(m[2].toUpperCase());
+      if(i===cur.o.length||cur.o[i]===undefined){cur.o[i]=m[3];if(m[1]||m[4])cur.a=i;last='o'+i;continue}
+    }
+    if((m=ln.match(rxQ))&&(!cur||cur.o.length>=2||cur.a>=0)&&!/^[A-Da-d]\s*[.):]/.test(ln)){flush();cur={q:m[2],o:[],a:-1,e:''};last='q';continue}
+    if(!cur){cur={q:ln,o:[],a:-1,e:''};last='q';continue}
+    if(last==='q')cur.q+=' '+ln;
+    else if(last==='e')cur.e+=' '+ln;
+    else if(last&&last[0]==='o')cur.o[+last.slice(1)]+=' '+ln;
+    else if(last==='a'){flush();cur={q:ln,o:[],a:-1,e:''};last='q'}
+  }
+  flush();
+  return{qs,errs};
+}
+function serializeQuiz(set){return (set.qs||[]).map((x,i)=>`${i+1}. ${x.q}\n${x.o.map((t,j)=>'ABCD'[j]+'. '+t).join('\n')}\nĐáp án: ${'ABCD'[x.a]}${x.e?'\nGiải thích: '+x.e:''}`).join('\n\n')}
+const qzUserKey=u=>'quiz_'+u.id;
+const qzMine=()=>{const u=me();return u?(store.get(qzUserKey(u),null)||{sets:{}}):{sets:{}}};
+function mergeQuiz(a,b){
+  const o={sets:{...((a&&a.sets)||{})}};
+  Object.entries((b&&b.sets)||{}).forEach(([k,v])=>{const x=o.sets[k];if(!x||(v.ts||0)>(x.ts||0)){o.sets[k]={...v,best:Math.max(v.best||0,x?x.best||0:0),tries:Math.max(v.tries||0,x?x.tries||0:0)}}else{o.sets[k]={...x,best:Math.max(v.best||0,x.best||0),tries:Math.max(v.tries||0,x.tries||0)}}});
+  return o;
+}
+const QZ={res:null,tm:null,
+  sets(){
+    const raw=SV.ok?Object.values(SVDB.docs.qzset||{}):Object.values(store.get('qzset',{}));
+    return raw.filter(s=>s&&s.id&&Array.isArray(s.qs)).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  },
+  visible(){
+    const u=me(),admin=u&&u.role==='admin',cls=u?String(u.cls||'').toUpperCase():'';
+    return this.sets().filter(s=>admin||(!s.hidden&&(!s.cls||!u||String(s.cls).toUpperCase()===cls||String(s.cls).toUpperCase()==='ALL')));
+  },
+  get(id){return this.sets().find(s=>s.id===id)||null},
+  async saveSet(o){
+    if(SV.ok)await svWrite('app_doc_set','qzset',o.id,o);
+    else{const m=store.get('qzset',{});m[o.id]=o;store.set('qzset',m)}
+    if(SV.ok)SVDB.emit('qzset');
+  },
+  async delSet(id){
+    if(SV.ok)await svWrite('app_doc_del','qzset',id);
+    else{const m=store.get('qzset',{});delete m[id];store.set('qzset',m)}
+  },
+  async loadAdm(){
+    if(!isAdmin())return;
+    try{
+      if(SV.ok&&SV.token)this.res=await rpc('app_admin_quiz',{p_token:SV.token})||{};
+      else{const o={};users().forEach(u=>{const v=store.get(qzUserKey(u),null);if(v)o[u.id]=v});this.res=o}
+    }catch(e){this.res=this.res||{}}
+    if(state.route.name==='admin'&&state.adminTab==='quiz')render();
+  },
+  S(){return state.qz},
+  save(run){
+    const u=me();if(!u||run.guest)return;
+    const mine=qzMine();const old=mine.sets[run.set]||{};
+    const pct=Math.round(run.ok/Math.max(1,run.n)*100);
+    mine.sets[run.set]={ts:Date.now(),n:run.n,ok:run.ok,last:pct,best:Math.max(old.best||0,pct),tries:(old.tries||0)+1,wrong:run.wrongIdx,mode:run.mode};
+    store.set(qzUserKey(u),mine);
+  },
+  start(setId,only){
+    const s=this.get(setId);if(!s)return;
+    const c=state.qz.cfg;
+    let idx=s.qs.map((_,i)=>i);
+    if(only)idx=only;
+    if(c.shuffle)idx.sort(()=>Math.random()-.5);
+    const items=idx.map(si=>{const q=s.qs[si];let ord=q.o.map((_,j)=>j);if(c.shuffle)ord.sort(()=>Math.random()-.5);return{si,ord}});
+    const test=c.mode==='test';
+    const mins=test&&c.timer?Math.max(1,Math.round(+c.mins||Math.ceil(items.length*.75))):0;
+    state.qz.run={set:s.id,title:s.title,items,i:0,ans:{},flag:{},mode:c.mode,start:Date.now(),deadline:mins?Date.now()+mins*60000:0,guest:!me(),n:items.length,partial:!!only};
+    state.qz.screen='run';render();this.timer();
+  },
+  timer(){
+    clearInterval(this.tm);
+    const r=state.qz.run;if(!r||!r.deadline)return;
+    this.tm=setInterval(()=>{
+      const R=state.qz.run;if(!R||state.qz.screen!=='run'){clearInterval(this.tm);return}
+      const left=Math.max(0,Math.round((R.deadline-Date.now())/1000)),el=document.getElementById('qzTimer');
+      if(el){el.textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');el.classList.toggle('low',left<=30)}
+      if(left<=0){clearInterval(this.tm);toast('Hết giờ, bài được nộp tự động');this.finish()}
+    },500);
+  },
+  finish(){
+    const r=state.qz.run;if(!r)return;
+    const s=this.get(r.set);clearInterval(this.tm);
+    let ok=0;const wrong=[];
+    r.items.forEach((it,k)=>{const q=s&&s.qs[it.si];if(!q)return;if(r.ans[k]===q.a)ok++;else wrong.push(it.si)});
+    r.ok=ok;r.wrongIdx=wrong;r.secs=Math.round((Date.now()-r.start)/1000);r.done=true;
+    if(!r.partial)this.save(r);
+    state.qz.screen='res';render();
+    const pct=ok/Math.max(1,r.n);
+    FX.play(pct>=.8?'badge':pct>=.5?'ok':'tap');
+    if(pct>=.8&&!RM())FX.burst(innerWidth/2,200,'confetti');
+  },
+  pick(j){
+    const r=state.qz.run;if(!r)return;
+    const it=r.items[r.i];
+    if(r.mode==='practice'&&r.ans[r.i]!==undefined)return;
+    r.ans[r.i]=j;
+    if(r.mode==='practice'){const q=this.get(r.set).qs[it.si];FX.play(j===q.a?'like':'pop')}
+    else FX.play('tap');
+    render();
+  }
+};
+const pctClass=p=>p>=80?'ok':p>=50?'warn':'bad';
+function quizPage(){
+  const S=QZ.S(),sc=S.screen,u=me();
+  const head=(t,l)=>`<div class="head"><span class="eyebrow">Ôn tập trắc nghiệm</span><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">${t}</h1>${l?`<p class="lead">${l}</p>`:''}</div>`;
+  if(sc==='run'&&S.run)return quizRun(S.run);
+  if(sc==='res'&&S.run)return quizResult(S.run);
+  if(sc==='cfg'){
+    const s=QZ.get(S.sel);if(!s){S.screen='list';return quizPage()}
+    const c=S.cfg,test=c.mode==='test';
+    return `<div class="view wrap" style="padding-block:40px"><button class="crumb" data-act="qzback">← Danh sách bộ đề</button>${head(esc(s.title),s.qs.length+' câu'+(s.cls?' · lớp '+esc(s.cls):''))}
+    <div class="card" style="max-width:560px"><h3 style="margin-bottom:10px">Chọn cách làm</h3>
+      <label class="permrow"><input type="radio" name="qzmode" data-qz="mode:practice" ${!test?'checked':''}><span><b>Luyện tập</b><br><span class="help">Chọn đáp án là biết đúng sai ngay, kèm giải thích.</span></span></label>
+      <label class="permrow"><input type="radio" name="qzmode" data-qz="mode:test" ${test?'checked':''}><span><b>Kiểm tra</b><br><span class="help">Làm hết rồi nộp bài mới biết điểm, có thể đánh dấu câu muốn xem lại.</span></span></label>
+      <label class="permrow"><input type="checkbox" data-qz="shuffle" ${c.shuffle?'checked':''}><span><b>Trộn thứ tự câu và đáp án</b></span></label>
+      ${test?`<label class="permrow"><input type="checkbox" data-qz="timer" ${c.timer?'checked':''}><span><b>Tính giờ</b> ${c.timer?`<input type="number" min="1" max="180" data-qz="mins" value="${esc(c.mins||Math.ceil(s.qs.length*.75))}" style="width:70px;margin-left:8px" aria-label="Số phút"> phút`:''}</span></label>`:''}
+      ${u?'':'<p class="notice warn" style="margin-top:10px">Bạn chưa đăng nhập nên kết quả sẽ không được lưu.</p>'}
+      <div class="cta" style="margin-top:14px"><button class="btn primary" data-act="qzstart" data-id="${esc(s.id)}">Bắt đầu làm bài</button></div></div></div>`;
+  }
+  const L=QZ.visible(),mine=qzMine().sets;
+  return `<div class="view wrap" style="padding-block:40px">${head('Ôn tập trắc nghiệm','Làm các bộ đề do giáo viên đăng, xem đáp án và giải thích, theo dõi điểm của bạn.')}
+  ${L.length?`<div class="grid g3">${L.map(s=>{const m=mine[s.id];const cd=s.topic?cdOf(+s.topic):null;
+    return `<div class="card feat"><div class="pills" style="display:flex;gap:6px;flex-wrap:wrap">${cd?`<span class="pill">Chủ đề ${cd.n}</span>`:'<span class="pill">Tổng hợp</span>'}${s.cls?`<span class="pill">Lớp ${esc(s.cls)}</span>`:''}${s.hidden?'<span class="pill warn">Đang ẩn</span>':''}</div>
+    <h3>${esc(s.title)}</h3><p class="help">${s.qs.length} câu${s.mins?' · '+s.mins+' phút':''}</p>
+    ${m?`<p><span class="pill ${pctClass(m.best)}">Cao nhất ${m.best}%</span> <span class="help">Gần nhất ${m.last}% · ${m.tries} lần</span></p>`:'<p class="help">Bạn chưa làm bộ đề này.</p>'}
+    <div class="cta" style="margin-top:auto"><button class="btn primary small" data-act="qzopen" data-id="${esc(s.id)}">${m?'Làm lại':'Làm bài'}</button></div></div>`}).join('')}</div>`
+  :`<div class="empty">Giáo viên chưa đăng bộ đề nào. Bạn quay lại sau nhé.${u&&u.role==='admin'?' <button class="crumb" data-act="go" data-go="admin">Vào Quản trị để đăng bộ đề</button>':''}</div>`}
+  </div>`;
+}
+function quizRun(r){
+  const s=QZ.get(r.set);if(!s){state.qz.screen='list';return quizPage()}
+  const it=r.items[r.i],q=s.qs[it.si],test=r.mode==='test',chosen=r.ans[r.i],shown=!test&&chosen!==undefined;
+  const answered=Object.keys(r.ans).length,pctDone=Math.round((r.i+(shown?1:0))/r.n*100);
+  const opts=it.ord.map((oi,k)=>{
+    let cls='qzopt';
+    if(test&&chosen===oi)cls+=' sel';
+    if(shown){if(oi===q.a)cls+=' good';else if(oi===chosen)cls+=' badc'}
+    return `<button class="${cls}" data-act="qzpick" data-id="${oi}" ${shown?'disabled':''}><span class="qzl">${'ABCD'[k]}</span><span>${esc(q.o[oi])}</span></button>`}).join('');
+  const pal=test?`<div class="qzpal" aria-label="Danh sách câu">${r.items.map((_,k)=>`<button class="${k===r.i?'cur':''} ${r.ans[k]!==undefined?'ans':''} ${r.flag[k]?'flg':''}" data-act="qzgo" data-id="${k}" aria-label="Câu ${k+1}">${k+1}</button>`).join('')}</div>`:'';
+  const left=r.deadline?Math.max(0,Math.round((r.deadline-Date.now())/1000)):0;
+  return `<div class="view wrap" style="padding-block:28px"><div class="qzwrap">
+    <div class="qztop"><button class="crumb" data-act="qzquit">← Thoát</button><span class="help">${esc(s.title)}</span>${r.deadline?`<span class="qztimer" id="qzTimer">${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}</span>`:''}</div>
+    <div class="progress" style="margin:6px 0 4px"><i style="width:${pctDone}%"></i></div>
+    <p class="help" style="margin-bottom:12px">Câu ${r.i+1}/${r.n}${test?' · đã trả lời '+answered:''}</p>
+    <div class="card qzq"><h2 style="font-size:1.25rem;line-height:1.4;margin-bottom:14px">${esc(q.q)}</h2><div class="qzopts">${opts}</div>
+    ${shown?`<div class="${chosen===q.a?'notice':'notice warn'}" style="margin-top:14px"><b>${chosen===q.a?'Chính xác!':'Chưa đúng.'}</b> Đáp án đúng là <b>${'ABCD'[it.ord.indexOf(q.a)]}. ${esc(q.o[q.a])}</b>.${q.e?'<br>'+esc(q.e):''}</div>`:''}</div>
+    ${pal}
+    <div class="qznav">
+      ${test?`<button class="btn small" data-act="qzprev" ${r.i===0?'disabled':''}>Câu trước</button><button class="btn small ghost" data-act="qzflag">${r.flag[r.i]?'Bỏ đánh dấu':'Đánh dấu xem lại'}</button>`:''}
+      ${test?(r.i<r.n-1?`<button class="btn small primary" data-act="qznext">Câu sau</button>`:'')+`<button class="btn small ${r.i===r.n-1?'primary':''}" data-act="qzsubmit">Nộp bài</button>`
+      :(shown?(r.i<r.n-1?`<button class="btn small primary" data-act="qznext">Câu tiếp</button>`:`<button class="btn small primary" data-act="qzsubmit">Xem kết quả</button>`):`<span class="help">Chọn một đáp án.</span>`)}
+    </div></div></div>`;
+}
+function quizResult(r){
+  const s=QZ.get(r.set);if(!s){state.qz.screen='list';return quizPage()}
+  const p=Math.round(r.ok/Math.max(1,r.n)*100),mm=Math.floor(r.secs/60),ss=r.secs%60;
+  const wrong=r.items.map((it,k)=>({it,k})).filter(x=>r.ans[x.k]!==s.qs[x.it.si].a);
+  const msg=p===100?'Tuyệt đối! Bạn trả lời đúng tất cả.':p>=80?'Rất tốt, bạn nắm bài chắc rồi.':p>=50?'Khá ổn, ôn lại vài câu sai nhé.':'Đừng nản, xem lại giải thích rồi thử lần nữa.';
+  const cd=s.topic?cdOf(+s.topic):null;
+  return `<div class="view wrap" style="padding-block:40px"><div class="qzwrap">
+    <div class="card" style="text-align:center"><span class="eyebrow">Kết quả</span><h1 style="font-size:3rem;margin:6px 0">${r.ok}/${r.n}</h1>
+      <p><span class="pill ${pctClass(p)}">${p}%</span> <span class="help">· ${mm} phút ${ss} giây</span></p><p style="margin-top:8px">${msg}</p>
+      ${r.guest?'<p class="help" style="margin-top:6px">Đăng nhập để lưu điểm của bạn.</p>':r.partial?'<p class="help" style="margin-top:6px">Lượt làm lại câu sai không tính vào điểm.</p>':''}
+      <div class="cta" style="justify-content:center;margin-top:14px">
+        ${wrong.length?`<button class="btn primary small" data-act="qzredo" data-id="1">Làm lại ${wrong.length} câu sai</button>`:''}
+        <button class="btn small" data-act="qzredo" data-id="0">Làm lại cả bộ</button>
+        ${cd?`<button class="btn small ghost" data-act="qzreview">Xem lại bài học chủ đề ${cd.n}</button>`:''}
+        <button class="btn small ghost" data-act="qzback">Danh sách bộ đề</button></div></div>
+    ${wrong.length?`<h3 style="margin:22px 0 10px">Các câu cần xem lại</h3><div class="grid" style="gap:12px">${wrong.map(({it,k})=>{const q=s.qs[it.si],ch=r.ans[k];
+      return `<div class="card"><p><b>${esc(q.q)}</b></p><p style="margin-top:8px"><span class="pill bad">Bạn chọn</span> ${ch===undefined?'<i>Chưa trả lời</i>':esc(q.o[ch])}</p><p style="margin-top:4px"><span class="pill ok">Đáp án đúng</span> ${esc(q.o[q.a])}</p>${q.e?`<p class="help" style="margin-top:8px">${esc(q.e)}</p>`:''}</div>`}).join('')}</div>`:''}
+  </div></div>`;
+}
+function adminQuiz(){
+  const A=state.qz.admin,sets=QZ.sets(),res=QZ.res||{};
+  const users_=users().filter(u=>u.role==='student');
+  const stat=id=>{const rows=users_.map(u=>({u,m:((res[u.id]||{}).sets||{})[id]})).filter(x=>x.m);return rows};
+  let detail='';
+  if(A.view){
+    const s=QZ.get(A.view);
+    if(s){const rows=stat(s.id).sort((a,b)=>b.m.last-a.m.last);
+      const miss={};rows.forEach(x=>(x.m.wrong||[]).forEach(i=>miss[i]=(miss[i]||0)+1));
+      const top=Object.entries(miss).sort((a,b)=>b[1]-a[1]).slice(0,5);
+      detail=`<div class="card" style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><h3>Kết quả: ${esc(s.title)}</h3><span><button class="btn small" data-act="qzadmrefresh">Làm mới</button> <button class="btn small ghost" data-act="qzadmview" data-id="">Đóng</button></span></div>
+      ${rows.length?`<div class="tbl" style="margin-top:12px"><table><thead><tr><th>Học sinh</th><th>Lớp</th><th>Lần gần nhất</th><th>Cao nhất</th><th>Số lần</th></tr></thead><tbody>${rows.map(({u,m})=>`<tr><td>${esc(u.name)}</td><td>${esc(u.cls||'')}</td><td>${m.ok}/${m.n} (${m.last}%)</td><td>${m.best}%</td><td>${m.tries}</td></tr>`).join('')}</tbody></table></div>
+      <p class="help" style="margin-top:8px">Trung bình lần gần nhất: ${Math.round(rows.reduce((a,x)=>a+x.m.last,0)/rows.length)}% · ${rows.length}/${users_.length} học sinh đã làm.</p>
+      ${top.length?`<h4 style="margin:14px 0 6px">Câu nhiều bạn sai nhất</h4><ol style="margin:0;padding-left:20px">${top.map(([i,c])=>`<li>${esc((s.qs[i]||{}).q||'')} <span class="help">(${c} bạn sai)</span></li>`).join('')}</ol>`:''}`
+      :'<p class="help" style="margin-top:10px">Chưa có học sinh nào làm bộ đề này.</p>'}</div>`}
+  }
+  const prev=A.prev;
+  const form=`<div class="card" style="margin-bottom:20px"><h3 style="margin-bottom:6px">${A.editId?'Sửa bộ đề':'Đăng bộ đề ôn tập mới'}</h3>
+    <p class="help" style="margin-bottom:12px">Dán câu hỏi vào ô bên dưới hoặc chọn file .txt / .csv. Mỗi câu gồm câu hỏi, các đáp án A, B, C, D và một dòng “Đáp án: X”. Dòng “Giải thích:” là tùy chọn.</p>
+    <form class="f" onsubmit="return false">
+    ${field('qz_title','Tên bộ đề',`<input id="qz_title" maxlength="90" value="${esc(A.title)}" placeholder="Ví dụ: Ôn tập bảng tính">`)}
+    <div class="row2">${field('qz_topic','Chủ đề',`<select id="qz_topic"><option value="0" ${A.topic==='0'?'selected':''}>Tổng hợp</option>${CD.map(c=>`<option value="${c.n}" ${String(A.topic)===String(c.n)?'selected':''}>${c.n}. ${esc(c.name)}</option>`).join('')}</select>`)}
+    ${field('qz_cls','Lớp (để trống = tất cả)',`<input id="qz_cls" maxlength="6" value="${esc(A.cls)}" placeholder="8A">`)}</div>
+    <div class="field"><label for="qzFile">Chọn file câu hỏi</label><input type="file" id="qzFile" accept=".txt,.csv,.md,text/plain,text/csv"><p class="err" id="e_qzFile" role="alert"></p></div>
+    ${field('qz_text','Nội dung câu hỏi',`<textarea id="qz_text" style="min-height:220px;font-family:var(--f-mono)" placeholder="1. Câu hỏi?&#10;A. ...&#10;B. ...&#10;C. ...&#10;D. ...&#10;Đáp án: A">${esc(A.text)}</textarea>`,'Có thể đánh dấu sao * trước đáp án đúng thay cho dòng “Đáp án”. File .csv dùng cột: câu hỏi, A, B, C, D, đáp án, giải thích.')}
+    <div class="cta"><button class="btn small" type="button" data-act="qzsample">Chèn mẫu định dạng</button><button class="btn small" type="button" data-act="qzparse">Xem trước</button>
+      <button class="btn primary small" type="button" data-act="qzsaveset" ${prev&&prev.qs.length&&A.title.trim()?'':'disabled'}>${A.editId?'Lưu thay đổi':'Đăng bộ đề'}</button>${A.editId||A.text?`<button class="btn small ghost" type="button" data-act="qzclear">Xóa form</button>`:''}</div></form>
+    ${prev?`<div style="margin-top:14px"><p><b>${prev.qs.length}</b> câu hợp lệ${prev.errs.length?`, <b style="color:var(--red)">${prev.errs.length}</b> lỗi`:''}.</p>
+      ${prev.errs.length?`<ul class="err" style="padding-left:18px;margin:6px 0">${prev.errs.slice(0,12).map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`:''}
+      ${prev.qs.length?`<div class="qzprev">${prev.qs.slice(0,50).map((x,i)=>`<div class="qzpq"><b>${i+1}. ${esc(x.q)}</b>${x.o.map((t,j)=>`<div class="${j===x.a?'good':''}">${'ABCD'[j]}. ${esc(t)}</div>`).join('')}${x.e?`<small class="help">${esc(x.e)}</small>`:''}</div>`).join('')}</div>`:''}</div>`:''}</div>`;
+  const list=sets.length?`<div class="tbl"><table><thead><tr><th>Bộ đề</th><th>Chủ đề</th><th>Lớp</th><th>Số câu</th><th>Đã làm</th><th>Trạng thái</th><th></th></tr></thead><tbody>
+    ${sets.map(s=>`<tr><td>${esc(s.title)}</td><td>${s.topic&&+s.topic?+s.topic:'Tổng hợp'}</td><td>${esc(s.cls||'Tất cả')}</td><td>${s.qs.length}</td><td>${stat(s.id).length}</td><td><span class="pill ${s.hidden?'':'ok'}">${s.hidden?'Ẩn':'Hiển thị'}</span></td>
+    <td><div class="acts"><button class="btn small" data-act="qzadmview" data-id="${esc(s.id)}">Kết quả</button><button class="btn small" data-act="qzedit" data-id="${esc(s.id)}">Sửa</button><button class="btn small" data-act="qzhide" data-id="${esc(s.id)}">${s.hidden?'Hiện':'Ẩn'}</button><button class="btn small danger" data-act="qzdel" data-id="${esc(s.id)}">Xóa</button></div></td></tr>`).join('')}</tbody></table></div>`
+    :'<div class="empty">Chưa có bộ đề nào. Hãy đăng bộ đề đầu tiên ở trên.</div>';
+  return `${detail}${form}<h3 style="margin-bottom:10px">Các bộ đề đã đăng</h3>${list}`;
+}
+function qzAdminSync(){const A=state.qz.admin;const g=id=>{const e=document.getElementById(id);return e?e.value:null};['title','topic','cls','text'].forEach(k=>{const v=g('qz_'+k);if(v!==null)A[k]=v})}
+async function qzAct(a,el,id){
+  const S=state.qz,A=S.admin;
+  switch(a){
+    case 'qzopen':S.sel=id;S.screen='cfg';render();return true;
+    case 'qzback':clearInterval(QZ.tm);S.screen='list';S.run=null;render();return true;
+    case 'qzstart':QZ.start(id);return true;
+    case 'qzredo':{const r=S.run;if(!r)return true;QZ.start(r.set,id==='1'?r.wrongIdx.slice():null);return true}
+    case 'qzreview':{const s=QZ.get(S.run&&S.run.set);if(s&&s.topic){state.filter={...state.filter,cd:String(s.topic)}}go('lessons');return true}
+    case 'qzpick':QZ.pick(+id);return true;
+    case 'qznext':{const r=S.run;if(r&&r.i<r.n-1){r.i++;render()}return true}
+    case 'qzprev':{const r=S.run;if(r&&r.i>0){r.i--;render()}return true}
+    case 'qzgo':{const r=S.run;if(r){r.i=+id;render()}return true}
+    case 'qzflag':{const r=S.run;if(r){r.flag[r.i]=!r.flag[r.i];render()}return true}
+    case 'qzquit':if(confirm('Thoát bài làm? Kết quả chưa nộp sẽ không được lưu.')){clearInterval(QZ.tm);S.screen='list';S.run=null;render()}return true;
+    case 'qzsubmit':{const r=S.run;if(!r)return true;const left=r.n-Object.keys(r.ans).length;
+      if(r.mode==='test'&&left>0&&!confirm('Bạn còn '+left+' câu chưa trả lời. Vẫn nộp bài?'))return true;
+      QZ.finish();return true}
+    case 'qzsample':qzAdminSync();A.text=QZ_SAMPLE;A.prev=null;render();return true;
+    case 'qzclear':A.title='';A.topic='0';A.cls='';A.text='';A.prev=null;A.editId=null;render();return true;
+    case 'qzparse':{qzAdminSync();A.prev=parseQuiz(A.text);render();return true}
+    case 'qzsaveset':{
+      qzAdminSync();const p=parseQuiz(A.text);A.prev=p;
+      if(!A.title.trim()){toast('Hãy nhập tên bộ đề');render();return true}
+      if(!p.qs.length){toast('Chưa có câu hỏi hợp lệ');render();return true}
+      if(p.errs.length&&!confirm('Có '+p.errs.length+' câu bị lỗi và sẽ bị bỏ qua. Vẫn đăng '+p.qs.length+' câu hợp lệ?'))return true;
+      const old=A.editId?QZ.get(A.editId):null;
+      const o={id:A.editId||('z~'+Date.now().toString(36)),title:A.title.trim().slice(0,90),topic:String(A.topic||'0'),cls:A.cls.trim().toUpperCase().slice(0,6),ts:old?old.ts:Date.now(),hidden:old?!!old.hidden:false,qs:p.qs};
+      try{await QZ.saveSet(o);toast('Đã đăng bộ đề “'+o.title+'”');A.title='';A.topic='0';A.cls='';A.text='';A.prev=null;A.editId=null;render()}
+      catch(e){toast(e.code==='too_big'?'Bộ đề quá lớn, hãy chia nhỏ.':'Chưa lưu được, bạn thử lại nhé.')}
+      return true}
+    case 'qzedit':{const s=QZ.get(id);if(!s)return true;A.editId=s.id;A.title=s.title;A.topic=String(s.topic||'0');A.cls=s.cls||'';A.text=serializeQuiz(s);A.prev=parseQuiz(A.text);render();scrollTo({top:0,behavior:'smooth'});return true}
+    case 'qzhide':{const s=QZ.get(id);if(!s)return true;try{await QZ.saveSet({...s,hidden:!s.hidden});render()}catch(e){toast('Chưa lưu được.')}return true}
+    case 'qzdel':{const s=QZ.get(id);if(!s||!confirm('Xóa bộ đề “'+s.title+'”? Không khôi phục được.'))return true;try{await QZ.delSet(id);if(A.view===id)A.view=null;if(A.editId===id)A.editId=null;toast('Đã xóa bộ đề');render()}catch(e){toast('Chưa xóa được.')}return true}
+    case 'qzadmview':A.view=id||null;render();return true;
+    case 'qzadmrefresh':QZ.loadAdm();toast('Đang làm mới…');return true;
+  }
+  return false;
+}
+async function qzFileIn(f){
+  const A=state.qz.admin,err=document.getElementById('e_qzFile');
+  if(!f)return;
+  if(f.size>400000){if(err)err.textContent='File quá lớn (tối đa 400 KB).';return}
+  if(!/\.(txt|csv|md)$/i.test(f.name)&&!/^text\//.test(f.type)){if(err)err.textContent='Chỉ nhận file .txt, .csv hoặc .md. Với file Word, hãy sao chép nội dung rồi dán vào ô bên dưới.';return}
+  let t='';try{t=await f.text()}catch(e){if(err)err.textContent='Không đọc được file.';return}
+  qzAdminSync();if(!A.title)A.title=f.name.replace(/\.[^.]+$/,'');
+  A.text=t.replace(/^﻿/,'');A.prev=parseQuiz(A.text);render();
+}
+
 function paletteForPrompt(){
   return PAL.map(p=>p.name+': '+p.items.map(i=>i[0].replace(/\n/g,' ⏎ ')).join(' | ')).join('\n');
 }
@@ -2629,9 +2953,9 @@ function admin(){
   const t=state.adminTab;
   const pend=cmRows('gallery').filter(g=>!g.approved&&!g.hidden).length+['gallery','qa','answers','comments'].reduce((n,c)=>n+cmRows(c).filter(x=>x.reported).length,0);
   const reqs=users().filter(u=>u.resetRequested).length;
-  const tabs=[['stats','Thống kê'],['lessons','Bài tập'],['students','Học sinh'+(reqs?` (${reqs})`:'')],['projects','Cộng đồng'+(pend?` (${pend})`:'')],['msgs','Tin nhắn']];
+  const tabs=[['stats','Thống kê'],['lessons','Bài tập'],['students','Học sinh'+(reqs?` (${reqs})`:'')],['projects','Cộng đồng'+(pend?` (${pend})`:'')],['quiz','Ôn tập'],['msgs','Tin nhắn']];
   let body='';
-  if(t==='stats')body=adminStats();else if(t==='lessons')body=adminLessons();else if(t==='students')body=adminStudents();else if(t==='projects')body=adminProjects();else body=adminMsgs();
+  if(t==='stats')body=adminStats();else if(t==='lessons')body=adminLessons();else if(t==='students')body=adminStudents();else if(t==='projects')body=adminProjects();else if(t==='quiz')body=adminQuiz();else body=adminMsgs();
   return `<div class="view wrap" style="padding-block:40px"><div class="head"><span class="eyebrow">Quản trị</span><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Bảng điều khiển giáo viên</h1></div>
   <div class="tabs" role="tablist">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${t===k}" data-act="admintab" data-tab="${k}">${l}</button>`).join('')}</div>${body}</div>`;
 }
@@ -3499,6 +3823,7 @@ async function commSubmit(kind,f,fd){
 }
 function commClick(a,el,id){
   const u=me(),C=el.dataset.c;
+  if(a.slice(0,2)==='qz'){qzAct(a,el,id);return true}
   switch(a){
     case 'dcat':state.dict.cat=el.dataset.v;render();return true;
     case 'dopen':{const k=el.dataset.i;state.dict.open[k]=!state.dict.open[k];const l=$('#dlist');if(l)l.innerHTML=dictList();return true}
@@ -3561,7 +3886,7 @@ function commClick(a,el,id){
 
 /* ---------- render ---------- */
 function render(){
-  const v={home,auth,lessons,lesson,ask,blocks:blocksPage,portfolio:gallery,gallery,qa:qaPage,friends:friendsPage,stats:statsPage,account,admin,about,contact,privacy,perm:permPage}[state.route.name]||home;
+  const v={home,auth,lessons,lesson,ask,blocks:blocksPage,portfolio:gallery,gallery,qa:qaPage,friends:friendsPage,stats:statsPage,account,admin,about,contact,privacy,perm:permPage,quiz:quizPage}[state.route.name]||home;
   FX.swap(()=>{$('#main').innerHTML=v(state.route.id)});
   renderChrome();
   document.title='PRIME Tin học 8';
@@ -3758,7 +4083,7 @@ function onClick(e){
       const u=me(),ps=projects(),p=ps.find(x=>x.id===id);
       if(p&&u&&(isAdmin()||p.uid===u.id)){store.set('projects',ps.filter(x=>x.id!==id));toast('Đã xóa dự án');render()}break}
     /* admin */
-    case 'admintab':state.adminTab=el.dataset.tab;state.editing=null;render();break;
+    case 'admintab':state.adminTab=el.dataset.tab;state.editing=null;if(state.adminTab==='quiz')QZ.loadAdm();render();break;
     case 'newlesson':state.editing='new';render();break;
     case 'editlesson':state.editing=id;render();{const t=$('#a_title');if(t)t.scrollIntoView({block:'center'})}break;
     case 'prevblocks':{const c=$('#a_code'),ty=$('#a_type'),p=$('#a_prev');if(c&&p){p.innerHTML=ty&&ty.value==='scratch'?ws(c.value||'when @greenFlag clicked'):'<p class="help">Chỉ xem trước được loại Khối lệnh Scratch.</p>'}break}
@@ -3786,6 +4111,14 @@ const us=users(),u=us.find(x=>x.id===id);u.locked=!u.locked;store.set('users',us
 }
 function onInput(e){
   const t=e.target;
+  if(t.id==='qzFile'){const f=t.files&&t.files[0];t.value='';qzFileIn(f);return}
+  if(t.id&&t.id.slice(0,3)==='qz_'){qzAdminSync();const b=document.querySelector('[data-act=qzsaveset]');if(b){const A=state.qz.admin;b.disabled=!(A.prev&&A.prev.qs.length&&A.title.trim())}return}
+  if(t.dataset&&t.dataset.qz){const S=state.qz,c=S.cfg,v=t.dataset.qz;
+    if(v.slice(0,5)==='mode:'){c.mode=v.slice(5);render()}
+    else if(v==='shuffle'){c.shuffle=t.checked}
+    else if(v==='timer'){c.timer=t.checked;render()}
+    else if(v==='mins'){c.mins=t.value}
+    return}
   if(t.id==='avFile'){const f=t.files&&t.files[0];t.value='';openAvEditor(f);return}
   if(t.id==='flt_q'){state.filter.q=t.value;updateList()}
   else if(t.id==='chatIn'){state.chat.draft=t.value;growBox()}
