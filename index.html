@@ -635,6 +635,16 @@ b,strong{font-weight:600}
 .qzsw{display:inline-flex;gap:6px;align-items:center;font-size:.85rem;color:var(--muted);cursor:pointer;white-space:nowrap}.qzsw input{accent-color:var(--violet)}.qzor>.qzsw{margin-top:10px}
 .qzpv{max-width:100%;overflow-x:auto}.qzpv[hidden]{display:none}.qzot{min-width:0;flex:1;overflow-x:auto}.qzopt .ws{margin:0}.qzl2{font-weight:600}
 .qzbar{margin-top:14px;position:sticky;bottom:0;background:var(--surface);padding:10px 0;border-top:1px solid var(--line)}
+
+.attbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.attlist{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.attlist.view{margin-block:10px}
+.attchip{display:inline-flex;align-items:center;gap:8px;max-width:100%;padding:6px 12px;border:1px solid var(--line,#E7E5E4);border-radius:9999px;background:var(--card,#fff);color:inherit;font:inherit;font-size:.92rem}
+.attchip.open{cursor:pointer}.attchip.open:hover{border-color:#C2410C;color:#9A3412}
+.attchip .attn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.attx{border:0;background:none;color:inherit;font-size:1.1rem;line-height:1;cursor:pointer;padding:0 2px;min-width:24px;min-height:24px}
+.cnt{display:block;text-align:right}
+.mubox iframe{width:100%;border:0;border-radius:12px;margin-top:10px}
 </style>
 
 <a class="skip" href="#main">Bỏ qua đến nội dung</a>
@@ -1012,7 +1022,9 @@ const ICON={
   rocket:'<path d="M5 19c0-3 1-4 3-5l-3-1 3-3c3-3 7-4 11-4 0 4-1 8-4 11l-3 3-1-3c-1 2-2 3-6 2z"/><circle cx="15" cy="9" r="1.5"/>',
   chat:'<path d="M4 5h16v11H9l-5 4z"/>',
   send:'<path d="M4 12l16-8-6 16-3-6z"/>',
-  stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>'
+  stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>',
+  clip:'<path d="M20 11l-8 8a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l8-8"/>',
+  music:'<path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>'
 };
 const icon=(k,s=24)=>`<svg class="ico" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]||ICON.cd5}</svg>`;
 
@@ -2872,7 +2884,7 @@ function ask(){
           ${ctx?`<span class="ctxchip">Đang hỏi về bài: <b>${esc(ctx.title)}</b><button type="button" data-act="clearctx" aria-label="Bỏ ngữ cảnh bài học">×</button></span>`:''}
           <div class="cbox">
             <label class="help" for="chatIn" style="position:absolute;left:-9999px">Câu hỏi của bạn</label>
-            <textarea id="chatIn" rows="1" maxlength="2000" placeholder="Hỏi cách làm bài Scratch… (Enter để gửi, Shift + Enter xuống dòng)">${esc(c.draft)}</textarea>
+            <textarea id="chatIn" rows="1" maxlength="8000" placeholder="Hỏi cách làm bài Scratch… (Enter để gửi, Shift + Enter xuống dòng)">${esc(c.draft)}</textarea>
             <button class="sendr" type="submit" id="sendBtn" aria-label="Gửi" ${c.busy?'hidden':''}>${icon('send',20)}</button>
             <button class="sendr stopr" type="button" id="stopBtn" data-act="stopchat" aria-label="Dừng" ${c.busy?'':'hidden'}>${icon('stop',20)}</button>
           </div>
@@ -3023,6 +3035,25 @@ function portfolio(){
     <div class="grid g3">${visibleProjects().map(projCard).join('')||'<div class="empty">Chưa có dự án nào.</div>'}</div></div>`;
 }
 
+/* ---- Spotify profile music ---- */
+function spParse(u){
+  const m=String(u||'').trim().match(/^https:\/\/open\.spotify\.com\/(?:intl-[a-z]{2}\/)?(track|album|playlist|episode|show|artist)\/([A-Za-z0-9]{22})(?:[?#].*)?$/);
+  return m?{t:m[1],id:m[2]}:null;
+}
+const spSrc=m=>`https://open.spotify.com/embed/${m.t}/${m.id}`;
+const spMine=u=>store.get('mu_'+u.id,null);
+function spEmbed(m,id){return m&&m.t&&m.id?`<div class="mubox"><button class="btn small" data-act="muplay" data-t="${esc(m.t)}" data-id="${esc(m.id)}" aria-expanded="false">${icon('music',16)} Nghe nhạc hồ sơ</button><div data-mu="${esc(m.id)}"></div></div>`:''}
+function musicCard(u){
+  const m=spMine(u);
+  return `<div class="card"><h3 style="margin-bottom:8px">Nhạc hồ sơ</h3>
+    <p class="help" style="margin-bottom:10px">Dán liên kết bài hát, album hoặc playlist Spotify. Nhạc không tự phát, bạn bè bấm nghe mới có tiếng.</p>
+    <form class="f" data-form="music" novalidate>${field('mu_url','Liên kết Spotify',`<input id="mu_url" name="url" type="url" inputmode="url" placeholder="https://open.spotify.com/track/..." value="${m?esc('https://open.spotify.com/'+m.t+'/'+m.id):''}">`)}
+    <div class="cta"><button class="btn primary" type="submit">Lưu nhạc</button>${m?'<button type="button" class="btn" data-act="mudel">Gỡ nhạc</button>':''}</div></form>
+    ${m?spEmbed(m):''}
+    <p class="help" style="margin-top:10px">Nhạc chỉ phát qua trình phát chính thức của Spotify. Trang này không lưu hay tải nhạc.</p></div>`;
+}
+function museSave(u,m){store.set('mu_'+u.id,m);CM.lastProf='';syncProfile()}
+
 function account(){
   const u=me();
   if(!u)return `<div class="view wrap" style="padding-block:40px"><div class="empty">Bạn cần đăng nhập. <button class="crumb" data-act="authgo" data-tab="login">Đăng nhập</button></div></div>`;
@@ -3037,7 +3068,7 @@ function account(){
       <div class="card"><h3 style="margin-bottom:14px">Tiến độ học</h3><div style="display:flex;flex-direction:column;gap:14px">${rows}</div>
         <p class="help" style="margin-top:14px">Đã học ${all.filter(l=>d[l.id]).length}/${all.length} bài.</p>${u.role!=='admin'?`<p style="margin-top:12px"><button class="btn small" data-act="go" data-go="stats">Xem tiến bộ và huy hiệu</button></p>`:''}</div>
       <div class="card"><h3 style="margin-bottom:8px">Quyền và Claude</h3><p class="help" style="margin-bottom:12px">Kết nối Claude, bật hoặc tắt từng quyền và xóa dữ liệu AI của bạn.</p><button class="btn small" data-act="go" data-go="perm">Mở trang Quyền</button></div>
-      ${u.role!=='admin'?avatarCard(u):''}
+      ${u.role!=='admin'?avatarCard(u)+musicCard(u):''}
       <div class="card"><h3 style="margin-bottom:14px">Đổi mật khẩu</h3>
         <form class="f" data-form="chpw" novalidate>
           ${field('c_old','Mật khẩu hiện tại','<input id="c_old" name="old" type="password" autocomplete="current-password">')}
@@ -3311,6 +3342,7 @@ async function syncProfile(){
   if(old&&old.uid&&CM.uid&&old.uid!==CM.uid)return;
   const s=statsOf(u);
   const p={login:u.login,name:firstName(u.name),cls:u.cls||'',uid:CM.uid||(old&&old.uid)||null,share:!!u.share,av:curKind(u)};
+  {const m=spMine(u);if(m&&u.share)p.mu=m}
   if(u.share){p.done=s.done;p.total=s.total;p.streak=s.streak;p.badges=s.badgeIds.length;p.last=s.last}
   const key=JSON.stringify(p);
   if(CM.lastProf===key)return;
@@ -3502,6 +3534,66 @@ function gallery(){
 /* ================= Q&A ================= */
 const TAGS=[['move','Di chuyển'],['vars','Biến'],['loop','Vòng lặp'],['cond','Điều kiện'],['event','Sự kiện'],['ops','Toán tử'],['sound','Âm thanh'],['sheet','Bảng tính'],['other','Khác']];
 const tagName=k=>(TAGS.find(t=>t[0]===k)||['','Khác'])[1];
+/* ---- Q&A attachments ---- */
+const QF={q:[],a:[],busy:false};
+const QF_EXT=['png','jpg','jpeg','gif','webp','pdf','txt','sb3','docx','pptx','xlsx'],QF_MAX=5*1024*1024,QF_N=3;
+const fmtSize=n=>n<1024?n+' B':n<1048576?Math.round(n/1024)+' KB':(n/1048576).toFixed(1)+' MB';
+const attCan=()=>!!(SV.ok&&SV.token);
+function attChips(k){return QF[k].map((f,i)=>`<span class="attchip"><span class="attn">${esc(f.name)}</span><span class="help">${fmtSize(f.size)}</span><button type="button" class="attx" data-act="attrm" data-k="${k}" data-i="${i}" aria-label="Bỏ tệp ${esc(f.name)}">×</button></span>`).join('')}
+function attPicker(k){
+  return `<div class="field"><span class="lab">Đính kèm tệp (không bắt buộc)</span>
+    <div class="attbar"><label class="btn small attpick" tabindex="0">${icon('clip',16)} Chọn tệp<input type="file" id="qf_${k}" data-qfk="${k}" multiple hidden accept=".png,.jpg,.jpeg,.gif,.webp,.pdf,.txt,.sb3,.docx,.pptx,.xlsx"></label><span class="help">Tối đa ${QF_N} tệp, mỗi tệp ≤ 5 MB. Ảnh, PDF, văn bản, Word/PowerPoint/Excel, dự án Scratch (.sb3).</span></div>
+    <div class="attlist" id="qfl_${k}">${attChips(k)}</div>
+    <p class="help">${attCan()?'Đừng gửi ảnh có mặt, tên thật, số điện thoại hay mật khẩu.':'Gửi tệp chỉ dùng được trên bản web chính thức (có đăng nhập máy chủ).'}</p></div>`;
+}
+function attView(list){
+  if(!Array.isArray(list)||!list.length)return '';
+  return `<div class="attlist view">${list.map(a=>`<button type="button" class="attchip open" data-act="attopen" data-p="${esc(a.p)}" data-n="${esc(a.n)}">${icon('clip',14)}<span class="attn">${esc(a.n)}</span><span class="help">${fmtSize(+a.s||0)}</span></button>`).join('')}</div>`;
+}
+function attAdd(k,files){
+  const bad=[];
+  for(const f of files){
+    const ext=(f.name.split('.').pop()||'').toLowerCase();
+    if(!QF_EXT.includes(ext)){bad.push(f.name+': loại tệp chưa được hỗ trợ');continue}
+    if(f.size>QF_MAX){bad.push(f.name+': lớn hơn 5 MB');continue}
+    if(f.size<1){bad.push(f.name+': tệp rỗng');continue}
+    if(QF[k].length>=QF_N){bad.push('Chỉ gửi tối đa '+QF_N+' tệp');break}
+    QF[k].push(f);
+  }
+  const c=$('#qfl_'+k);if(c)c.innerHTML=attChips(k);
+  if(bad.length)toast(bad[0]);
+}
+const b64of=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]||'');r.onerror=()=>rej(r.error);r.readAsDataURL(f)});
+async function attCall(body){
+  const r=await fetch(SV.url+'/functions/v1/qa-files',{method:'POST',headers:{'apikey':SV.key,'Content-Type':'application/json'},body:JSON.stringify({...body,token:SV.token})});
+  let j=null;try{j=await r.json()}catch(e){}
+  if(!r.ok||!j||j.error){const e=new Error((j&&j.error)||'net');e.code=(j&&j.error)||'net';throw e}
+  return j;
+}
+const attMsg=e=>e.code==='limit'?'Hôm nay bạn đã gửi đủ số tệp cho phép.':e.code==='bad_type'?'Tệp không đúng định dạng hoặc bị hỏng.':e.code==='too_big'?'Tệp lớn hơn 5 MB.':e.code==='unauthorized'?'Hãy đăng nhập lại rồi thử nữa.':'Chưa gửi được tệp, hãy thử lại.';
+async function attUpload(k,btn){
+  const out=[];
+  if(!QF[k].length)return out;
+  if(!attCan()){toast('Gửi tệp chỉ dùng được trên bản web chính thức.');return null}
+  try{
+    for(let i=0;i<QF[k].length;i++){
+      if(btn)btn.textContent='Đang tải tệp '+(i+1)+'/'+QF[k].length+'…';
+      const f=QF[k][i];const r=await attCall({action:'upload',name:f.name,data:await b64of(f)});
+      out.push({p:r.p,n:r.n,s:r.s});
+    }
+  }catch(e){
+    if(out.length)attCall({action:'delete',paths:out.map(x=>x.p)}).catch(()=>{});
+    toast(attMsg(e));return null;
+  }
+  return out;
+}
+async function attOpen(p,n){
+  if(!attCan()){toast('Hãy đăng nhập trên bản web chính thức để mở tệp.');return}
+  try{const r=await attCall({action:'url',path:p});window.open(r.url,'_blank','noopener')}
+  catch(e){toast(e.code==='gone'?'Tệp đã bị xóa.':attMsg(e))}
+}
+function attDrop(o){if(o&&o.att&&o.att.length&&attCan())attCall({action:'delete',paths:o.att.map(x=>x.p)}).catch(()=>{})}
+
 function qaPage(){
   const u=me(),Q=state.qa,R=reactIdx();
   const answers=cmRows('answers').filter(a=>!a.hidden||canMod());
@@ -3513,7 +3605,8 @@ function qaPage(){
   const form=Q.form?`<div class="card formcard" style="margin:0 0 20px;max-width:680px"><h3 style="margin-bottom:14px">Câu hỏi mới</h3>
     <form class="f" data-form="qask" novalidate>
       ${field('q_title','Câu hỏi (ngắn gọn)','<input id="q_title" name="title" maxlength="120">')}
-      ${field('q_body','Chi tiết (không bắt buộc)','<textarea id="q_body" name="body" maxlength="500" placeholder="Bạn đã thử gì? Chương trình chạy ra sao?"></textarea>')}
+      ${field('q_body','Chi tiết (không bắt buộc)','<textarea id="q_body" name="body" maxlength="4000" placeholder="Bạn đã thử gì? Chương trình chạy ra sao? Có thể dán đoạn mã hoặc văn bản dài." data-cnt="4000"></textarea><span class="help cnt" id="cnt_q_body">0/4000</span>')}
+      ${attPicker('q')}
       ${field('q_tag','Chủ đề',`<select id="q_tag" name="tag">${TAGS.map(t=>`<option value="${t[0]}" ${Q.tag===t[0]?'selected':''}>${t[1]}</option>`).join('')}</select>`)}
       <div class="cta"><button class="btn primary" type="submit">Đăng câu hỏi</button><button type="button" class="btn" data-act="qform">Hủy</button></div></form></div>`:'';
   let detail='';
@@ -3522,18 +3615,18 @@ function qaPage(){
     const canBest=u&&(u.login===open.a||canMod());
     detail=`<div class="card qdet"><button class="crumb" data-act="qclose">← Danh sách câu hỏi</button>
       <h2 style="font-size:1.4rem;margin:8px 0">${esc(open.title)}</h2><p><span class="pill">${tagName(open.tag)}</span> <span class="help">${esc(open.n)} · ${fmtDate(open.ts)}</span></p>
-      ${open.body?`<p style="white-space:pre-wrap;margin-block:10px">${esc(open.body)}</p>`:''}
+      ${open.body?`<p style="white-space:pre-wrap;margin-block:10px">${esc(open.body)}</p>`:''}${attView(open.att)}
       <div class="row" style="display:flex;justify-content:flex-start;gap:8px;flex-wrap:wrap"><button class="btn small" data-act="qai" data-id="${open.id}">Nhờ AI trả lời thử</button>
         ${u&&(u.login===open.a||canMod())?`<button class="btn small danger" data-act="qdel" data-id="${open.id}">Xóa câu hỏi</button>`:`<button class="mact" data-act="report" data-c="qa" data-id="${open.id}">Báo cáo</button>`}</div>
       <h3 style="margin:18px 0 8px">${as.length} trả lời</h3>
       ${as.map(a=>{const th=R.a[a.id]?R.a[a.id].size:0,mine=u&&R.a[a.id]&&R.a[a.id].has(u.login);
-        return `<div class="ans ${open.best===a.id?'best':''}">${open.best===a.id?'<span class="pill ok">Câu trả lời hay nhất</span>':''}<p style="white-space:pre-wrap">${esc(a.text)}</p>
+        return `<div class="ans ${open.best===a.id?'best':''}">${open.best===a.id?'<span class="pill ok">Câu trả lời hay nhất</span>':''}<p style="white-space:pre-wrap">${esc(a.text)}</p>${attView(a.att)}
         <div class="row" style="display:flex;justify-content:flex-start;gap:8px;flex-wrap:wrap"><span class="help">${esc(a.n)} · ${fmtDate(a.ts)}${a.hidden?' · đã ẩn':''}</span>
         <button class="btn small ${mine?'primary':''}" data-act="qthanks" data-id="${a.id}" aria-pressed="${!!mine}">Cảm ơn ${th}</button>
         ${canBest?`<button class="btn small" data-act="qbest" data-id="${a.id}">${open.best===a.id?'Bỏ chọn':'Chọn hay nhất'}</button>`:''}
         ${u&&(u.login===a.a||canMod())?`<button class="mact" data-act="adel" data-id="${a.id}">Xóa</button>`:`<button class="mact" data-act="report" data-c="answers" data-id="${a.id}">Báo cáo</button>`}
         ${canMod()?`<button class="mact" data-act="ahide" data-id="${a.id}">${a.hidden?'Hiện':'Ẩn'}</button>`:''}</div></div>`}).join('')||'<p class="help">Chưa có ai trả lời. Bạn thử giúp bạn nhé.</p>'}
-      ${u?`<form class="f" data-form="qans" data-id="${open.id}" style="margin-top:14px" novalidate>${field('a_text','Câu trả lời của bạn','<textarea id="a_text" name="text" maxlength="500"></textarea>')}<button class="btn primary" type="submit">Gửi trả lời</button></form>`
+      ${u?`<form class="f" data-form="qans" data-id="${open.id}" style="margin-top:14px" novalidate>${field('a_text','Câu trả lời của bạn','<textarea id="a_text" name="text" maxlength="4000" data-cnt="4000"></textarea><span class="help cnt" id="cnt_a_text">0/4000</span>')}${attPicker('a')}<button class="btn primary" type="submit">Gửi trả lời</button></form>`
         :`<p class="help" style="margin-top:12px"><button class="crumb" style="text-decoration:underline" data-act="authgo" data-tab="login">Đăng nhập</button> để trả lời.</p>`}</div>`;
   }
   const list=qs.map(q=>{const n=answers.filter(a=>a.qid===q.id).length;
@@ -3563,7 +3656,7 @@ function friendsPage(){
     if(!p)return `<div class="card fr"><b>${esc(l)}</b><p class="help">Bạn này chưa có hồ sơ.</p></div>`;
     const body=p.share?`<div class="progress"><i style="width:${p.total?Math.round((p.done||0)/p.total*100):0}%"></i></div>
       <p class="help">Đã học ${p.done||0}/${p.total||0} bài · chuỗi ${p.streak||0} ngày · ${p.badges||0} huy hiệu</p>
-      <p class="help">${p.last?'Bài gần nhất: '+esc(p.last.title):'Chưa học bài nào'}</p>`:'<p class="help">Bạn này chưa chia sẻ tiến độ.</p>';
+      <p class="help">${p.last?'Bài gần nhất: '+esc(p.last.title):'Chưa học bài nào'}</p>${spEmbed(p.mu)}`:'<p class="help">Bạn này chưa chia sẻ tiến độ.</p>';
     return `<div class="card fr"><div class="row"><span style="display:flex;gap:10px;align-items:center;min-width:0">${av(l,p.name,36)}<b>${pname(l)}</b></span><button class="mact" data-act="funf" data-id="${esc(l)}">Bỏ kết bạn</button></div>${body}</div>`};
   return `<div class="view wrap" style="padding-block:40px">
     <div class="head"><span class="eyebrow">Bạn bè</span><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Học cùng bạn bè</h1><p class="lead">Thêm bạn, xem bạn đang học đến đâu và cùng cố gắng. Không có bảng xếp hạng.</p></div>
@@ -3894,23 +3987,43 @@ async function commSubmit(kind,f,fd){
     await cmSet('comments',uid('c_'),{pid:f.dataset.id,a:u.login,n:dn(u),text,ts:Date.now(),hidden:false});
     return true;
   }
+  if(kind==='music'){
+    if(!u)return needLogin(),true;
+    const m=spParse(fd.url);
+    if(!m){bad(f,'mu_url','Hãy dán liên kết dạng https://open.spotify.com/track/… (bài hát, album hoặc playlist).');return true}
+    museSave(u,m);toast(u.share?'Đã lưu nhạc hồ sơ':'Đã lưu. Bạn bè chỉ nghe được khi bạn bật chia sẻ tiến độ.');render();return true;
+  }
   if(kind==='qask'){
     if(!u)return needLogin(),true;
-    const title=clean(fd.title,120),body=clean(fd.body,500);
+    const title=clean(fd.title,120),body=clean(fd.body,4000);
     if(title.length<5){bad(f,'q_title','Câu hỏi ít nhất 5 ký tự.');firstBad(f);return true}
     if(dirty(title+' '+body)){bad(f,'q_title','Nội dung có từ chưa phù hợp, hãy sửa lại nhé.');return true}
     if(!rate('qask',3,300000))return true;
     const id=uid('q_');
-    if(await cmSet('qa',id,{title,body,tag:fd.tag||'other',a:u.login,n:dn(u),ts:Date.now(),hidden:false,best:null})){state.qa.form=false;state.qa.open=id;toast('Đã đăng câu hỏi');render()}
+    if(QF.busy)return true;QF.busy=true;
+    const sb=f.querySelector('[type=submit]');const sl=sb&&sb.textContent;if(sb)sb.disabled=true;
+    const att=await attUpload('q',sb);
+    QF.busy=false;if(sb){sb.disabled=false;sb.textContent=sl}
+    if(att===null)return true;
+    const doc={title,body,tag:fd.tag||'other',a:u.login,n:dn(u),ts:Date.now(),hidden:false,best:null};if(att.length)doc.att=att;
+    if(await cmSet('qa',id,doc)){QF.q=[];state.qa.form=false;state.qa.open=id;toast('Đã đăng câu hỏi');render()}
+    else attDrop(doc);
     return true;
   }
   if(kind==='qans'){
     if(!u)return needLogin(),true;
-    const text=clean(fd.text,500);
+    const text=clean(fd.text,4000);
     if(text.length<2){bad(f,'a_text','Hãy viết câu trả lời.');return true}
     if(dirty(text)){bad(f,'a_text','Nội dung có từ chưa phù hợp, hãy sửa lại nhé.');return true}
     if(!rate('ans',5))return true;
-    if(await cmSet('answers',uid('a_'),{qid:f.dataset.id,text,a:u.login,n:dn(u),ts:Date.now(),hidden:false})){f.reset();toast('Đã gửi trả lời')}
+    if(QF.busy)return true;QF.busy=true;
+    const sb=f.querySelector('[type=submit]');const sl=sb&&sb.textContent;if(sb)sb.disabled=true;
+    const att=await attUpload('a',sb);
+    QF.busy=false;if(sb){sb.disabled=false;sb.textContent=sl}
+    if(att===null)return true;
+    const doc={qid:f.dataset.id,text,a:u.login,n:dn(u),ts:Date.now(),hidden:false};if(att.length)doc.att=att;
+    if(await cmSet('answers',uid('a_'),doc)){QF.a=[];f.reset();const c=$('#qfl_a');if(c)c.innerHTML='';toast('Đã gửi trả lời')}
+    else attDrop(doc);
     return true;
   }
   if(kind==='aiq'){
@@ -3943,12 +4056,16 @@ function commClick(a,el,id){
     case 'adhide':if(canMod())cmPatch(C,id,{hidden:true,reported:false});return true;
     case 'adok':if(canMod())cmPatch(C,id,{reported:false});return true;
     case 'addel':if(canMod()&&twice(el,'Bấm lại để xóa'))cmDel(C,id);return true;
-    case 'qform':if(needLogin())return true;state.qa.form=!state.qa.form;render();return true;
+    case 'muplay':{const box=el.parentNode.querySelector('[data-mu]');if(!box)return true;if(box.firstChild){box.innerHTML='';el.setAttribute('aria-expanded','false')}else{const m={t:el.dataset.t,id:el.dataset.id};if(!/^[a-z]+$/.test(m.t)||!/^[A-Za-z0-9]{22}$/.test(m.id))return true;box.innerHTML=`<iframe src="${spSrc(m)}" height="${m.t==='track'||m.t==='episode'?152:352}" allow="encrypted-media" loading="lazy" title="Trình phát Spotify"></iframe>`;el.setAttribute('aria-expanded','true')}return true}
+    case 'mudel':{if(u){museSave(u,null);toast('Đã gỡ nhạc');render()}return true}
+    case 'attrm':{const k=el.dataset.k;QF[k].splice(+el.dataset.i,1);const c=$('#qfl_'+k);if(c)c.innerHTML=attChips(k);return true}
+    case 'attopen':attOpen(el.dataset.p,el.dataset.n);return true;
+    case 'qform':QF.q=[];if(needLogin())return true;state.qa.form=!state.qa.form;render();return true;
     case 'qtag':state.qa.tag=el.dataset.v;render();return true;
     case 'qopen':state.qa.open=id;state.qa.form=false;render();window.scrollTo(0,0);return true;
     case 'qclose':state.qa.open=null;render();return true;
-    case 'qdel':{if(!twice(el,'Bấm lại để xóa'))return true;const q=CM.d.qa[id];if(q&&u&&(q.a===u.login||canMod())){state.qa.open=null;cmDel('qa',id)}return true}
-    case 'adel':{const x=CM.d.answers[id];if(x&&u&&(x.a===u.login||canMod()))cmDel('answers',id);return true}
+    case 'qdel':{if(!twice(el,'Bấm lại để xóa'))return true;const q=CM.d.qa[id];if(q&&u&&(q.a===u.login||canMod())){state.qa.open=null;attDrop(q);cmRows('answers').filter(x=>x.qid===id).forEach(x=>attDrop(x));cmDel('qa',id)}return true}
+    case 'adel':{const x=CM.d.answers[id];if(x&&u&&(x.a===u.login||canMod())){attDrop(x);cmDel('answers',id)}return true}
     case 'ahide':if(canMod())cmPatch('answers',id,{hidden:!(CM.d.answers[id]||{}).hidden});return true;
     case 'qthanks':toggleReact('a',id);return true;
     case 'qbest':{const an=CM.d.answers[id];if(!an)return true;const q=CM.d.qa[an.qid];if(q&&u&&(q.a===u.login||canMod()))cmPatch('qa',an.qid,{best:q.best===id?null:id});return true}
@@ -4221,6 +4338,8 @@ function onInput(e){
     else if(v==='timer'){c.timer=t.checked;render()}
     else if(v==='mins'){c.mins=t.value}
     return}
+  if(t.dataset&&t.dataset.qfk){const f=[...(t.files||[])];t.value='';attAdd(t.dataset.qfk,f);return}
+  if(t.dataset&&t.dataset.cnt){const c=$('#cnt_'+t.id);if(c)c.textContent=t.value.length+'/'+t.dataset.cnt}
   if(t.id==='avFile'){const f=t.files&&t.files[0];t.value='';openAvEditor(f);return}
   if(t.id==='flt_q'){state.filter.q=t.value;updateList()}
   else if(t.id==='chatIn'){state.chat.draft=t.value;growBox()}
