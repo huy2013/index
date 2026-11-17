@@ -645,6 +645,69 @@ b,strong{font-weight:600}
 .attx{border:0;background:none;color:inherit;font-size:1.1rem;line-height:1;cursor:pointer;padding:0 2px;min-width:24px;min-height:24px}
 .cnt{display:block;text-align:right}
 .mubox iframe{width:100%;border:0;border-radius:12px;margin-top:10px}
+
+.muplay .ps{display:none}.muplay.on .ps{display:block}.muplay.on .pl{display:none}
+.mubar{display:flex;align-items:center;gap:14px;padding:12px 16px;margin-bottom:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);flex-wrap:wrap}
+.mubar.empty{border-style:dashed}
+.muico{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--surface2);color:var(--violet)}
+.muplay{width:48px;height:48px;border-radius:50%;border:0;background:var(--violet);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 12px rgba(194,65,12,.35);transition:transform .15s,background .15s}
+.muplay:hover{background:#9A3412;transform:scale(1.05)}.muplay.on{background:#9A3412}
+.mubody{display:flex;flex-direction:column;min-width:0;flex:1}
+.mudock{position:fixed;left:16px;bottom:16px;z-index:40;width:min(380px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 12px 32px rgba(0,0,0,.28);overflow:hidden}
+.mudock[hidden]{display:none}
+.mudock-h{display:flex;justify-content:space-between;align-items:center;padding:6px 10px 6px 14px;font-size:.85rem;color:var(--muted)}
+.mudock-b iframe{display:block;border:0;width:100%}.mu-load{padding:14px}
+.phero{border-radius:20px;overflow:hidden;margin-bottom:16px;color:#fff;background:linear-gradient(115deg,#7C2D12 0%,#C2410C 55%,#D97706 100%);box-shadow:0 10px 28px rgba(154,52,18,.28);position:relative}
+.phero::after{content:"";position:absolute;right:-60px;top:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),transparent 65%);pointer-events:none}
+:root[data-theme="dark"] .phero{background:linear-gradient(115deg,#431407 0%,#9A3412 55%,#B45309 100%)}
+.phead{display:flex;gap:18px;align-items:center;padding:22px 24px 14px;flex-wrap:wrap;position:relative;z-index:1}
+.pav{position:relative;border-radius:50%;border:4px solid #fff;display:block;line-height:0;background:#fff}
+.pav .av{border-radius:50%}
+.pav .dot{position:absolute;right:4px;bottom:4px;width:16px;height:16px;border-radius:50%;background:#22C55E;border:3px solid #fff}
+.pinfo{flex:1;min-width:200px}
+.pinfo h1{color:#fff;font-size:clamp(1.6rem,4vw,2.3rem);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.vf{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#fff;color:#C2410C;font:700 .85rem var(--f-body)}
+.psub{opacity:.95;margin-top:2px}.pmeta{display:flex;gap:8px;flex-wrap:wrap;font-size:.92rem;opacity:.9;margin-top:6px}
+.pbtn{display:flex;gap:8px;flex-wrap:wrap}
+.btn.light{background:#fff;color:#9A3412;border-color:#fff;font-weight:600}.btn.light:hover{background:#FFEDD5}
+.btn.lightg{background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.5)}.btn.lightg:hover{background:rgba(255,255,255,.3)}
+.pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 16px 16px;padding:12px 8px;border-radius:14px;background:rgba(0,0,0,.2);position:relative;z-index:1}
+.pstats div{display:flex;flex-direction:column;align-items:center;text-align:center}.pstats b{font:700 1.5rem var(--f-display)}.pstats span{font-size:.82rem;opacity:.9}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;align-items:start}
+.pcol{display:flex;flex-direction:column;gap:16px;min-width:0}
+.ptitle{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:var(--violet)}.ptitle h3{flex:1;color:var(--fg)}
+.link2{background:none;border:0;color:var(--violet);font-weight:600;cursor:pointer;padding:4px 6px}.link2:hover{text-decoration:underline}
+.chips2{display:flex;flex-wrap:wrap;gap:8px}.chip2{padding:5px 12px;border-radius:9999px;background:var(--surface2);font-size:.88rem;color:var(--muted)}.chip2.on{background:#FFEDD5;color:#9A3412}
+:root[data-theme="dark"] .chip2.on{background:#431407;color:#FDBA74}
+.bdrow{display:flex;gap:16px;flex-wrap:wrap}.bditem{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:.85rem;text-align:center;max-width:96px}
+.avrow2{display:flex;gap:10px;flex-wrap:wrap}.avlink{background:none;border:0;padding:0;cursor:pointer;border-radius:50%}
+.swrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}.swrow:last-child{border-bottom:0}
+input.sw{appearance:none;-webkit-appearance:none;flex:none;width:44px;height:26px;border-radius:9999px;background:var(--surface2);border:1px solid var(--line);position:relative;cursor:pointer;transition:background .2s}
+input.sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+input.sw:checked{background:var(--violet);border-color:var(--violet)}input.sw:checked::after{transform:translateX(18px)}
+.minis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mini{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 6px;border:1px solid var(--line);border-radius:12px;background:var(--bg);cursor:pointer}.mini:hover{border-color:var(--violet)}.mini b{font:700 1.4rem var(--f-display);color:var(--violet)}.mini span{font-size:.8rem;color:var(--muted);text-align:center}
+.seccenter{margin:28px 0 16px;display:flex;flex-direction:column;gap:16px}
+.protect{display:flex;gap:20px;align-items:center;background:linear-gradient(135deg,var(--surface),var(--surface2))}
+.protect-b{flex:1;min-width:0}.seclvl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.segs{display:flex;gap:6px;flex:1;min-width:120px;max-width:260px}.segs i{flex:1;height:10px;border-radius:9999px;background:var(--surface2);border:1px solid var(--line)}
+.segs i.on{background:var(--violet);border-color:var(--violet)}.segs i.on.mid{background:var(--amber);border-color:var(--amber)}.segs i.on.low{background:var(--red);border-color:var(--red)}
+.lv{padding:3px 12px;border-radius:9999px;font-size:.9rem;background:var(--surface2)}.lv.ok{background:#DCFCE7;color:#166534}.lv.mid{background:#FEF3C7;color:#92400E}.lv.low{background:#FEE2E2;color:#991B1B}
+.checks{list-style:none;margin:0;display:flex;flex-direction:column;gap:10px}.checks li{display:flex;align-items:center;gap:12px}.checks li span:nth-child(2){flex:1}
+.ck{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font-weight:700;flex:none;background:var(--surface2)}
+.checks .ok .ck{background:#16A34A;color:#fff}.checks .no .ck{background:#F59E0B;color:#fff}
+.secgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.sech{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;color:var(--violet)}.sech h3{color:var(--fg)}
+.sesl{list-style:none;margin:0;display:flex;flex-direction:column;gap:6px}.sesl li{display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;border:1px solid var(--line)}.sesl li.cur{background:#FFF7ED;border-color:#FDBA74}
+:root[data-theme="dark"] .sesl li.cur{background:#2A1A10;border-color:#9A3412}
+.sesi{color:var(--violet);flex:none;display:grid}.sest{display:flex;flex-direction:column;flex:1;min-width:0}
+.linkl{list-style:none;margin:0;display:flex;flex-direction:column;gap:10px}.linkl li{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.linkl b{flex:1;min-width:140px}
+.sectips .tips{margin:0;padding-left:20px;display:grid;grid-template-columns:1fr 1fr;gap:6px 24px}
+.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.amg{display:flex;flex-direction:column;gap:2px;text-align:left;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);cursor:pointer}.amg:hover{border-color:var(--violet)}
+.amg.out{background:#FEF2F2;border-color:#FECACA;color:#991B1B}:root[data-theme="dark"] .amg.out{background:#3B1212;border-color:#7F1D1D;color:#FCA5A5}
+@media (max-width:760px){.pgrid,.secgrid,.sectips .tips{grid-template-columns:1fr}.acts{grid-template-columns:1fr 1fr}.pstats{grid-template-columns:repeat(2,1fr)}.protect{flex-direction:column;align-items:flex-start}.phead{padding:18px 16px 10px}.mudock{left:8px;right:8px;width:auto;bottom:8px}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .phero{background:linear-gradient(115deg,#431407 0%,#9A3412 55%,#B45309 100%)}}
 </style>
 
 <a class="skip" href="#main">Bỏ qua đến nội dung</a>
@@ -1023,6 +1086,15 @@ const ICON={
   chat:'<path d="M4 5h16v11H9l-5 4z"/>',
   send:'<path d="M4 12l16-8-6 16-3-6z"/>',
   stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>',
+  lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  laptop:'<rect x="4" y="5" width="16" height="11" rx="2"/><path d="M2 19h20"/>',
+  phone:'<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/>',
+  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.4 1 2.5h6c0-1.1.3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',
+  trophy:'<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 13v4M8 20h8"/>',
+  users:'<circle cx="9" cy="8" r="3"/><path d="M3 19a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14a5 5 0 0 1 5 5"/>',
+  key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
   clip:'<path d="M20 11l-8 8a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l8-8"/>',
   music:'<path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>'
 };
@@ -1478,7 +1550,8 @@ const DK={
   convs:{g:u=>store.get('convs_'+u.id,undefined),s:(u,v)=>store.set('convs_'+u.id,v,1)},
   badgeInit:{g:u=>store.get('badgeInit_'+u.id,false),s:(u,v)=>store.set('badgeInit_'+u.id,v,1)},
   quiz:{g:u=>store.get('quiz_'+u.id,undefined),s:(u,v)=>store.set('quiz_'+u.id,v,1)},
-  perms:{g:u=>store.get('perms_'+u.id,undefined),s:(u,v)=>store.set('perms_'+u.id,v,1)}
+  perms:{g:u=>store.get('perms_'+u.id,undefined),s:(u,v)=>store.set('perms_'+u.id,v,1)},
+  music:{g:u=>store.get('mu_'+u.id,undefined),s:(u,v)=>store.set('mu_'+u.id,v,1)}
 };
 const mergeMax=(a,b)=>{const o={...(a||{})};Object.entries(b||{}).forEach(([k,v])=>{if(typeof v==='number')o[k]=Math.max(+o[k]||0,v);else if(v&&typeof v==='object')o[k]=mergeMax(o[k],v);else if(!(k in o))o[k]=v});return o};
 function svKeyOf(k){
@@ -1487,6 +1560,7 @@ function svKeyOf(k){
   if(k==='convs_'+u.id)return perms().hist===false?null:'convs';
   if(k==='perms_'+u.id)return 'perms';
   if(k==='quiz_'+u.id)return 'quiz';
+  if(k==='mu_'+u.id)return 'music';
   if(k==='badgeInit_'+u.id)return 'badgeInit';
   return null;
 }
@@ -1547,6 +1621,7 @@ async function svAfterLogin(){
     if(!has&&lessonsAll().length)svPushLessons();}
   CM.lastProf='';
   svAvatars();
+  SEC.list=null;secTag();
   svStartPoll();
   AIL.load();
 }
@@ -1650,7 +1725,7 @@ async function seed(){
 const state={route:{name:'home',id:null},filter:{cd:'',q:''},authTab:'login',adminTab:'stats',editing:null,show:{},tempPw:null,seen:{},note:'',palTab:'motion',g:{sort:'new',form:false,open:null},qa:{tag:'',q:'',open:null,form:false},dict:{q:'',cat:'all',fav:false,open:{}},
   qz:{screen:'list',sel:null,cfg:{mode:'practice',shuffle:true,timer:false,mins:''},run:null,admin:{title:'',topic:'0',cls:'',text:'',prev:null,editId:null,view:null,mode:'gui',cards:[{q:'',qs:'',qsOn:false,o:['','','',''],os:[0,0,0,0],a:-1,e:''}],errs:{},showPrev:false,inited:false,draft:false}},
   fq:{tab:'q',pick:null,kind:'lessons',sheet:null,cheer:'bolt'},fr:{tab:'feed',n:8},chat:{lp:false,convs:[],key:null,cur:null,busy:false,ctl:null,ctx:null,draft:'',hint:false,sb:false,ren:null,q:''},ai:'pending'};
-const ROUTES=['home','auth','lessons','lesson','ask','blocks','portfolio','gallery','qa','friends','stats','account','admin','about','contact','privacy','perm','quiz'];
+const ROUTES=['home','auth','lessons','lesson','ask','blocks','portfolio','gallery','qa','friends','stats','account','admin','about','contact','privacy','perm','quiz','profile'];
 function parseHash(){
   let h='';try{h=(location.hash||'').replace('#','')}catch(e){}
   if(!h)return null;
@@ -3041,42 +3116,184 @@ function spParse(u){
   return m?{t:m[1],id:m[2]}:null;
 }
 const spSrc=m=>`https://open.spotify.com/embed/${m.t}/${m.id}`;
-const spMine=u=>store.get('mu_'+u.id,null);
-function spEmbed(m,id){return m&&m.t&&m.id?`<div class="mubox"><button class="btn small" data-act="muplay" data-t="${esc(m.t)}" data-id="${esc(m.id)}" aria-expanded="false">${icon('music',16)} Nghe nhạc hồ sơ</button><div data-mu="${esc(m.id)}"></div></div>`:''}
+const spMine=u=>{const m=store.get('mu_'+u.id,null);return m&&m.t&&m.id?m:null};
+const SPN={track:'Bài hát',album:'Album',playlist:'Playlist',episode:'Tập podcast',show:'Podcast',artist:'Nghệ sĩ'};
+/* trình phát nổi: nhạc không tắt khi đổi trang hay khi trang vẽ lại */
+const MU={cur:null,ctl:null};
+function muDock(){
+  let d=document.getElementById('mudock');
+  if(!d){d=document.createElement('div');d.id='mudock';d.className='mudock';d.hidden=true;
+    d.innerHTML='<div class="mudock-h"><span>'+icon('music',16)+' Đang phát nhạc hồ sơ</span><button type="button" class="attx" data-act="muclose" aria-label="Đóng trình phát nhạc">×</button></div><div class="mudock-b"></div>';
+    document.body.appendChild(d)}
+  return d;
+}
+function muClose(){const d=document.getElementById('mudock');if(d){d.hidden=true;d.querySelector('.mudock-b').innerHTML=''}MU.cur=null;MU.ctl=null;document.querySelectorAll('.muplay[aria-pressed=true]').forEach(b=>{b.setAttribute('aria-pressed','false');b.classList.remove('on')})}
+function muApi(cb){
+  if(window.SpotifyIframeApi)return cb(window.SpotifyIframeApi);
+  let done=false;const fin=a=>{if(!done){done=true;cb(a)}};
+  window.onSpotifyIframeApiReady=a=>{window.SpotifyIframeApi=a;fin(a)};
+  if(!document.getElementById('spapi')){const sc=document.createElement('script');sc.id='spapi';sc.src='https://open.spotify.com/embed/iframe-api/v1';sc.async=true;sc.onerror=()=>fin(null);document.head.appendChild(sc)}
+  setTimeout(()=>fin(null),3500);
+}
+function muPlay(t,id){
+  if(!/^[a-z]+$/.test(t)||!/^[A-Za-z0-9]{22}$/.test(id))return;
+  if(MU.cur===id){muClose();return}
+  const d=muDock(),b=d.querySelector('.mudock-b');
+  MU.cur=id;MU.ctl=null;d.hidden=false;b.innerHTML='<div class="mu-load help">Đang mở trình phát Spotify…</div>';
+  const h=(t==='track'||t==='episode')?80:152;
+  const plain=()=>{if(MU.cur!==id)return;b.innerHTML=`<iframe src="${spSrc({t,id})}" width="100%" height="${h}" allow="autoplay; encrypted-media" loading="lazy" title="Trình phát Spotify"></iframe>`};
+  muApi(api=>{
+    if(MU.cur!==id)return;
+    if(!api){plain();return}
+    b.innerHTML='<div></div>';
+    try{api.createController(b.firstChild,{uri:'spotify:'+t+':'+id,width:'100%',height:h},c=>{MU.ctl=c;c.addListener('ready',()=>{try{c.play()}catch(e){}})})}catch(e){plain()}
+  });
+  document.querySelectorAll('.muplay').forEach(x=>{const on=x.dataset.id===id;x.setAttribute('aria-pressed',on?'true':'false');x.classList.toggle('on',on)});
+}
+function muBar(m,own){
+  if(!m){return own?`<div class="mubar empty"><span class="muico">${icon('music',22)}</span><div class="mubody"><b>Chưa có nhạc hồ sơ</b><span class="help">Dán liên kết Spotify để ai vào hồ sơ cũng nghe được.</span></div><button class="btn small primary" data-act="scrollto" data-to="sec-music">Thêm nhạc</button></div>`:''}
+  const on=MU.cur===m.id;
+  return `<div class="mubar"><button class="muplay${on?' on':''}" data-act="muplay" data-t="${esc(m.t)}" data-id="${esc(m.id)}" aria-pressed="${on}" aria-label="Nghe nhạc hồ sơ"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path class="pl" d="M8 5v14l11-7z" fill="currentColor"/><g class="ps" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></g></svg></button>
+    <div class="mubody"><b>Nhạc hồ sơ</b><span class="help">${SPN[m.t]||'Nhạc'} trên Spotify · bấm để nghe</span></div>
+    ${own?`<button class="btn small" data-act="scrollto" data-to="sec-music">Đổi nhạc</button>`:''}</div>`;
+}
 function musicCard(u){
   const m=spMine(u);
-  return `<div class="card"><h3 style="margin-bottom:8px">Nhạc hồ sơ</h3>
-    <p class="help" style="margin-bottom:10px">Dán liên kết bài hát, album hoặc playlist Spotify. Nhạc không tự phát, bạn bè bấm nghe mới có tiếng.</p>
+  return `<div class="card" id="sec-music"><h3 style="margin-bottom:8px">Nhạc hồ sơ</h3>
+    <p class="help" style="margin-bottom:10px">Dán liên kết bài hát, album hoặc playlist Spotify. Ai vào hồ sơ của bạn cũng bấm nghe được ngay ở đầu trang. Nhạc không tự phát khi mở trang.</p>
     <form class="f" data-form="music" novalidate>${field('mu_url','Liên kết Spotify',`<input id="mu_url" name="url" type="url" inputmode="url" placeholder="https://open.spotify.com/track/..." value="${m?esc('https://open.spotify.com/'+m.t+'/'+m.id):''}">`)}
     <div class="cta"><button class="btn primary" type="submit">Lưu nhạc</button>${m?'<button type="button" class="btn" data-act="mudel">Gỡ nhạc</button>':''}</div></form>
-    ${m?spEmbed(m):''}
-    <p class="help" style="margin-top:10px">Nhạc chỉ phát qua trình phát chính thức của Spotify. Trang này không lưu hay tải nhạc.</p></div>`;
+    <p class="help" style="margin-top:10px">Nhạc phát qua trình phát chính thức của Spotify, trang này không tải hay lưu file nhạc. Spotify có thể chỉ phát đoạn nghe thử nếu người nghe chưa đăng nhập Spotify.</p></div>`;
 }
-function museSave(u,m){store.set('mu_'+u.id,m);CM.lastProf='';syncProfile()}
+function museSave(u,m){store.set('mu_'+u.id,m||{});CM.lastProf='';syncProfile()}
 
-function account(){
-  const u=me();
-  if(!u)return `<div class="view wrap" style="padding-block:40px"><div class="empty">Bạn cần đăng nhập. <button class="crumb" data-act="authgo" data-tab="login">Đăng nhập</button></div></div>`;
-  const d=doneOf(u.id),all=visLessons();
-  const rows=CD.map(c=>{const ls=all.filter(l=>l.cd===c.n);if(!ls.length)return '';const n=ls.filter(l=>d[l.id]).length;
-    return `<div class="prog-row" style="margin:0"><div class="lab"><span>${esc(c.name)}</span><span>${n}/${ls.length}</span></div><div class="progress"><i style="width:${Math.round(n/ls.length*100)}%"></i></div></div>`}).join('');
-  return `<div class="view wrap" style="padding-block:40px">
-    <div class="head"><span class="eyebrow">Tài khoản</span><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Xin chào, ${esc(u.name)}</h1>
-      <p class="lead">${u.role==='admin'?'Tài khoản giáo viên':'Lớp '+esc(u.cls||u.grade)} · Tên đăng nhập: ${esc(u.login)}</p></div>
-    ${u.mustChange?`<div class="notice warn" style="margin-bottom:20px"><b>Hãy đổi mật khẩu ngay.</b> Mật khẩu hiện tại là mật khẩu tạm hoặc mật khẩu mặc định.</div>`:''}
-    <div class="split">
-      <div class="card"><h3 style="margin-bottom:14px">Tiến độ học</h3><div style="display:flex;flex-direction:column;gap:14px">${rows}</div>
-        <p class="help" style="margin-top:14px">Đã học ${all.filter(l=>d[l.id]).length}/${all.length} bài.</p>${u.role!=='admin'?`<p style="margin-top:12px"><button class="btn small" data-act="go" data-go="stats">Xem tiến bộ và huy hiệu</button></p>`:''}</div>
-      <div class="card"><h3 style="margin-bottom:8px">Quyền và Claude</h3><p class="help" style="margin-bottom:12px">Kết nối Claude, bật hoặc tắt từng quyền và xóa dữ liệu AI của bạn.</p><button class="btn small" data-act="go" data-go="perm">Mở trang Quyền</button></div>
-      ${u.role!=='admin'?avatarCard(u)+musicCard(u):''}
-      <div class="card"><h3 style="margin-bottom:14px">Đổi mật khẩu</h3>
+/* ---- thiết bị / phiên đăng nhập ---- */
+const SEC={list:null,loading:false,err:false};
+function devLabel(){
+  const ua=navigator.userAgent||'';
+  const os=/Windows/.test(ua)?'Windows':/Android/.test(ua)?'Android':/iPhone|iPad|iPod/.test(ua)?'iOS':/Mac OS X/.test(ua)?'macOS':/Linux/.test(ua)?'Linux':'Thiết bị';
+  const br=/Edg\//.test(ua)?'Edge':/OPR\//.test(ua)?'Opera':/Firefox\//.test(ua)?'Firefox':/Chrome\//.test(ua)?'Chrome':/Safari\//.test(ua)?'Safari':'Trình duyệt';
+  return br+' · '+os;
+}
+async function secTag(){if(!SV.ok||!SV.token)return;try{await rpc('app_session_tag',{p_token:SV.token,p_ua:devLabel()})}catch(e){}}
+async function secLoad(force){
+  if(!SV.ok||!SV.token||(SEC.loading))return;
+  if(SEC.list&&!force)return;
+  SEC.loading=true;
+  try{SEC.list=await rpc('app_sessions_list',{p_token:SV.token})||[];SEC.err=false}catch(e){SEC.err=true;SEC.list=SEC.list||[];if(e.code==='unauthorized'){SEC.loading=false;return svExpire()}}
+  SEC.loading=false;
+  if(state.route.name==='account')scheduleRender();
+}
+const agoMs=t=>{const s=Math.max(0,(Date.now()-t)/1000);return s<90?'Vừa xong':s<3600?Math.floor(s/60)+' phút trước':s<86400?Math.floor(s/3600)+' giờ trước':Math.floor(s/86400)+' ngày trước'};
+function secChecks(u){
+  const p=store.get('perms_'+u.id,null);
+  const others=SEC.list?SEC.list.filter(x=>!x.cur).length:null;
+  return [
+    {ok:!u.mustChange,t:'Đã đổi mật khẩu tạm hoặc mặc định',fix:'Đổi mật khẩu',to:'sec-pw'},
+    {ok:others===null?null:others<=2,t:'Không có nhiều thiết bị lạ đang đăng nhập',fix:'Xem thiết bị',to:'sec-sessions'},
+    {ok:!!(p&&p.at),t:'Đã xem lại các quyền chia sẻ dữ liệu',fix:'Mở trang Quyền',go:'perm'}
+  ];
+}
+function secCenter(u){
+  const ck=secChecks(u),n=ck.filter(c=>c.ok).length,known=ck.filter(c=>c.ok!==null).length;
+  const lvl=n>=3?['Mạnh','ok']:n===2?['Khá','mid']:['Cần cải thiện','low'];
+  const seg=[0,1,2].map(i=>`<i class="${i<n?'on '+lvl[1]:''}"></i>`).join('');
+  const svOn=SV.ok&&SV.token;
+  const sess=!svOn?`<p class="help">Danh sách thiết bị chỉ có khi đăng nhập vào máy chủ PRIME (bản web chính thức).</p>`
+    :SEC.list===null?`<p class="help">Đang tải danh sách thiết bị…</p>`
+    :`<ul class="sesl">${SEC.list.map(x=>`<li class="${x.cur?'cur':''}"><span class="sesi">${icon(/iOS|Android/.test(x.ua)?'phone':'laptop',20)}</span><span class="sest"><b>${esc(x.ua||'Thiết bị chưa rõ')}</b><span class="help">${x.cur?'Thiết bị này · đang dùng':'Hoạt động '+agoMs(x.last)}</span></span>${x.cur?'<span class="pill ok">Đang dùng</span>':`<button class="mact" data-act="sesout" data-id="${esc(x.id)}">Đăng xuất</button>`}</li>`).join('')||'<li class="help">Chưa có phiên nào.</li>'}</ul>
+      ${SEC.list.filter(x=>!x.cur).length?`<p style="margin-top:10px"><button class="btn small danger" data-act="sesall">Đăng xuất tất cả thiết bị khác</button></p>`:''}${SEC.err?'<p class="help">Chưa tải được danh sách mới nhất.</p>':''}`;
+  const claude=AIL&&AIL.st&&AIL.st.connected;
+  const m=u.role!=='admin'?spMine(u):null;
+  return `<section class="seccenter" id="sec" aria-labelledby="sec-h">
+    <div class="sec-head"><span class="eyebrow">Bảo mật</span><h2 id="sec-h" style="font-size:clamp(1.5rem,3.5vw,2rem)">Trung tâm bảo mật tài khoản</h2><p class="help">Đáng tin cậy · rõ ràng · an toàn</p></div>
+    <div class="card protect"><div class="shield" aria-hidden="true"><svg viewBox="0 0 64 64" width="64" height="64"><path d="M32 4l22 8v16c0 14-9 25-22 32C19 53 10 42 10 28V12z" fill="var(--violet)"/><rect x="23" y="29" width="18" height="14" rx="3" fill="#fff"/><path d="M26 29v-4a6 6 0 0 1 12 0v4" fill="none" stroke="#fff" stroke-width="3"/></svg></div>
+      <div class="protect-b"><h3>Bảo vệ tài khoản</h3><p class="help">${n>=3?'Tài khoản của bạn được bảo vệ tốt.':'Hoàn thành các mục dưới đây để tài khoản an toàn hơn.'}</p>
+      <div class="seclvl"><span>Mức bảo mật</span><div class="segs" role="img" aria-label="Mức bảo mật: ${lvl[0]}">${seg}</div><b class="lv ${lvl[1]}">${known<ck.length&&n<3?'Đang kiểm tra':lvl[0]}</b></div></div></div>
+    <ul class="checks card">${ck.map(c=>`<li class="${c.ok?'ok':c.ok===null?'wait':'no'}"><span class="ck" aria-hidden="true">${c.ok?'✓':c.ok===null?'…':'!'}</span><span>${c.t}</span>${c.ok===false?(c.go?`<button class="mact" data-act="go" data-go="${c.go}">${c.fix}</button>`:`<button class="mact" data-act="scrollto" data-to="${c.to}">${c.fix}</button>`):''}</li>`).join('')}</ul>
+    <div class="secgrid">
+      <div class="card" id="sec-pw"><div class="sech">${icon('lock',22)}<div><h3>Đổi mật khẩu</h3><p class="help">Dùng mật khẩu mạnh, không dùng chung với tài khoản khác.</p></div></div>
         <form class="f" data-form="chpw" novalidate>
           ${field('c_old','Mật khẩu hiện tại','<input id="c_old" name="old" type="password" autocomplete="current-password">')}
           ${field('c_new','Mật khẩu mới','<input id="c_new" name="pw" type="password" autocomplete="new-password">','Ít nhất 8 ký tự, gồm chữ và số.')}
           ${field('c_new2','Nhập lại mật khẩu mới','<input id="c_new2" name="pw2" type="password" autocomplete="new-password">')}
           <button class="btn primary" type="submit">Đổi mật khẩu</button></form></div>
+      <div class="card" id="sec-sessions"><div class="sech">${icon('laptop',22)}<div><h3>Thiết bị đang đăng nhập</h3><p class="help">Thấy thiết bị lạ? Đăng xuất nó rồi đổi mật khẩu.</p></div></div>${sess}</div>
+      <div class="card"><div class="sech">${icon('link',22)}<div><h3>Tài khoản liên kết</h3><p class="help">Dịch vụ bên ngoài đang gắn với hồ sơ của bạn.</p></div></div>
+        <ul class="linkl"><li><b>Claude (gia sư AI)</b><span class="pill ${claude?'ok':''}">${claude?'Đã kết nối':'Chưa kết nối'}</span><button class="mact" data-act="go" data-go="perm">Quản lý</button></li>
+        ${u.role!=='admin'?`<li><b>Spotify (nhạc hồ sơ)</b><span class="pill ${m?'ok':''}">${m?'Đã gắn nhạc':'Chưa gắn'}</span><button class="mact" data-act="scrollto" data-to="sec-music">${m?'Đổi':'Thêm'}</button></li>`:''}</ul></div>
     </div>
-    <p style="margin-top:24px"><button class="btn danger" data-act="logout">Đăng xuất</button></p></div>`;
+    <div class="card sectips"><div class="sech">${icon('bulb',22)}<div><h3>Mẹo bảo mật</h3><p class="help">Vài cách đơn giản để giữ tài khoản an toàn.</p></div></div>
+      <ul class="tips"><li>Dùng mật khẩu mạnh, riêng cho PRIME.</li><li>Không đưa mật khẩu cho bạn bè, kể cả bạn thân.</li><li>Kiểm tra danh sách thiết bị thỉnh thoảng.</li><li>Đăng xuất thiết bị bạn không nhận ra.</li></ul></div>
+  </section>`;
+}
+
+/* ---- hồ sơ ---- */
+function heroBanner(o){
+  return `<div class="phero"><div class="pcover" aria-hidden="true"></div>
+    <div class="phead"><span class="pav">${o.av}<i class="dot" title="Đang hoạt động"></i></span>
+      <div class="pinfo"><h1>${esc(o.name)}${o.admin?' <span class="vf" title="Giáo viên" aria-label="Giáo viên">✓</span>':''}</h1>
+        <p class="psub">${o.sub}</p><p class="pmeta">${o.meta.join('<span aria-hidden="true">·</span>')}</p></div>
+      <div class="pbtn">${o.btns||''}</div></div>
+    ${o.stats?`<div class="pstats">${o.stats.map(([v,l])=>`<div><b>${v}</b><span>${l}</span></div>`).join('')}</div>`:''}</div>`;
+}
+function swRows(){
+  const p=perms();
+  return PERM_LIST.map(([k,t])=>`<label class="swrow"><span>${t}</span><input type="checkbox" role="switch" class="sw" data-perm="${k}" ${p[k]?'checked':''}></label>`).join('');
+}
+function account(){
+  const u=me();
+  if(!u)return `<div class="view wrap" style="padding-block:40px"><div class="empty">Bạn cần đăng nhập. <button class="crumb" data-act="authgo" data-tab="login">Đăng nhập</button></div></div>`;
+  if(SV.ok&&SV.token&&!SEC.list&&!SEC.loading)setTimeout(()=>secLoad(),0);
+  const adm=u.role==='admin',s=statsOf(u),d=doneOf(u.id),all=visLessons();
+  const chips=CD.map(c=>{const ls=all.filter(l=>l.cd===c.n);if(!ls.length)return '';const n=ls.filter(l=>d[l.id]).length;return `<span class="chip2${n?' on':''}">Chủ đề ${c.n} · ${n}/${ls.length}</span>`}).join('');
+  const bd=BADGES.map(b=>({b,lv:b.lv(s)})).filter(x=>x.lv>0).sort((a,b)=>b.lv-a.lv).slice(0,3);
+  const fr=adm?[]:friendsOf(u.login);
+  const pct=s.total?Math.round(s.done/s.total*100):0;
+  const hero=heroBanner({av:av(u.login,u.name,96),name:u.name,admin:adm,
+    sub:adm?'Giáo viên · PRIME':'Học sinh lớp '+esc(u.cls||u.grade||'8'),
+    meta:[`@${esc(u.login)}`,u.created?'Tham gia '+fmtDate(u.created):'Thành viên PRIME'],
+    btns:`<button class="btn light" data-act="scrollto" data-to="sec-info">Chỉnh sửa hồ sơ</button>${adm?'':`<button class="btn lightg" data-act="go" data-go="profile" data-id="${esc(u.login)}">Xem hồ sơ công khai</button>`}`,
+    stats:adm?null:[[s.done,'Bài đã học'],[s.streak,'Ngày liên tiếp'],[s.badgeIds.length,'Huy hiệu'],[s.answers,'Câu trả lời']]});
+  return `<div class="view wrap profile" style="padding-block:28px">
+    ${adm?'':muBar(spMine(u),true)}
+    ${hero}
+    ${u.mustChange?`<div class="notice warn" style="margin-bottom:16px"><b>Hãy đổi mật khẩu ngay.</b> Mật khẩu hiện tại là mật khẩu tạm hoặc mật khẩu mặc định. <button class="crumb" data-act="scrollto" data-to="sec-pw">Đổi mật khẩu</button></div>`:''}
+    <div class="pgrid">
+      <div class="pcol">
+        <div class="card"><div class="ptitle">${icon('cd5',20)}<h3>Tiến độ học</h3><button class="link2" data-act="go" data-go="stats">Chi tiết</button></div>
+          <div class="progress"><i style="width:${pct}%"></i></div><p class="help" style="margin:6px 0 12px">Đã học ${s.done}/${s.total} bài (${pct}%).</p><div class="chips2">${chips||'<span class="help">Chưa có bài nào.</span>'}</div></div>
+        ${adm?'':`<div class="card"><div class="ptitle">${icon('trophy',20)}<h3>Huy hiệu thành tích</h3><button class="link2" data-act="go" data-go="stats">Xem tất cả</button></div>
+          ${bd.length?`<div class="bdrow">${bd.map(x=>`<div class="bditem">${miniBadge(x.b,x.lv)}<span>${esc(x.b.name)}</span></div>`).join('')}</div>`:'<p class="help">Học bài đầu tiên để nhận huy hiệu đầu tiên.</p>'}</div>
+        <div class="card"><div class="ptitle">${icon('users',20)}<h3>Bạn học (${fr.length})</h3><button class="link2" data-act="go" data-go="friends">Thêm bạn</button></div>
+          <div class="avrow2">${fr.slice(0,5).map(l=>`<button class="avlink" data-act="go" data-go="profile" data-id="${esc(l)}" aria-label="Xem hồ sơ ${esc((CM.d.profiles[l]||{}).name||l)}">${av(l,(CM.d.profiles[l]||{}).name,44)}</button>`).join('')||'<span class="help">Chưa có bạn nào. Kết bạn để học cùng nhau.</span>'}</div></div>`}
+      </div>
+      <div class="pcol">
+        <div class="card"><div class="ptitle">${icon('key',20)}<h3>Quyền và Claude</h3><button class="link2" data-act="go" data-go="perm">Chi tiết</button></div>${swRows()}</div>
+        ${adm?'':`<div class="card"><div class="ptitle">${icon('rocket',20)}<h3>Dự án và hỏi đáp</h3></div>
+          <div class="minis"><button class="mini" data-act="go" data-go="portfolio"><b>${s.posts}</b><span>Dự án đã đăng</span></button><button class="mini" data-act="go" data-go="qa"><b>${s.answers}</b><span>Câu trả lời</span></button><button class="mini" data-act="go" data-go="quiz"><b>${s.qdone}</b><span>Ôn tập</span></button></div></div>`}
+      </div>
+    </div>
+    ${adm?'':`<div class="pgrid" id="sec-info"><div class="pcol">${avatarCard(u)}</div><div class="pcol">${musicCard(u)}</div></div>`}
+    ${secCenter(u)}
+    <div class="card acctmg"><div class="ptitle">${icon('gear',20)}<h3>Quản lý tài khoản</h3></div>
+      <div class="acts"><button class="amg" data-act="scrollto" data-to="${adm?'sec':'sec-info'}"><b>Thông tin cá nhân</b><span class="help">Ảnh đại diện, nhạc hồ sơ</span></button><button class="amg" data-act="scrollto" data-to="sec"><b>Bảo mật</b><span class="help">Mật khẩu, thiết bị</span></button><button class="amg" data-act="go" data-go="perm"><b>Quyền và dữ liệu</b><span class="help">Claude, chia sẻ tiến độ</span></button><button class="amg out" data-act="logout"><b>Đăng xuất</b><span class="help">Thoát khỏi thiết bị này</span></button></div></div>
+  </div>`;
+}
+function profilePage(login){
+  const u=me(),P=CM.d.profiles[login];
+  if(!login||!P)return `<div class="view wrap" style="padding-block:40px"><div class="empty">Không tìm thấy hồ sơ này. <button class="crumb" data-act="go" data-go="friends">Về trang bạn bè</button></div></div>`;
+  const self=u&&u.login===login;
+  const pct=P.total?Math.round((P.done||0)/P.total*100):0;
+  const hero=heroBanner({av:av(login,P.name,96),name:P.name||login,sub:P.cls?'Học sinh lớp '+esc(P.cls):'Học sinh PRIME',meta:[`@${esc(login)}`],
+    btns:self?`<button class="btn light" data-act="go" data-go="account">Chỉnh sửa hồ sơ</button>`:(u?`<button class="btn light" data-act="go" data-go="friends">Kết bạn</button>`:`<button class="btn light" data-act="authgo" data-tab="login">Đăng nhập để kết bạn</button>`),
+    stats:P.share?[[P.done||0,'Bài đã học'],[P.streak||0,'Ngày liên tiếp'],[P.badges||0,'Huy hiệu'],[pct+'%','Hoàn thành']]:null});
+  return `<div class="view wrap profile" style="padding-block:28px">
+    <p style="margin-bottom:10px"><button class="crumb" data-act="go" data-go="${u?'friends':'home'}">← Quay lại</button></p>
+    ${muBar(P.mu&&P.mu.t&&P.mu.id?P.mu:null,false)}
+    ${hero}
+    <div class="card" style="max-width:560px">${P.share?`<h3 style="margin-bottom:8px">Tiến độ học</h3><div class="progress"><i style="width:${pct}%"></i></div><p class="help" style="margin-top:8px">${P.last?'Bài gần nhất: '+esc(P.last.title):'Chưa học bài nào'}</p>`:'<p class="help">Bạn này chưa chia sẻ tiến độ học. Chỉ tên, lớp và nhạc hồ sơ được hiển thị công khai.</p>'}</div>
+  </div>`;
 }
 
 /* ---------- admin ---------- */
@@ -3342,7 +3559,7 @@ async function syncProfile(){
   if(old&&old.uid&&CM.uid&&old.uid!==CM.uid)return;
   const s=statsOf(u);
   const p={login:u.login,name:firstName(u.name),cls:u.cls||'',uid:CM.uid||(old&&old.uid)||null,share:!!u.share,av:curKind(u)};
-  {const m=spMine(u);if(m&&u.share)p.mu=m}
+  {const m=spMine(u);if(m)p.mu=m}
   if(u.share){p.done=s.done;p.total=s.total;p.streak=s.streak;p.badges=s.badgeIds.length;p.last=s.last}
   const key=JSON.stringify(p);
   if(CM.lastProf===key)return;
@@ -3614,7 +3831,7 @@ function qaPage(){
     const as=answers.filter(a=>a.qid===open.id).sort((a,b)=>(b.id===open.best)-(a.id===open.best)||a.ts-b.ts);
     const canBest=u&&(u.login===open.a||canMod());
     detail=`<div class="card qdet"><button class="crumb" data-act="qclose">← Danh sách câu hỏi</button>
-      <h2 style="font-size:1.4rem;margin:8px 0">${esc(open.title)}</h2><p><span class="pill">${tagName(open.tag)}</span> <span class="help">${esc(open.n)} · ${fmtDate(open.ts)}</span></p>
+      <h2 style="font-size:1.4rem;margin:8px 0">${esc(open.title)}</h2><p><span class="pill">${tagName(open.tag)}</span> <span class="help">${esc(open.n)} · ${fmtDate(open.ts)}</span> ${CM.d.profiles[open.a]?`<button class="mact" data-act="go" data-go="profile" data-id="${esc(open.a)}">Xem hồ sơ</button>`:''}</p>
       ${open.body?`<p style="white-space:pre-wrap;margin-block:10px">${esc(open.body)}</p>`:''}${attView(open.att)}
       <div class="row" style="display:flex;justify-content:flex-start;gap:8px;flex-wrap:wrap"><button class="btn small" data-act="qai" data-id="${open.id}">Nhờ AI trả lời thử</button>
         ${u&&(u.login===open.a||canMod())?`<button class="btn small danger" data-act="qdel" data-id="${open.id}">Xóa câu hỏi</button>`:`<button class="mact" data-act="report" data-c="qa" data-id="${open.id}">Báo cáo</button>`}</div>
@@ -3656,8 +3873,8 @@ function friendsPage(){
     if(!p)return `<div class="card fr"><b>${esc(l)}</b><p class="help">Bạn này chưa có hồ sơ.</p></div>`;
     const body=p.share?`<div class="progress"><i style="width:${p.total?Math.round((p.done||0)/p.total*100):0}%"></i></div>
       <p class="help">Đã học ${p.done||0}/${p.total||0} bài · chuỗi ${p.streak||0} ngày · ${p.badges||0} huy hiệu</p>
-      <p class="help">${p.last?'Bài gần nhất: '+esc(p.last.title):'Chưa học bài nào'}</p>${spEmbed(p.mu)}`:'<p class="help">Bạn này chưa chia sẻ tiến độ.</p>';
-    return `<div class="card fr"><div class="row"><span style="display:flex;gap:10px;align-items:center;min-width:0">${av(l,p.name,36)}<b>${pname(l)}</b></span><button class="mact" data-act="funf" data-id="${esc(l)}">Bỏ kết bạn</button></div>${body}</div>`};
+      <p class="help">${p.last?'Bài gần nhất: '+esc(p.last.title):'Chưa học bài nào'}</p>`:'<p class="help">Bạn này chưa chia sẻ tiến độ.</p>';
+    return `<div class="card fr"><div class="row"><span style="display:flex;gap:10px;align-items:center;min-width:0">${av(l,p.name,36)}<b>${pname(l)}</b></span><button class="mact" data-act="funf" data-id="${esc(l)}">Bỏ kết bạn</button></div>${body}${muBar(p.mu&&p.mu.t&&p.mu.id?p.mu:null,false)}<p style="margin-top:8px"><button class="mact" data-act="go" data-go="profile" data-id="${esc(l)}">Xem hồ sơ</button></p></div>`};
   return `<div class="view wrap" style="padding-block:40px">
     <div class="head"><span class="eyebrow">Bạn bè</span><h1 style="font-size:clamp(1.9rem,4.5vw,2.8rem)">Học cùng bạn bè</h1><p class="lead">Thêm bạn, xem bạn đang học đến đâu và cùng cố gắng. Không có bảng xếp hạng.</p></div>
     ${cmBanner()}
@@ -3991,7 +4208,7 @@ async function commSubmit(kind,f,fd){
     if(!u)return needLogin(),true;
     const m=spParse(fd.url);
     if(!m){bad(f,'mu_url','Hãy dán liên kết dạng https://open.spotify.com/track/… (bài hát, album hoặc playlist).');return true}
-    museSave(u,m);toast(u.share?'Đã lưu nhạc hồ sơ':'Đã lưu. Bạn bè chỉ nghe được khi bạn bật chia sẻ tiến độ.');render();return true;
+    museSave(u,m);toast('Đã lưu nhạc hồ sơ');render();return true;
   }
   if(kind==='qask'){
     if(!u)return needLogin(),true;
@@ -4056,8 +4273,12 @@ function commClick(a,el,id){
     case 'adhide':if(canMod())cmPatch(C,id,{hidden:true,reported:false});return true;
     case 'adok':if(canMod())cmPatch(C,id,{reported:false});return true;
     case 'addel':if(canMod()&&twice(el,'Bấm lại để xóa'))cmDel(C,id);return true;
-    case 'muplay':{const box=el.parentNode.querySelector('[data-mu]');if(!box)return true;if(box.firstChild){box.innerHTML='';el.setAttribute('aria-expanded','false')}else{const m={t:el.dataset.t,id:el.dataset.id};if(!/^[a-z]+$/.test(m.t)||!/^[A-Za-z0-9]{22}$/.test(m.id))return true;box.innerHTML=`<iframe src="${spSrc(m)}" height="${m.t==='track'||m.t==='episode'?152:352}" allow="encrypted-media" loading="lazy" title="Trình phát Spotify"></iframe>`;el.setAttribute('aria-expanded','true')}return true}
-    case 'mudel':{if(u){museSave(u,null);toast('Đã gỡ nhạc');render()}return true}
+    case 'muplay':muPlay(el.dataset.t,el.dataset.id);return true;
+    case 'muclose':muClose();return true;
+    case 'scrollto':{const t=document.getElementById(el.dataset.to);if(t){t.scrollIntoView({behavior:RM()?'auto':'smooth',block:'start'});const f=t.querySelector('input,button');if(f&&el.dataset.to!=='sec'&&el.dataset.to!=='sec-info')setTimeout(()=>f.focus({preventScroll:true}),400)}return true}
+    case 'sesout':{if(!twice(el,'Bấm lại để đăng xuất'))return true;rpc('app_session_revoke',{p_token:SV.token,p_sid:id}).then(()=>{toast('Đã đăng xuất thiết bị đó');secLoad(true)}).catch(e=>toast(svMsg(e)));return true}
+    case 'sesall':{if(!twice(el,'Bấm lại để xác nhận'))return true;rpc('app_sessions_revoke_others',{p_token:SV.token}).then(n=>{toast('Đã đăng xuất '+(n||0)+' thiết bị khác');secLoad(true)}).catch(e=>toast(svMsg(e)));return true}
+    case 'mudel':{if(u){museSave(u,null);if(MU.cur)muClose();toast('Đã gỡ nhạc');render()}return true}
     case 'attrm':{const k=el.dataset.k;QF[k].splice(+el.dataset.i,1);const c=$('#qfl_'+k);if(c)c.innerHTML=attChips(k);return true}
     case 'attopen':attOpen(el.dataset.p,el.dataset.n);return true;
     case 'qform':QF.q=[];if(needLogin())return true;state.qa.form=!state.qa.form;render();return true;
@@ -4104,7 +4325,7 @@ function commClick(a,el,id){
 
 /* ---------- render ---------- */
 function render(){
-  const v={home,auth,lessons,lesson,ask,blocks:blocksPage,portfolio:gallery,gallery,qa:qaPage,friends:friendsPage,stats:statsPage,account,admin,about,contact,privacy,perm:permPage,quiz:quizPage}[state.route.name]||home;
+  const v={home,auth,lessons,lesson,ask,blocks:blocksPage,portfolio:gallery,gallery,qa:qaPage,friends:friendsPage,stats:statsPage,account,admin,about,contact,privacy,perm:permPage,quiz:quizPage,profile:profilePage}[state.route.name]||home;
   FX.swap(()=>{$('#main').innerHTML=v(state.route.id)});
   renderChrome();
   document.title='PRIME Tin học 8';
@@ -4256,7 +4477,7 @@ function onClick(e){
     case 'logout':{
       if(SV.ok&&SV.token){const t=SV.token;svFlush().then(()=>rpc('app_logout',{p_token:t})).catch(()=>{});SV.token=null;SV.user=null;SV.list=[];SV.prog={};SV.msgs=[];store.set('sbsess',null)}
       else store.set('session',null);
-      state.chat.key=null;CM.lastProf='';AIL.st=null;AIL.adm=null;AIL.sync();toast('Đã đăng xuất');go('home');break}
+      state.chat.key=null;CM.lastProf='';SEC.list=null;if(MU.cur)muClose();AIL.st=null;AIL.adm=null;AIL.sync();toast('Đã đăng xuất');go('home');break}
     case 'topicgo':state.filter={cd:el.dataset.v,q:''};go('lessons');break;
     case 'topic':state.filter.cd=el.dataset.v;updateList();break;
     case 'paltab':state.palTab=el.dataset.v;render();break;
